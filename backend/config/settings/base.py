@@ -64,9 +64,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='dndchar'),
-        'USER': config('DB_USER', default='dndchar'),
-        'PASSWORD': config('DB_PASSWORD', default='dndchar'),
+        'NAME': config('DB_NAME', default='dungeon_toolkit'),
+        'USER': config('DB_USER', default='dungeon_toolkit'),
+        'PASSWORD': config('DB_PASSWORD', default='dungeon_toolkit'),
         'HOST': config('DB_HOST', default='db'),
         'PORT': config('DB_PORT', default='5432'),
     }

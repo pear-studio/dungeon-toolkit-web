@@ -12,13 +12,13 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-dndchar}
-      POSTGRES_USER: ${DB_USER:-dndchar}
+      POSTGRES_DB: ${DB_NAME:-dungeon_toolkit}
+      POSTGRES_USER: ${DB_USER:-dungeon_toolkit}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dndchar}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dungeon_toolkit}"]
       interval: 5s
       timeout: 5s
       retries: 5

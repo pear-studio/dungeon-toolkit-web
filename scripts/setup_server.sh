@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================
-# DNDChar 服务器初始化脚本
+# Dungeon Toolkit 服务器初始化脚本
 # 适用于 Ubuntu 22.04 / 24.04
 # 使用方法：bash setup_server.sh
 # =============================================================
@@ -9,7 +9,7 @@ set -e  # 任意命令失败则退出
 
 echo ""
 echo "============================================"
-echo "  DNDChar 服务器初始化"
+echo "  Dungeon Toolkit 服务器初始化"
 echo "============================================"
 echo ""
 
@@ -47,8 +47,8 @@ docker --version
 docker compose version
 echo ""
 echo "  接下来的步骤："
-echo "  1. 拉取代码：git clone <your-repo-url> /app/dndchar"
-echo "  2. 进入目录：cd /app/dndchar"
+echo "  1. 拉取代码：git clone <your-repo-url> /app/dungeon-toolkit"
+echo "  2. 进入目录：cd /app/dungeon-toolkit"
 echo "  3. 配置环境：cp .env.example .env && vim .env"
 echo "  4. 启动服务：docker compose up -d --build"
 echo "  5. 访问网站：http://<your-server-ip>"

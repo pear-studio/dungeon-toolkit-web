@@ -41,8 +41,8 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">⚔️</div>
-          <h1 className="text-3xl font-bold text-amber-400">DNDChar</h1>
-          <p className="text-slate-400 mt-1">你的 D&D 角色管理平台</p>
+          <h1 className="text-3xl font-bold text-amber-400">Dungeon Toolkit</h1>
+          <p className="text-slate-400 mt-1">你的 D&D 工具箱</p>
         </div>
 
         {/* 表单卡片 */}

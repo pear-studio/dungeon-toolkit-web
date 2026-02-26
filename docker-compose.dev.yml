@@ -15,13 +15,13 @@ services:
     ports:
       - "5432:5432"    # 暴露端口供本地 Django 直连
     environment:
-      POSTGRES_DB: dndchar
-      POSTGRES_USER: dndchar
-      POSTGRES_PASSWORD: dndchar
+      POSTGRES_DB: dungeon_toolkit
+      POSTGRES_USER: dungeon_toolkit
+      POSTGRES_PASSWORD: dungeon_toolkit
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dndchar"]
+      test: ["CMD-SHELL", "pg_isready -U dungeon_toolkit"]
       interval: 5s
       timeout: 5s
       retries: 5

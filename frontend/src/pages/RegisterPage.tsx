@@ -47,7 +47,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">⚔️</div>
-          <h1 className="text-3xl font-bold text-amber-400">DNDChar</h1>
+          <h1 className="text-3xl font-bold text-amber-400">Dungeon Toolkit</h1>
           <p className="text-slate-400 mt-1">开始你的冒险之旅</p>
         </div>
 

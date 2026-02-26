@@ -53,7 +53,7 @@ export default function DashboardPage() {
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚔️</span>
-            <span className="text-lg font-bold text-amber-400">DNDChar</span>
+            <span className="text-lg font-bold text-amber-400">Dungeon Toolkit</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-slate-400 hidden sm:block">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                 欢迎回来，<span className="text-amber-400">{user?.username}</span>！
               </h1>
               <p className="text-slate-400 mt-1">
-                你的冒险者大厅已准备就绪。创建或管理你的 D&D 角色吧。
+                你的冒险者大厅已准备就绪。角色管理、规则查询、AI 辅助，一切工具尽在于此。
               </p>
             </div>
           </div>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
 
       {/* 底部版本信息 */}
       <footer className="border-t border-slate-800 mt-16 py-6 text-center text-sm text-slate-600">
-        DNDChar v0.1.0 · 开源项目 · 使用 React + Django 构建
+        Dungeon Toolkit v0.1.0 · 开源项目 · 使用 React + Django 构建
       </footer>
     </div>
   )

@@ -11,7 +11,7 @@ from rest_framework.response import Response
 @permission_classes([AllowAny])
 def health_check(request):
     """服务健康检查"""
-    return Response({'status': 'ok', 'service': 'DNDChar API'})
+    return Response({'status': 'ok', 'service': 'Dungeon Toolkit API'})
 
 
 urlpatterns = [

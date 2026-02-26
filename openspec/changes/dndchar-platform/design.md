@@ -1,4 +1,4 @@
-# DND 角色塑造平台 · 技术设计文档
+# Dungeon Toolkit · 技术设计文档
 
 ## 系统架构总览
 
@@ -35,7 +35,7 @@
 ## 项目目录结构
 
 ```
-dndchar/
+dungeon-toolkit/
 ├── docker-compose.yml           # 开发环境
 ├── docker-compose.prod.yml      # 生产环境
 ├── .env.example                 # 环境变量模板（含详细注释）
@@ -481,7 +481,7 @@ services:
 
 ```
 # 数据库
-DATABASE_URL=postgresql://user:password@db:5432/dndchar
+DATABASE_URL=postgresql://user:password@db:5432/dungeon_toolkit
 
 # Django
 SECRET_KEY=your-secret-key-here
