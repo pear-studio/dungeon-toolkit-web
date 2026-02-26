@@ -1,0 +1,405 @@
+[
+  {
+    "slug": "human",
+    "name": "人类",
+    "name_en": "Human",
+    "description": "人类是最常见的种族，以适应力强、雄心勃勃、进取精神著称。他们在各个职业中都有出色的表现。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1},
+    "traits": [
+      {
+        "name": "多才多艺",
+        "description": "获得一项额外技能熟练项。"
+      }
+    ],
+    "languages": ["通用语", "额外一门语言（自选）"],
+    "has_subraces": false,
+    "subraces": []
+  },
+  {
+    "slug": "elf",
+    "name": "精灵",
+    "name_en": "Elf",
+    "description": "精灵是优雅、长寿的种族，与自然和魔法有天然的亲和力。他们的眼神犀利，动作敏捷。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"dex": 2},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "灵敏感知",
+        "description": "你在感知（察觉）技能检定中具有熟练加值。"
+      },
+      {
+        "name": "精灵祖传",
+        "description": "你对魅力（魔法）的豁免检定具有优势，且不会被入眠法术催眠。"
+      },
+      {
+        "name": "恍惚（无需睡眠）",
+        "description": "精灵不需要睡眠，他们的恍惚休息时间只需4小时，相当于人类8小时的睡眠效果。"
+      }
+    ],
+    "languages": ["通用语", "精灵语"],
+    "has_subraces": true,
+    "subraces": [
+      {
+        "slug": "high-elf",
+        "name": "高等精灵",
+        "name_en": "High Elf",
+        "description": "高等精灵拥有对魔法的天赋，思维敏锐。",
+        "ability_bonuses": {"int": 1},
+        "traits": [
+          {
+            "name": "精灵武器训练",
+            "description": "你熟练使用长剑、短剑、短弓和长弓。"
+          },
+          {
+            "name": "戏法",
+            "description": "你习得法师法术列表中的一个戏法。你的施法属性为智力。"
+          },
+          {
+            "name": "额外语言",
+            "description": "你掌握一门额外语言（自选）。"
+          }
+        ]
+      },
+      {
+        "slug": "wood-elf",
+        "name": "木精灵",
+        "name_en": "Wood Elf",
+        "description": "木精灵敏锐的感知和迅捷的身手使他们成为天生的猎手和斥候。",
+        "ability_bonuses": {"wis": 1},
+        "traits": [
+          {
+            "name": "精灵武器训练",
+            "description": "你熟练使用长剑、短剑、短弓和长弓。"
+          },
+          {
+            "name": "疾速",
+            "description": "你的移动速度提升至35尺。"
+          },
+          {
+            "name": "林中隐匿",
+            "description": "你可以在轻度遮蔽地形（自然环境，如叶丛、大雨、飘雪、薄雾或树木林立之处）中尝试藏匿行动。"
+          }
+        ]
+      },
+      {
+        "slug": "drow",
+        "name": "卓尔（黑暗精灵）",
+        "name_en": "Drow",
+        "description": "卓尔被驱逐到地底世界，他们以冷酷和魔法能力著称。",
+        "ability_bonuses": {"cha": 1},
+        "traits": [
+          {
+            "name": "优越的黑暗视觉",
+            "description": "你的黑暗视觉范围扩展至120尺。"
+          },
+          {
+            "name": "日光敏感",
+            "description": "在阳光直射时，你的攻击检定和依赖视觉的感知（察觉）检定处于劣势。"
+          },
+          {
+            "name": "卓尔魔法",
+            "description": "你习得舞光戏法。在达到3级时，你可以每次施放跳跃咒。在达到5级时，你可以每次施放飘浮咒。魅力是你的施法属性。"
+          },
+          {
+            "name": "卓尔武器训练",
+            "description": "你熟练使用手弩、短剑和刺剑。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dwarf",
+    "name": "矮人",
+    "name_en": "Dwarf",
+    "description": "矮人是坚韧的种族，居住在山脉和地下的石造王国中。以工艺精湛、勇敢善战著称。",
+    "speed": 25,
+    "size": "中型",
+    "ability_bonuses": {"con": 2},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "矮人抗性",
+        "description": "你对毒素伤害的豁免检定具有优势，并且对毒素伤害具有抗性。"
+      },
+      {
+        "name": "矮人战斗训练",
+        "description": "你熟练使用战斧、手斧、投锤和战锤。"
+      },
+      {
+        "name": "工具熟练",
+        "description": "你熟练使用铁匠工具、啤酒商工具或石匠工具中的一种（自选）。"
+      },
+      {
+        "name": "石头感知",
+        "description": "你的智慧（历史）检定，若与石造建筑的起源相关，则检定结果视为熟练加值的两倍。"
+      },
+      {
+        "name": "矮人坚韧",
+        "description": "你的速度不因穿戴重甲而降低。"
+      }
+    ],
+    "languages": ["通用语", "矮人语"],
+    "has_subraces": true,
+    "subraces": [
+      {
+        "slug": "hill-dwarf",
+        "name": "丘陵矮人",
+        "name_en": "Hill Dwarf",
+        "description": "丘陵矮人以非凡的感知和直觉著称。",
+        "ability_bonuses": {"wis": 1},
+        "traits": [
+          {
+            "name": "矮人坚韧",
+            "description": "你的生命值上限增加，每次你升级时（包括1级）也额外增加1点。"
+          }
+        ]
+      },
+      {
+        "slug": "mountain-dwarf",
+        "name": "山地矮人",
+        "name_en": "Mountain Dwarf",
+        "description": "山地矮人身强体壮，已适应了在崎岖地形中的生活。",
+        "ability_bonuses": {"str": 2},
+        "traits": [
+          {
+            "name": "矮人护甲训练",
+            "description": "你熟练穿戴轻甲和中甲。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "halfling",
+    "name": "半身人",
+    "name_en": "Halfling",
+    "description": "半身人是小巧、爱好和平的种族，以乐观积极和惊人的好运著称。",
+    "speed": 25,
+    "size": "小型",
+    "ability_bonuses": {"dex": 2},
+    "traits": [
+      {
+        "name": "幸运",
+        "description": "当你攻击检定、属性检定或豁免检定掷出1时，可以重骰，必须使用新的结果。"
+      },
+      {
+        "name": "勇敢",
+        "description": "你对抗惊吓的豁免检定具有优势。"
+      },
+      {
+        "name": "半身人灵巧",
+        "description": "你可以通过比你体型大的生物所占据的空间移动。"
+      }
+    ],
+    "languages": ["通用语", "半身人语"],
+    "has_subraces": true,
+    "subraces": [
+      {
+        "slug": "lightfoot",
+        "name": "轻足半身人",
+        "name_en": "Lightfoot",
+        "description": "轻足半身人擅于隐藏，甚至可以藏于他人身后。",
+        "ability_bonuses": {"cha": 1},
+        "traits": [
+          {
+            "name": "天生隐匿",
+            "description": "你可以尝试藏匿于比你体型大的生物身后。"
+          }
+        ]
+      },
+      {
+        "slug": "stout",
+        "name": "结实半身人",
+        "name_en": "Stout",
+        "description": "结实半身人体质强健，带有矮人血统。",
+        "ability_bonuses": {"con": 1},
+        "traits": [
+          {
+            "name": "结实抗性",
+            "description": "你对毒素伤害的豁免检定具有优势，并且对毒素伤害具有抗性。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "gnome",
+    "name": "侏儒",
+    "name_en": "Gnome",
+    "description": "侏儒是充满活力的种族，以对知识的热忱和自然的魔法亲和力著称。",
+    "speed": 25,
+    "size": "小型",
+    "ability_bonuses": {"int": 2},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "侏儒诡计",
+        "description": "你对魔法的智力、感知和魅力豁免检定具有优势。"
+      }
+    ],
+    "languages": ["通用语", "侏儒语"],
+    "has_subraces": true,
+    "subraces": [
+      {
+        "slug": "forest-gnome",
+        "name": "森林侏儒",
+        "name_en": "Forest Gnome",
+        "description": "森林侏儒与自然及动物有天然的亲和力。",
+        "ability_bonuses": {"dex": 1},
+        "traits": [
+          {
+            "name": "天然幻术师",
+            "description": "你习得幻象术戏法。"
+          },
+          {
+            "name": "通晓动语",
+            "description": "你可以用细微的声音和手势与小型或更小体型的野兽交流。"
+          }
+        ]
+      },
+      {
+        "slug": "rock-gnome",
+        "name": "岩石侏儒",
+        "name_en": "Rock Gnome",
+        "description": "岩石侏儒以发明创造和工程能力著称。",
+        "ability_bonuses": {"con": 1},
+        "traits": [
+          {
+            "name": "人工知识",
+            "description": "每当你做与魔法物品、炼金药品或技术装置相关的历史检定时，你可以将你的熟练加值加倍。"
+          },
+          {
+            "name": "工匠知识",
+            "description": "你熟练使用工匠工具和炼金师工具。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "half-elf",
+    "name": "半精灵",
+    "name_en": "Half-Elf",
+    "description": "半精灵兼有人类的进取心和精灵的感知，天生具有社交魅力。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"cha": 2},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "精灵祖传",
+        "description": "你对魅力（魔法）的豁免检定具有优势，且不会被入眠法术催眠。"
+      },
+      {
+        "name": "两项属性加值",
+        "description": "除魅力外，另外两项属性各+1（自选）。"
+      },
+      {
+        "name": "技能多样性",
+        "description": "你获得两项自选技能的熟练项。"
+      }
+    ],
+    "languages": ["通用语", "精灵语", "额外一门语言（自选）"],
+    "has_subraces": false,
+    "subraces": []
+  },
+  {
+    "slug": "half-orc",
+    "name": "半兽人",
+    "name_en": "Half-Orc",
+    "description": "半兽人身材魁梧，生命力顽强，融合了人类的适应力和兽人的强悍。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"str": 2, "con": 1},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "威吓",
+        "description": "你在威吓技能检定中具有熟练加值。"
+      },
+      {
+        "name": "不屈意志",
+        "description": "当你被击至0点生命值但未直接死亡时，你可以改为降至1点生命值。此能力在长休后恢复。"
+      },
+      {
+        "name": "野蛮攻击",
+        "description": "当你用近战武器掷出会心一击时，你可以额外掷一次该武器的伤害骰，并将结果加至额外伤害中。"
+      }
+    ],
+    "languages": ["通用语", "兽人语"],
+    "has_subraces": false,
+    "subraces": []
+  },
+  {
+    "slug": "tiefling",
+    "name": "魔裔",
+    "name_en": "Tiefling",
+    "description": "魔裔是被恶魔的血脉所触染的种族，外貌带有恶魔特征，却有能力选择自己的命运。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"int": 1, "cha": 2},
+    "traits": [
+      {
+        "name": "黑暗视觉",
+        "description": "在昏暗光线中，你的视野范围为60尺，可视为明亮光线；在黑暗中，你的视野范围为60尺，可视为昏暗光线。"
+      },
+      {
+        "name": "地狱抗性",
+        "description": "你对火焰伤害具有抗性。"
+      },
+      {
+        "name": "地狱传承",
+        "description": "你习得祸源戏法。在达到3级时，你可以每次使用此特性施放地狱责罚（2级）。在达到5级时，你可以每次使用此特性施放黑暗之门。魅力是你的施法属性。"
+      }
+    ],
+    "languages": ["通用语", "地狱语"],
+    "has_subraces": false,
+    "subraces": []
+  },
+  {
+    "slug": "dragonborn",
+    "name": "龙裔",
+    "name_en": "Dragonborn",
+    "description": "龙裔是具有龙族血脉的种族，拥有与生俱来的龙息武器和对特定元素的抗性。",
+    "speed": 30,
+    "size": "中型",
+    "ability_bonuses": {"str": 2, "cha": 1},
+    "traits": [
+      {
+        "name": "龙族先祖",
+        "description": "你有某种特定颜色龙的血脉，决定了你的龙息类型和抗性。（需在向导中选择）"
+      },
+      {
+        "name": "龙息武器",
+        "description": "可以用动作喷出一种特定元素的伤害。造成2d6的该类型伤害（豁免为CON豁免，DC = 8 + 体质修正 + 熟练加值），在短休或长休后恢复。"
+      },
+      {
+        "name": "元素抗性",
+        "description": "你对龙族先祖类型伤害具有抗性。"
+      }
+    ],
+    "languages": ["通用语", "龙语"],
+    "has_subraces": false,
+    "subraces": []
+  }
+]

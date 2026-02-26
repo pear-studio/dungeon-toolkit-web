@@ -3,60 +3,61 @@
 ## Phase 1：MVP
 
 ### 基础工程搭建
-- [ ] 初始化 Git 仓库，配置 .gitignore
-- [ ] 创建 Django 项目结构（config/apps/data/scripts）
-- [ ] 创建 React + TypeScript + Tailwind 项目
-- [ ] 编写开发环境 docker-compose.yml（nginx + django + postgresql + redis）
-- [ ] 编写 .env.example（含详细中文注释）
-- [ ] 配置 Django settings（base/development/production 三套）
-- [ ] 配置 Django REST Framework + simplejwt
-- [ ] 配置 CORS（django-cors-headers）
+- [x] 初始化 Git 仓库，配置 .gitignore
+- [x] 创建 Django 项目结构（config/apps/data/scripts）
+- [x] 创建 React + TypeScript + Tailwind 项目
+- [x] 编写开发环境 docker-compose.yml（nginx + django + postgresql + redis）
+- [x] 编写 .env.example（含详细中文注释）
+- [x] 配置 Django settings（base/development/production 三套）
+- [x] 配置 Django REST Framework + simplejwt
+- [x] 配置 CORS（django-cors-headers）
 
 ### 游戏数据准备（dnd5e_2014）
-- [ ] 整理 rulesets.json（定义规则集）
-- [ ] 整理 races.json（13个基础种族 + 亚种族）
+- [x] 整理 rulesets.json（定义规则集）
+- [x] 整理 races.json（9个基础种族 + 亚种族）
 - [ ] 整理 classes.json（12个职业 + 各等级特性）
 - [ ] 整理 subclasses.json（各职业至少1个子职业）
 - [ ] 整理 backgrounds.json（基础背景）
 - [ ] 整理 spells.json（至少覆盖1-5环常用法术）
 - [ ] 整理 shared/conditions.json、damage_types.json
-- [ ] 编写 scripts/import_gamedata.py 导入脚本
-- [ ] 验证导入脚本正确运行
+- [x] 编写 scripts/import_gamedata.py 导入脚本
+- [x] 验证导入脚本正确运行
 
 ### 后端：用户系统（users app）
-- [ ] 自定义 User 模型（AbstractUser，UUID主键，email登录）
-- [ ] 注册 API（POST /api/auth/register/）
-- [ ] 登录 API（POST /api/auth/login/，返回JWT）
-- [ ] Token 刷新 API
-- [ ] 当前用户信息 API（GET /api/auth/me/）
+- [x] 自定义 User 模型（AbstractUser，UUID主键，email登录）
+- [x] 注册 API（POST /api/auth/register/）
+- [x] 登录 API（POST /api/auth/login/，返回JWT）
+- [x] Token 刷新 API
+- [x] 当前用户信息 API（GET /api/auth/me/）
 
 ### 后端：游戏数据（gamedata app）
-- [ ] Ruleset 模型 + API
-- [ ] Race / Subrace 模型 + API（含过滤）
-- [ ] CharClass / Subclass 模型 + API
-- [ ] Background 模型 + API
-- [ ] Spell 模型 + API（含多条件过滤）
+- [x] Ruleset 模型 + API
+- [x] Race / Subrace 模型 + API（含过滤）
+- [x] CharClass / Subclass 模型 + API
+- [x] Background 模型 + API
+- [x] Spell 模型 + API（含多条件过滤）
 - [ ] Feat 模型 + API
 
 ### 后端：角色管理（characters app）
-- [ ] Character 模型（完整字段，含JSONB字段）
-- [ ] 角色列表/创建 API
-- [ ] 角色详情/更新/删除 API
-- [ ] 角色分享 API（生成share_token，切换is_public）
-- [ ] 公开分享页 API（无需登录）
-- [ ] 权限控制（只能访问自己的角色）
+- [x] Character 模型（完整字段，含JSONB字段）
+- [x] 角色列表/创建 API
+- [x] 角色详情/更新/删除 API
+- [x] 角色分享 API（生成share_token，切换is_public）
+- [x] 公开分享页 API（无需登录）
+- [x] 权限控制（只能访问自己的角色）
 
 ### 前端：基础框架
-- [ ] 配置 React Router（页面路由）
-- [ ] 配置 Axios（API 请求层，含 JWT 拦截器）
-- [ ] 配置 Zustand（authStore / wizardStore / characterStore）
+- [x] 配置 React Router（页面路由）
+- [x] 配置 Axios（API 请求层，含 JWT 拦截器）
+- [x] 配置 Zustand（authStore）
+- [ ] 配置 Zustand（wizardStore / characterStore）
 - [ ] 实现 JWT 自动刷新逻辑
-- [ ] 实现受保护路由（未登录跳转登录页）
+- [x] 实现受保护路由（未登录跳转登录页）
 
 ### 前端：用户认证页面
-- [ ] 登录页面
-- [ ] 注册页面
-- [ ] 表单验证
+- [x] 登录页面
+- [x] 注册页面
+- [ ] 表单验证（待完善）
 
 ### 前端：角色创建向导（核心）
 - [ ] 向导容器组件（步骤导航 + 进度条）

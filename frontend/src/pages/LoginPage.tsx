@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,14 +16,14 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      await login(email, password)
+      await login(identifier, password)
       navigate('/dashboard')
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } } }
       const msg =
         axiosErr.response?.data?.non_field_errors?.[0] ||
         axiosErr.response?.data?.detail ||
-        '登录失败，请检查邮箱和密码'
+        '登录失败，请检查账号和密码'
       setError(msg)
     } finally {
       setLoading(false)
@@ -59,14 +59,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                邮箱
+                邮箱 / 用户名
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                placeholder="your@email.com"
+                placeholder="your@email.com 或 用户名"
                 className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
                            placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1
                            focus:ring-amber-500 transition"

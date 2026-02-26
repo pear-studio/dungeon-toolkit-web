@@ -38,7 +38,8 @@
 dungeon-toolkit/
 ├── docker-compose.yml           # 开发环境
 ├── docker-compose.prod.yml      # 生产环境
-├── .env.example                 # 环境变量模板（含详细注释）
+├── backend/                     # (见下方 backend 目录)
+│   └── .env.example             # 环境变量模板（含详细注释）
 ├── README.md                    # 项目介绍 + 快速开始
 │
 ├── docs/                        # 详细文档

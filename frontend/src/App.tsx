@@ -1,18 +1,26 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import { useAuthStore } from './stores/authStore'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import CreatePage from './pages/CreatePage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
-  const restoreSession = useAuthStore((s) => s.restoreSession)
+  // authStore 在模块加载时已自动调用 restoreSession()，此处无需重复调用
+  const isLoading = useAuthStore((s) => s.isLoading)
 
-  // 应用启动时从 localStorage 恢复登录状态
-  useEffect(() => {
-    restoreSession()
-  }, [restoreSession])
+  // 在会话恢复完成之前，整个应用显示全屏加载，避免任何路由闪烁
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-center">
+          <div className="text-4xl mb-4 animate-spin">⚙️</div>
+          <p className="text-slate-400">加载中...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <BrowserRouter>
@@ -27,6 +35,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <CreatePage />
             </ProtectedRoute>
           }
         />
