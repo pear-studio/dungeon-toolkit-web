@@ -1,0 +1,50 @@
+# 中文规则书源码（本地参考，不上传）
+rules_source/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# 修复脚本（临时文件）
+fix_wsl.ps1
+fix_wsl2.ps1
+
+# React / Node
+node_modules/
+frontend/build/
+frontend/dist/
+.npm
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# Docker
+.docker/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

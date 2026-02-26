@@ -1,0 +1,30 @@
+version: '3.9'
+
+# ============================================================
+# 本地开发环境配置
+# 只启动 PostgreSQL，Django 和 React 各自在本地运行
+#
+# 使用方法：
+#   docker-compose -f docker-compose.dev.yml up -d
+# ============================================================
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"    # 暴露端口供本地 Django 直连
+    environment:
+      POSTGRES_DB: dndchar
+      POSTGRES_USER: dndchar
+      POSTGRES_PASSWORD: dndchar
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dndchar"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_dev_data:
