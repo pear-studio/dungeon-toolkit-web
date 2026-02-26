@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-dungeon_toolkit}
       POSTGRES_USER: ${DB_USER:-dungeon_toolkit}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-dungeon_pass_2024}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?请在 backend/.env 中设置 DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
