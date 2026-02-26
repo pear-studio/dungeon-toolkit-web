@@ -1,6 +1,6 @@
 # ⚔️ Dungeon Toolkit
 
-> 面向中文 D&D 5e 玩家的开源工具箱 —— 角色管理 · 规则查询 · AI 辅助
+> 面向中文 D&D 5e 玩家的开源工具箱 —— 向导式角色创建 · 角色卡管理
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
@@ -12,10 +12,10 @@ Dungeon Toolkit 是一个面向中文 D&D 5e 玩家的开源工具箱，计划�
 
 - 🧙 **向导式角色创建** — 8 步引导完成种族/职业/属性/背景全流程
 - 📋 **角色卡管理** — 查看与编辑你的角色，支持公开分享
-- 📚 **中文规则文档库** — 内嵌可搜索的完整中文 5e 规则
-- 🎨 **AIGC 辅助** — AI 生成角色立绘、背景故事、角色扮演对话
 
 **当前进度：** Phase 1 MVP 开发中（用户注册/登录 + 基础框架已完成）
+
+> ⚠️ **免责声明**：本项目代码主要由 AI 辅助生成，可能存在错漏或不完善之处，欢迎提 Issue 和 PR。
 
 ---
 
@@ -131,8 +131,6 @@ dungeon-toolkit/
 - [x] Dashboard 欢迎页
 - [ ] 向导式角色创建（开发中）
 - [ ] 角色卡管理
-- [ ] 规则文档库
-- [ ] AIGC 功能
 
 ---
 
