@@ -67,7 +67,7 @@ venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 
 # 配置环境变量（复制示例文件后可直接使用默认值）
-copy .env.example .env
+copy backend\.env.example backend\.env
 
 # 初始化数据库
 python manage.py makemigrations

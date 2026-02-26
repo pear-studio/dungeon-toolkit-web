@@ -11,10 +11,11 @@ services:
   db:
     image: postgres:15-alpine
     restart: unless-stopped
+    env_file: backend/.env
     environment:
       POSTGRES_DB: ${DB_NAME:-dungeon_toolkit}
       POSTGRES_USER: ${DB_USER:-dungeon_toolkit}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dungeon_pass_2024}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -26,7 +27,7 @@ services:
   backend:
     build: ./backend
     restart: unless-stopped
-    env_file: .env
+    env_file: backend/.env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.production
       DB_HOST: db
