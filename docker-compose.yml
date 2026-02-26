@@ -13,13 +13,13 @@ services:
     restart: unless-stopped
     env_file: backend/.env
     environment:
-      POSTGRES_DB: dungeon_toolkit
-      POSTGRES_USER: dungeon_user
-      POSTGRES_PASSWORD: dungeon_pass_2024
+      POSTGRES_DB: ${DB_NAME:-dungeon_toolkit}
+      POSTGRES_USER: ${DB_USER:-dungeon_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?请在 backend/.env 中设置 DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dungeon_toolkit}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dungeon_user}"]
       interval: 5s
       timeout: 5s
       retries: 5
