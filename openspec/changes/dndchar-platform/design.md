@@ -337,46 +337,49 @@ GET    /api/aigc/race-lore/{slug}/  种族背景故事（AI生成+缓存）
 
 ---
 
-## 角色创建向导（8步）
+## 角色创建向导（当前实现：5步 MVP）
+
+> 当前已实现前 5 步核心流程，后续法术/装备步骤在 Phase 2 补全。
 
 ```
-Step 1: 选择规则集
-  → 显示可用规则集（D&D 5e 2014版 / 2024版）
+Step 1: 选择规则集（RulesetSection）
+  → 显示可用规则集（D&D 5e 2014版 已上线 / 2024版 即将推出）
+  → 选择后点击「确认」锁定规则集，支持「更换」
 
-Step 2: 基础信息
-  → 角色名、性别、年龄、外貌描述
+Step 2: 选择种族（RaceSection）
+  → 从后端 /api/gamedata/races/ 动态加载种族卡片
+  → 含自定义种族选项
+  → 选中后展开：亚种族选择、性别、年龄滑条
 
-Step 3: 选择种族
-  → 种族列表卡片（含图标、简介）
-  → 选中后展示：种族特性、属性加值、速度等
-  → 若有亚种族则展开选择
-  → 右侧面板：相关规则文档快速预览（可选）
+Step 3: 选择职业（ClassSection）
+  → 从后端 /api/gamedata/classes/ 动态加载职业卡片
+  → 展示命中骰、主要属性、施法标记、豁免骰
+  → 含自定义职业选项
 
-Step 4: 选择职业
-  → 职业列表（含角色定位标签：输出/控场/辅助/坦克）
-  → 选中后展示：命中骰、主要属性、护甲/武器熟练、职业特性
-  → 注意：子职业通常3级才选，此处预览即可
-
-Step 5: 分配属性值
+Step 4: 分配属性值（AbilityScoresSection）
   → 三种方式可选：
-    a. 标准数组 [15,14,13,12,10,8] 拖拽分配
-    b. 点数购买（27点）交互计算
-    c. 手动输入（骰子结果）
+    a. 标准数组 [15,14,13,12,10,8] 点击分配
+    b. 购点法（27点）± 按钮交互
+    c. 随机骰点（4d6取最高3骰）
   → 自动叠加种族属性加值，显示最终值和修正值
+  → 底部属性总览面板
 
-Step 6: 选择背景
-  → 背景列表（含技能熟练、工具熟练、语言）
-  → 性格特质/理念/牵绊/缺点：各提供随机选项，支持自定义
+Step 5: 描述角色（DescribeSection）
+  → 角色名输入
+  → 背景选择（从后端动态加载）
+  → 阵营选择（3×3方格）
+  → 外貌描述（可选）
+  → 个性细节：特征/理想/牵绊/缺点（折叠展开）
 
-Step 7: 选择法术（仅法术职业显示此步）
-  → 根据职业和等级，展示可选戏法和法术
-  → 已知法术列表 vs 可选法术列表
+完成 → 提交创建 → 跳转 Dashboard
+```
 
-Step 8: 初始装备
-  → 根据职业/背景的初始装备选项
-  → 或直接分配初始金币（自行购买）
+### 计划补全的步骤（Phase 2）
 
-完成 → 角色卡预览 → 确认创建
+```
+Step 6: 选择法术（仅法术职业显示此步）
+Step 7: 初始装备选择
+完成 → 角色卡完整预览 → 确认创建
 ```
 
 ---
@@ -525,10 +528,52 @@ REDIS_URL=redis://redis:6379/0
 Zustand stores：
 
 authStore         用户登录状态、JWT Token
-characterStore    当前编辑的角色数据
-wizardStore       向导步骤状态（8步的临时数据）
-gamedataStore     规则集/种族/职业等（内存缓存）
+characterStore    角色列表数据、CRUD 操作
+wizardStore       向导步骤状态（5步临时数据 + rulesetConfirmed 锁定标志）
+gamedataStore     规则集/种族/职业/背景（内存缓存，页面初始化时统一 fetchAll）
 ```
+
+### gamedataStore 数据流规范
+
+```
+App 初始化
+  └─ gamedataStore.fetchAll()
+       ├─ GET /api/gamedata/races/       → PagedResponse<Race>    → store.races[]
+       ├─ GET /api/gamedata/classes/     → PagedResponse<Class>   → store.classes[]
+       ├─ GET /api/gamedata/backgrounds/ → PagedResponse<Bg>      → store.backgrounds[]
+       └─ GET /api/gamedata/rulesets/    → PagedResponse<Ruleset> → store.rulesets[]
+
+各 Section 组件直接读取 store，禁止在组件内单独发起 fetch。
+```
+
+### DRF 分页处理
+
+后端默认启用分页，返回格式为：
+
+```json
+{ "count": 9, "next": null, "previous": null, "results": [...] }
+```
+
+前端 `api.ts` 统一使用 `PagedResponse<T>` 接口处理，
+`gamedataStore` 中取 `res.data.results` 存入 store。
+
+---
+
+## UI 设计规范（Design System）
+
+> 完整规范见根目录 `DESIGN_SYSTEM.md`，以下为核心原则摘要。
+
+| 规则 | 规范值 |
+|------|--------|
+| 卡片背景（未选中） | `!bg-slate-800`（必须加 `!` 防止浏览器覆盖） |
+| 卡片背景（选中） | `!bg-amber-500/10` |
+| 卡片文字（未选中） | `text-slate-200`（禁止用 `text-white`） |
+| 卡片文字（选中） | `text-amber-400` |
+| 次要说明 | `text-slate-400` |
+| 页面背景 | `bg-slate-900` |
+| 主面板背景 | `bg-slate-800` |
+| 输入框背景 | `bg-slate-700` |
+| 主操作按钮 | `bg-amber-500 text-slate-900` |
 
 ---
 
