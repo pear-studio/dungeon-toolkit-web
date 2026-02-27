@@ -124,7 +124,7 @@ export default function RaceSection() {
               {selectedRace?.has_subraces && selectedRace.subraces && selectedRace.subraces.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    亚种族 <span className="text-red-400">*</span>
+                    亚种族 <span className="text-red-400">* 必选</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {selectedRace.subraces.map((sub) => (

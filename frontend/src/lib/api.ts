@@ -87,6 +87,20 @@ export interface CharClass {
   hit_die: number
   primary_ability: string
   saving_throws: string[]
+  skill_choices_count?: number
+  skill_choices?: string[]
+  level_features?: Record<string, Array<{ name: string; description: string }>>
+  starting_equipment?: Array<{ option: string; items: string[] }>
+  subclasses?: Subclass[]
+}
+
+export interface Subclass {
+  id: string
+  slug: string
+  name: string
+  name_en: string
+  description: string
+  features?: Record<string, Array<{ name: string; description: string }>>
 }
 
 export interface Background {
@@ -96,6 +110,30 @@ export interface Background {
   skill_proficiencies: string[]
   feature_name: string
   feature_description: string
+  starting_equipment: string[]
+  tool_proficiencies?: string[]
+  languages_count?: number
+  starting_gold?: number
+  personality_traits?: string[]
+  ideals?: string[]
+  bonds?: string[]
+  flaws?: string[]
+}
+
+export interface Item {
+  id: string
+  slug: string
+  name: string
+  name_en: string
+  category: string
+  category_display: string
+  cost: string
+  weight: number
+  damage?: string
+  damage_type?: string
+  properties?: string[]
+  ac?: number
+  description?: string
 }
 
 // ── API 方法 ──────────────────────────────────────────────
@@ -124,6 +162,9 @@ export const gamedataApi = {
   race: (slug: string) => api.get<Race>(`/gamedata/races/${slug}/`),
   classes: () => api.get<PagedResponse<CharClass>>('/gamedata/classes/'),
   backgrounds: () => api.get<PagedResponse<Background>>('/gamedata/backgrounds/'),
+  items: (category?: string) => api.get<PagedResponse<Item>>('/gamedata/items/', {
+    params: category ? { category } : undefined,
+  }),
 }
 
 export default api

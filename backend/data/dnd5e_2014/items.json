@@ -1,0 +1,944 @@
+[
+  {
+    "slug": "club",
+    "name": "木棒",
+    "name_en": "Club",
+    "category": "weapon",
+    "cost": "1 gp",
+    "weight": 2,
+    "damage": "1d4",
+    "damage_type": "打击",
+    "properties": [
+      "轻便"
+    ]
+  },
+  {
+    "slug": "dagger",
+    "name": "匕首",
+    "name_en": "Dagger",
+    "category": "weapon",
+    "cost": "2 gp",
+    "weight": 0.5,
+    "damage": "1d4",
+    "damage_type": "穿刺",
+    "properties": [
+      "轻便",
+      "投掷 (20/60)"
+    ]
+  },
+  {
+    "slug": "greatclub",
+    "name": "大头棒",
+    "name_en": "Greatclub",
+    "category": "weapon",
+    "cost": "2 gp",
+    "weight": 10,
+    "damage": "1d8",
+    "damage_type": "打击",
+    "properties": [
+      "两手"
+    ]
+  },
+  {
+    "slug": "handaxe",
+    "name": "手斧",
+    "name_en": "Handaxe",
+    "category": "weapon",
+    "cost": "5 gp",
+    "weight": 1,
+    "damage": "1d6",
+    "damage_type": "砍劈",
+    "properties": [
+      "轻便",
+      "投掷 (20/60)"
+    ]
+  },
+  {
+    "slug": "javelin",
+    "name": "标枪",
+    "name_en": "Javelin",
+    "category": "weapon",
+    "cost": "5 sp",
+    "weight": 2,
+    "damage": "1d6",
+    "damage_type": "穿刺",
+    "properties": [
+      "投掷 (30/120)"
+    ]
+  },
+  {
+    "slug": "light-hammer",
+    "name": "轻锤",
+    "name_en": "Light Hammer",
+    "category": "weapon",
+    "cost": "2 gp",
+    "weight": 1,
+    "damage": "1d4",
+    "damage_type": "打击",
+    "properties": [
+      "轻便",
+      "投掷 (20/60)"
+    ]
+  },
+  {
+    "slug": "mace",
+    "name": "钉头锤",
+    "name_en": "Mace",
+    "category": "weapon",
+    "cost": "5 gp",
+    "weight": 4,
+    "damage": "1d6",
+    "damage_type": "打击",
+    "properties": []
+  },
+  {
+    "slug": "quarterstaff",
+    "name": "长棍",
+    "name_en": "Quarterstaff",
+    "category": "weapon",
+    "cost": "2 sp",
+    "weight": 4,
+    "damage": "1d6",
+    "damage_type": "打击",
+    "properties": [
+      "两用 (1d8)"
+    ]
+  },
+  {
+    "slug": "sickle",
+    "name": "镰刀",
+    "name_en": "Sickle",
+    "category": "weapon",
+    "cost": "1 gp",
+    "weight": 2,
+    "damage": "1d4",
+    "damage_type": "砍劈",
+    "properties": [
+      "轻便"
+    ]
+  },
+  {
+    "slug": "spear",
+    "name": "长矛",
+    "name_en": "Spear",
+    "category": "weapon",
+    "cost": "1 gp",
+    "weight": 3,
+    "damage": "1d6",
+    "damage_type": "穿刺",
+    "properties": [
+      "两用 (1d8)"
+    ]
+  },
+  {
+    "slug": "crossbow-light",
+    "name": "轻十字弓",
+    "name_en": "Light Crossbow",
+    "category": "weapon",
+    "cost": "25 gp",
+    "weight": 2.5,
+    "damage": "1d8",
+    "damage_type": "穿刺",
+    "properties": [
+      "装填 (80/320)",
+      "两手"
+    ]
+  },
+  {
+    "slug": "dart",
+    "name": "飞镖",
+    "name_en": "Dart",
+    "category": "weapon",
+    "cost": "5 cp",
+    "weight": 0.25,
+    "damage": "1d4",
+    "damage_type": "穿刺",
+    "properties": [
+      "投掷 (20/60)",
+      "轻便"
+    ]
+  },
+  {
+    "slug": "shortbow",
+    "name": "短弓",
+    "name_en": "Shortbow",
+    "category": "weapon",
+    "cost": "25 gp",
+    "weight": 2,
+    "damage": "1d6",
+    "damage_type": "穿刺",
+    "properties": [
+      "装填 (80/320)",
+      "两手"
+    ]
+  },
+  {
+    "slug": "sling",
+    "name": "弹弓",
+    "name_en": "Sling",
+    "category": "weapon",
+    "cost": "1 sp",
+    "weight": 0,
+    "damage": "1d4",
+    "damage_type": "打击",
+    "properties": [
+      "投掷 (30/120)"
+    ]
+  },
+  {
+    "slug": "battleaxe",
+    "name": "战斧",
+    "name_en": "Battleaxe",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 4,
+    "damage": "1d8",
+    "damage_type": "砍劈",
+    "properties": [
+      "两用 (1d10)"
+    ]
+  },
+  {
+    "slug": "flail",
+    "name": "连枷",
+    "name_en": "Flail",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 10,
+    "damage": "1d8",
+    "damage_type": "打击",
+    "properties": []
+  },
+  {
+    "slug": "glaive",
+    "name": "刀刃戈",
+    "name_en": "Glaive",
+    "category": "weapon",
+    "cost": "20 gp",
+    "weight": 6,
+    "damage": "1d10",
+    "damage_type": "砍劈",
+    "properties": [
+      "触及",
+      "两手"
+    ]
+  },
+  {
+    "slug": "greataxe",
+    "name": "巨斧",
+    "name_en": "Greataxe",
+    "category": "weapon",
+    "cost": "30 gp",
+    "weight": 7,
+    "damage": "1d12",
+    "damage_type": "砍劈",
+    "properties": [
+      "两手"
+    ]
+  },
+  {
+    "slug": "greatsword",
+    "name": "巨剑",
+    "name_en": "Greatsword",
+    "category": "weapon",
+    "cost": "50 gp",
+    "weight": 6,
+    "damage": "2d6",
+    "damage_type": "砍劈",
+    "properties": [
+      "两手"
+    ]
+  },
+  {
+    "slug": "halberd",
+    "name": "戟",
+    "name_en": "Halberd",
+    "category": "weapon",
+    "cost": "20 gp",
+    "weight": 6,
+    "damage": "1d10",
+    "damage_type": "砍劈",
+    "properties": [
+      "触及",
+      "两手"
+    ]
+  },
+  {
+    "slug": "lance",
+    "name": "骑枪",
+    "name_en": "Lance",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 6,
+    "damage": "1d12",
+    "damage_type": "穿刺",
+    "properties": [
+      "触及",
+      "特殊"
+    ]
+  },
+  {
+    "slug": "longsword",
+    "name": "长剑",
+    "name_en": "Longsword",
+    "category": "weapon",
+    "cost": "15 gp",
+    "weight": 3,
+    "damage": "1d8",
+    "damage_type": "砍劈",
+    "properties": [
+      "两用 (1d10)"
+    ]
+  },
+  {
+    "slug": "maul",
+    "name": "大锤",
+    "name_en": "Maul",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 10,
+    "damage": "2d6",
+    "damage_type": "打击",
+    "properties": [
+      "两手"
+    ]
+  },
+  {
+    "slug": "morningstar",
+    "name": "晨星锤",
+    "name_en": "Morningstar",
+    "category": "weapon",
+    "cost": "15 gp",
+    "weight": 4,
+    "damage": "1d8",
+    "damage_type": "穿刺",
+    "properties": []
+  },
+  {
+    "slug": "pike",
+    "name": "长戟",
+    "name_en": "Pike",
+    "category": "weapon",
+    "cost": "5 gp",
+    "weight": 18,
+    "damage": "1d10",
+    "damage_type": "穿刺",
+    "properties": [
+      "触及",
+      "两手"
+    ]
+  },
+  {
+    "slug": "rapier",
+    "name": "刺剑",
+    "name_en": "Rapier",
+    "category": "weapon",
+    "cost": "25 gp",
+    "weight": 2,
+    "damage": "1d8",
+    "damage_type": "穿刺",
+    "properties": [
+      "轻便"
+    ]
+  },
+  {
+    "slug": "scimitar",
+    "name": "弯刀",
+    "name_en": "Scimitar",
+    "category": "weapon",
+    "cost": "25 gp",
+    "weight": 3,
+    "damage": "1d6",
+    "damage_type": "砍劈",
+    "properties": [
+      "轻便"
+    ]
+  },
+  {
+    "slug": "shortsword",
+    "name": "短剑",
+    "name_en": "Shortsword",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 2,
+    "damage": "1d6",
+    "damage_type": "穿刺",
+    "properties": [
+      "轻便"
+    ]
+  },
+  {
+    "slug": "trident",
+    "name": "三叉戟",
+    "name_en": "Trident",
+    "category": "weapon",
+    "cost": "5 gp",
+    "weight": 4,
+    "damage": "1d6",
+    "damage_type": "穿刺",
+    "properties": [
+      "两用 (1d8)",
+      "投掷 (20/60)"
+    ]
+  },
+  {
+    "slug": "war-pick",
+    "name": "战镐",
+    "name_en": "War Pick",
+    "category": "weapon",
+    "cost": "5 gp",
+    "weight": 2,
+    "damage": "1d8",
+    "damage_type": "穿刺",
+    "properties": []
+  },
+  {
+    "slug": "warhammer",
+    "name": "战锤",
+    "name_en": "Warhammer",
+    "category": "weapon",
+    "cost": "15 gp",
+    "weight": 2,
+    "damage": "1d8",
+    "damage_type": "打击",
+    "properties": [
+      "两用 (1d10)"
+    ]
+  },
+  {
+    "slug": "whip",
+    "name": "鞭子",
+    "name_en": "Whip",
+    "category": "weapon",
+    "cost": "2 gp",
+    "weight": 3,
+    "damage": "1d4",
+    "damage_type": "砍劈",
+    "properties": [
+      "触及",
+      "轻便"
+    ]
+  },
+  {
+    "slug": "longbow",
+    "name": "长弓",
+    "name_en": "Longbow",
+    "category": "weapon",
+    "cost": "50 gp",
+    "weight": 2,
+    "damage": "1d8",
+    "damage_type": "穿刺",
+    "properties": [
+      "装填 (150/600)",
+      "两手"
+    ]
+  },
+  {
+    "slug": "heavy-crossbow",
+    "name": "重十字弓",
+    "name_en": "Heavy Crossbow",
+    "category": "weapon",
+    "cost": "50 gp",
+    "weight": 18,
+    "damage": "1d10",
+    "damage_type": "穿刺",
+    "properties": [
+      "装填 (100/400)",
+      "两手"
+    ]
+  },
+  {
+    "slug": "blowgun",
+    "name": "吹箭筒",
+    "name_en": "Blowgun",
+    "category": "weapon",
+    "cost": "10 gp",
+    "weight": 0.5,
+    "damage": "1",
+    "damage_type": "穿刺",
+    "properties": [
+      "装填 (25/100)",
+      "轻便"
+    ]
+  },
+  {
+    "slug": "leather-armor",
+    "name": "皮甲",
+    "name_en": "Leather Armor",
+    "category": "armor",
+    "cost": "10 gp",
+    "weight": 5,
+    "ac": 11,
+    "properties": []
+  },
+  {
+    "slug": "studded-leather-armor",
+    "name": "铆钉皮甲",
+    "name_en": "Studded Leather Armor",
+    "category": "armor",
+    "cost": "45 gp",
+    "weight": 6.5,
+    "ac": 12,
+    "properties": []
+  },
+  {
+    "slug": "hide-armor",
+    "name": "兽皮甲",
+    "name_en": "Hide Armor",
+    "category": "armor",
+    "cost": "10 gp",
+    "weight": 6,
+    "ac": 12,
+    "properties": []
+  },
+  {
+    "slug": "chain-shirt",
+    "name": "锁子甲",
+    "name_en": "Chain Shirt",
+    "category": "armor",
+    "cost": "50 gp",
+    "weight": 10,
+    "ac": 13,
+    "properties": []
+  },
+  {
+    "slug": "scale-mail",
+    "name": "鳞甲",
+    "name_en": "Scale Mail",
+    "category": "armor",
+    "cost": "50 gp",
+    "weight": 22.5,
+    "ac": 14,
+    "properties": []
+  },
+  {
+    "slug": "breastplate",
+    "name": "胸甲",
+    "name_en": "Breastplate",
+    "category": "armor",
+    "cost": "400 gp",
+    "weight": 10,
+    "ac": 14,
+    "properties": []
+  },
+  {
+    "slug": "half-plate",
+    "name": "半身甲",
+    "name_en": "Half Plate",
+    "category": "armor",
+    "cost": "750 gp",
+    "weight": 20,
+    "ac": 15,
+    "properties": []
+  },
+  {
+    "slug": "ring-mail",
+    "name": "环甲",
+    "name_en": "Ring Mail",
+    "category": "armor",
+    "cost": "30 gp",
+    "weight": 20,
+    "ac": 14,
+    "properties": []
+  },
+  {
+    "slug": "chain-mail",
+    "name": "链甲",
+    "name_en": "Chain Mail",
+    "category": "armor",
+    "cost": "75 gp",
+    "weight": 27.5,
+    "ac": 16,
+    "properties": []
+  },
+  {
+    "slug": "splint-armor",
+    "name": "板条甲",
+    "name_en": "Splint Armor",
+    "category": "armor",
+    "cost": "200 gp",
+    "weight": 30,
+    "ac": 17,
+    "properties": []
+  },
+  {
+    "slug": "plate-armor",
+    "name": "全身甲",
+    "name_en": "Plate Armor",
+    "category": "armor",
+    "cost": "1500 gp",
+    "weight": 32.5,
+    "ac": 18,
+    "properties": []
+  },
+  {
+    "slug": "shield",
+    "name": "盾牌",
+    "name_en": "Shield",
+    "category": "armor",
+    "cost": "10 gp",
+    "weight": 3,
+    "ac": 2,
+    "properties": []
+  },
+  {
+    "slug": "backpack",
+    "name": "背包",
+    "name_en": "Backpack",
+    "category": "adventuring-gear",
+    "cost": "2 gp",
+    "weight": 2.5
+  },
+  {
+    "slug": "bedroll",
+    "name": "睡袋",
+    "name_en": "Bedroll",
+    "category": "adventuring-gear",
+    "cost": "1 gp",
+    "weight": 3.5
+  },
+  {
+    "slug": "blanket",
+    "name": "毯子",
+    "name_en": "Blanket",
+    "category": "adventuring-gear",
+    "cost": "5 sp",
+    "weight": 1.5
+  },
+  {
+    "slug": "rope-50ft",
+    "name": "绳索 (50尺)",
+    "name_en": "Rope (50 ft)",
+    "category": "adventuring-gear",
+    "cost": "1 gp",
+    "weight": 5
+  },
+  {
+    "slug": "torch",
+    "name": "火把",
+    "name_en": "Torch",
+    "category": "adventuring-gear",
+    "cost": "1 cp",
+    "weight": 0.5
+  },
+  {
+    "slug": "oil-flask",
+    "name": "油瓶",
+    "name_en": "Oil Flask",
+    "category": "adventuring-gear",
+    "cost": "1 sp",
+    "weight": 0.5
+  },
+  {
+    "slug": "rations",
+    "name": "口粮",
+    "name_en": "Rations (1 day)",
+    "category": "adventuring-gear",
+    "cost": "5 sp",
+    "weight": 1
+  },
+  {
+    "slug": "waterskin",
+    "name": "水袋",
+    "name_en": "Waterskin",
+    "category": "adventuring-gear",
+    "cost": "2 sp",
+    "weight": 2.5
+  },
+  {
+    "slug": "crowbar",
+    "name": "撬棍",
+    "name_en": "Crowbar",
+    "category": "adventuring-gear",
+    "cost": "2 gp",
+    "weight": 2.5
+  },
+  {
+    "slug": "grappling-hook",
+    "name": "抓钩",
+    "name_en": "Grappling Hook",
+    "category": "adventuring-gear",
+    "cost": "2 gp",
+    "weight": 2
+  },
+  {
+    "slug": "lantern-hooded",
+    "name": "罩灯",
+    "name_en": "Hooded Lantern",
+    "category": "adventuring-gear",
+    "cost": "5 gp",
+    "weight": 1
+  },
+  {
+    "slug": "lantern-bullseye",
+    "name": "定向灯",
+    "name_en": "Bullseye Lantern",
+    "category": "adventuring-gear",
+    "cost": "10 gp",
+    "weight": 1
+  },
+  {
+    "slug": "mess-kit",
+    "name": "餐具套装",
+    "name_en": "Mess Kit",
+    "category": "adventuring-gear",
+    "cost": "2 sp",
+    "weight": 0.5
+  },
+  {
+    "slug": "tinderbox",
+    "name": "火种盒",
+    "name_en": "Tinderbox",
+    "category": "adventuring-gear",
+    "cost": "5 sp",
+    "weight": 0.5
+  },
+  {
+    "slug": "fishing-tackle",
+    "name": "钓具",
+    "name_en": "Fishing Tackle",
+    "category": "adventuring-gear",
+    "cost": "1 gp",
+    "weight": 2
+  },
+  {
+    "slug": "healers-kit",
+    "name": "医疗包",
+    "name_en": "Healer's Kit",
+    "category": "adventuring-gear",
+    "cost": "5 gp",
+    "weight": 1.5
+  },
+  {
+    "slug": "potion-healing",
+    "name": "治疗药水",
+    "name_en": "Potion of Healing",
+    "category": "adventuring-gear",
+    "cost": "50 gp",
+    "weight": 0.25
+  },
+  {
+    "slug": "antitoxin",
+    "name": "解毒剂",
+    "name_en": "Antitoxin",
+    "category": "adventuring-gear",
+    "cost": "50 gp",
+    "weight": 0.25
+  },
+  {
+    "slug": "holy-symbol",
+    "name": "圣徽",
+    "name_en": "Holy Symbol",
+    "category": "adventuring-gear",
+    "cost": "5 gp",
+    "weight": 0.5
+  },
+  {
+    "slug": "spellbook",
+    "name": "法术书",
+    "name_en": "Spellbook",
+    "category": "adventuring-gear",
+    "cost": "50 gp",
+    "weight": 1.5
+  },
+  {
+    "slug": "component-pouch",
+    "name": "材料袋",
+    "name_en": "Component Pouch",
+    "category": "adventuring-gear",
+    "cost": "25 gp",
+    "weight": 1
+  },
+  {
+    "slug": "explorers-pack",
+    "name": "探索者包",
+    "name_en": "Explorer's Pack",
+    "category": "adventuring-gear",
+    "cost": "10 gp",
+    "weight": 14
+  },
+  {
+    "slug": "diplomats-pack",
+    "name": "外交官包",
+    "name_en": "Diplomat's Pack",
+    "category": "adventuring-gear",
+    "cost": "39 gp",
+    "weight": 14
+  },
+  {
+    "slug": "entertainers-pack",
+    "name": "艺人包",
+    "name_en": "Entertainer's Pack",
+    "category": "adventuring-gear",
+    "cost": "40 gp",
+    "weight": 14
+  },
+  {
+    "slug": "scholars-pack",
+    "name": "学者包",
+    "name_en": "Scholar's Pack",
+    "category": "adventuring-gear",
+    "cost": "40 gp",
+    "weight": 10
+  },
+  {
+    "slug": "priests-pack",
+    "name": "祭司包",
+    "name_en": "Priest's Pack",
+    "category": "adventuring-gear",
+    "cost": "19 gp",
+    "weight": 9
+  },
+  {
+    "slug": "burglars-pack",
+    "name": "窃贼包",
+    "name_en": "Burglar's Pack",
+    "category": "adventuring-gear",
+    "cost": "16 gp",
+    "weight": 11.5
+  },
+  {
+    "slug": "thieves-tools",
+    "name": "盗贼工具",
+    "name_en": "Thieves' Tools",
+    "category": "tool",
+    "cost": "25 gp",
+    "weight": 0.5
+  },
+  {
+    "slug": "disguise-kit",
+    "name": "易容工具",
+    "name_en": "Disguise Kit",
+    "category": "tool",
+    "cost": "25 gp",
+    "weight": 1.5
+  },
+  {
+    "slug": "forgery-kit",
+    "name": "文书伪造工具",
+    "name_en": "Forgery Kit",
+    "category": "tool",
+    "cost": "15 gp",
+    "weight": 2.5
+  },
+  {
+    "slug": "gaming-set-dice",
+    "name": "骰子游戏套装",
+    "name_en": "Gaming Set (Dice)",
+    "category": "tool",
+    "cost": "1 sp",
+    "weight": 0
+  },
+  {
+    "slug": "gaming-set-cards",
+    "name": "纸牌游戏套装",
+    "name_en": "Gaming Set (Cards)",
+    "category": "tool",
+    "cost": "5 sp",
+    "weight": 0
+  },
+  {
+    "slug": "herbalism-kit",
+    "name": "草药工具",
+    "name_en": "Herbalism Kit",
+    "category": "tool",
+    "cost": "5 gp",
+    "weight": 1.5
+  },
+  {
+    "slug": "musical-instrument-lyre",
+    "name": "里拉琴",
+    "name_en": "Musical Instrument (Lyre)",
+    "category": "tool",
+    "cost": "30 gp",
+    "weight": 1
+  },
+  {
+    "slug": "musical-instrument-lute",
+    "name": "鲁特琴",
+    "name_en": "Musical Instrument (Lute)",
+    "category": "tool",
+    "cost": "35 gp",
+    "weight": 1
+  },
+  {
+    "slug": "musical-instrument-drum",
+    "name": "鼓",
+    "name_en": "Musical Instrument (Drum)",
+    "category": "tool",
+    "cost": "6 gp",
+    "weight": 1
+  },
+  {
+    "slug": "musical-instrument-flute",
+    "name": "长笛",
+    "name_en": "Musical Instrument (Flute)",
+    "category": "tool",
+    "cost": "2 gp",
+    "weight": 0.5
+  },
+  {
+    "slug": "navigator-tools",
+    "name": "领航工具",
+    "name_en": "Navigator's Tools",
+    "category": "tool",
+    "cost": "25 gp",
+    "weight": 1
+  },
+  {
+    "slug": "poisoners-kit",
+    "name": "炼毒工具",
+    "name_en": "Poisoner's Kit",
+    "category": "tool",
+    "cost": "50 gp",
+    "weight": 1
+  },
+  {
+    "slug": "horse-draft",
+    "name": "役马",
+    "name_en": "Draft Horse",
+    "category": "mount",
+    "cost": "50 gp",
+    "weight": 0
+  },
+  {
+    "slug": "horse-riding",
+    "name": "骑乘马",
+    "name_en": "Riding Horse",
+    "category": "mount",
+    "cost": "75 gp",
+    "weight": 0
+  },
+  {
+    "slug": "camel",
+    "name": "骆驼",
+    "name_en": "Camel",
+    "category": "mount",
+    "cost": "50 gp",
+    "weight": 0
+  },
+  {
+    "slug": "mule",
+    "name": "骡子",
+    "name_en": "Mule",
+    "category": "mount",
+    "cost": "8 gp",
+    "weight": 0
+  },
+  {
+    "slug": "pony",
+    "name": "矮马",
+    "name_en": "Pony",
+    "category": "mount",
+    "cost": "30 gp",
+    "weight": 0
+  },
+  {
+    "slug": "mastiff",
+    "name": "猛犬",
+    "name_en": "Mastiff",
+    "category": "mount",
+    "cost": "25 gp",
+    "weight": 0
+  }
+]

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { useWizardStore } from '../stores/wizardStore'
+import { useWizardStore, selectTotalLevel } from '../stores/wizardStore'
 import { useCharacterStore } from '../stores/characterStore'
 import { useGamedataStore } from '../stores/gamedataStore'
 import { characterApi } from '../lib/api'
@@ -10,19 +10,18 @@ import RaceSection from '../components/wizard/RaceSection'
 import ClassSection from '../components/wizard/ClassSection'
 import AbilityScoresSection from '../components/wizard/AbilityScoresSection'
 import DescribeSection from '../components/wizard/DescribeSection'
+import CharacterPreview from '../components/wizard/CharacterPreview'
 
-// 随机名字库（纯 UI 装饰，不属于游戏数据，允许硬编码）
 const RANDOM_NAMES = [
   '艾瑞达', '卡尔文', '莫伊拉', '泰伦斯', '席尔维娅', '加里克',
   '菲利斯', '奥登', '塞拉菲娜', '科雷格', '伊拉芙', '布兰顿',
   '阿特拉', '薇洛薇', '托尔贡', '娜拉西', '埃尔文', '塔尼斯',
 ]
-// D&D 规则常量（不属于数据库内容，允许硬编码）
+
 const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8]
 const ALIGNMENT_SLUGS = ['lawful-good', 'neutral-good', 'chaotic-good', 'lawful-neutral', 'true-neutral', 'chaotic-neutral', 'lawful-evil', 'neutral-evil', 'chaotic-evil']
 const GENDERS = ['男', '女', '保密']
 
-// 种族典型年龄范围（UI 辅助常量，与种族数据库无关，允许硬编码）
 const RACE_AGE: Record<string, { min: number; max: number; typical: number }> = {
   human:      { min: 18, max: 80,   typical: 25 },
   elf:        { min: 100, max: 700, typical: 250 },
@@ -46,11 +45,10 @@ export default function CreatePage() {
   const { races, classes, backgrounds, fetchAll, raceName, className: classNameFn } = useGamedataStore()
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const totalLevel = useWizardStore(selectTotalLevel)
 
-  // 页面挂载时预加载游戏数据
   useEffect(() => { fetchAll() }, [fetchAll])
 
-  // 随机填充（从已加载的 API 数据中随机选取）
   const handleRandom = () => {
     if (races.length === 0 || classes.length === 0 || backgrounds.length === 0) return
     const race = races[Math.floor(Math.random() * races.length)].slug
@@ -67,21 +65,23 @@ export default function CreatePage() {
       race_slug: race,
       race_custom_name: '',
       subrace_slug: '',
-      class_slug: classes[Math.floor(Math.random() * classes.length)].slug,
+      classes: [{ class_slug: classes[Math.floor(Math.random() * classes.length)].slug, level: 1 }],
       class_custom_name: '',
       background_slug: backgrounds[Math.floor(Math.random() * backgrounds.length)].slug,
       alignment: ALIGNMENT_SLUGS[Math.floor(Math.random() * ALIGNMENT_SLUGS.length)],
       age: String(age),
-      score_method: 'standard',
       ability_scores: scores as never,
     })
   }
 
-  // 校验
-  const raceOk = data.race_slug && (data.race_slug !== 'custom' || data.race_custom_name.trim())
-  const classOk = data.class_slug && (data.class_slug !== 'custom' || data.class_custom_name.trim())
+  const race = races.find(r => r.slug === data.race_slug)
+  const needsSubrace = race?.has_subraces && race.subraces && race.subraces.length > 0
+  const subraceSelected = !needsSubrace || data.subrace_slug
+
+  const primaryClass = data.classes[0]
+  const classOk = primaryClass?.class_slug && (primaryClass.class_slug !== 'custom' || data.class_custom_name.trim())
   const scoresOk = Object.values(data.ability_scores).every(v => v > 0)
-  const canSubmit = data.name.trim() && raceOk && classOk && data.background_slug && scoresOk
+  const canSubmit = data.name.trim() && data.race_slug && subraceSelected && classOk && data.background_slug && scoresOk
 
   const handleSubmit = async () => {
     if (!canSubmit) return
@@ -89,7 +89,7 @@ export default function CreatePage() {
     setSubmitting(true)
     try {
       const raceSlug = data.race_slug === 'custom' ? `custom__${data.race_custom_name.trim()}` : data.race_slug
-      const classSlug = data.class_slug === 'custom' ? `custom__${data.class_custom_name.trim()}` : data.class_slug
+      const classSlug = primaryClass.class_slug === 'custom' ? `custom__${data.class_custom_name.trim()}` : primaryClass.class_slug
       await characterApi.create({
         name: data.name.trim(),
         gender: data.gender || '保密',
@@ -120,29 +120,33 @@ export default function CreatePage() {
     }
   }
 
-  // 预览栏显示名（从 gamedataStore 查询，不再硬编码）
   const raceDisplayName = data.race_slug === 'custom'
     ? (data.race_custom_name || '自定义种族')
     : raceName(data.race_slug)
-  const classDisplayName = data.class_slug === 'custom'
-    ? (data.class_custom_name || '自定义职业')
-    : classNameFn(data.class_slug)
 
-  // 步骤完成状态
-  const step1Done = !!raceOk
+  const classDisplayName = primaryClass?.class_slug
+    ? (primaryClass.class_slug === 'custom'
+        ? (data.class_custom_name || '自定义职业')
+        : classNameFn(primaryClass.class_slug))
+    : ''
+
+  const classLevelDisplay = classDisplayName ? `${classDisplayName} ${totalLevel}级` : ''
+
+  const step1Done = !!data.race_slug && subraceSelected
   const step2Done = !!classOk
   const step3Done = scoresOk
   const step4Done = !!(data.name.trim() && data.background_slug)
+
   const steps = [
     { num: 1, label: '种族', done: step1Done },
     { num: 2, label: '职业', done: step2Done },
     { num: 3, label: '属性值', done: step3Done },
     { num: 4, label: '描述', done: step4Done },
+    { num: 5, label: '预览', done: true },
   ]
 
   return (
     <div className="min-h-screen bg-slate-900">
-      {/* 顶部导航 */}
       <nav className="border-b border-slate-800 bg-slate-900/95 backdrop-blur sticky top-0 z-20">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
           <button
@@ -162,26 +166,24 @@ export default function CreatePage() {
           </button>
         </div>
 
-        {/* 悬浮预览栏 */}
-        {(data.name || data.race_slug || data.class_slug) && (
+        {(data.name || data.race_slug || primaryClass?.class_slug) && (
           <div className="border-t border-slate-800 bg-slate-900/80">
             <div className="max-w-2xl mx-auto px-4 py-2 flex items-center gap-3 text-sm overflow-x-auto">
               {data.name && <span className="font-semibold text-amber-400 shrink-0">{data.name}</span>}
-              {(data.race_slug || data.class_slug) && <span className="text-slate-600 shrink-0">·</span>}
+              {(data.race_slug || primaryClass?.class_slug) && <span className="text-slate-600 shrink-0">·</span>}
               {data.race_slug && <span className="text-slate-300 shrink-0">{raceDisplayName}</span>}
-              {data.class_slug && <span className="text-slate-300 shrink-0">{classDisplayName}</span>}
+              {primaryClass?.class_slug && <span className="text-slate-300 shrink-0">{classLevelDisplay}</span>}
               {data.age && <span className="text-slate-500 shrink-0">{data.age} 岁</span>}
               {data.gender && <span className="text-slate-500 shrink-0">{data.gender}</span>}
             </div>
           </div>
         )}
 
-        {/* 步骤进度条（规则集确认后显示） */}
         {rulesetConfirmed && (
           <div className="border-t border-slate-800/60 bg-slate-900/60">
-            <div className="max-w-2xl mx-auto px-4 py-2 flex items-center gap-1">
+            <div className="max-w-2xl mx-auto px-4 py-2 flex items-center gap-1 overflow-x-auto">
               {steps.map((step, idx) => (
-                <div key={step.num} className="flex items-center gap-1 flex-1">
+                <div key={step.num} className="flex items-center gap-1 flex-1 min-w-0">
                   <div className={`flex items-center gap-1.5 text-xs transition ${step.done ? 'text-amber-400' : 'text-slate-600'}`}>
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
                       ${step.done ? 'bg-amber-500 text-slate-900' : 'bg-slate-700 text-slate-500'}`}>
@@ -199,61 +201,37 @@ export default function CreatePage() {
         )}
       </nav>
 
-      {/* 主内容：单页滚动 */}
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-10">
-        {/* 规则集选择 */}
         <RulesetSection />
 
-        {/* 规则集确认后，展示 5 步流程（2014版） */}
         {rulesetConfirmed && (
           <>
-            {/* 步骤1：角色名字 */}
-            <div className="border-t border-slate-800 pt-8">
-              <section>
-                <h2 className="text-base font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center">1</span>
-                  角色名字
-                </h2>
-                <input
-                  type="text"
-                  value={data.name}
-                  onChange={(e) => update({ name: e.target.value })}
-                  placeholder="给你的角色起一个名字……"
-                  maxLength={40}
-                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white
-                             text-base placeholder-slate-500 focus:outline-none focus:border-amber-500 transition"
-                />
-              </section>
-            </div>
-
-            {/* 步骤2：选择种族 */}
             <div className="border-t border-slate-800 pt-8">
               <RaceSection />
             </div>
 
-            {/* 步骤3：选择职业 */}
             <div className="border-t border-slate-800 pt-8">
               <ClassSection />
             </div>
 
-            {/* 步骤4：决定属性值 */}
             <div className="border-t border-slate-800 pt-8">
               <AbilityScoresSection />
             </div>
 
-            {/* 步骤5：描述角色（背景+阵营+外貌） */}
             <div className="border-t border-slate-800 pt-8">
               <DescribeSection />
             </div>
 
-            {/* 错误提示 */}
+            <div className="border-t border-slate-800 pt-8">
+              <CharacterPreview />
+            </div>
+
             {submitError && (
               <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
                 ❌ {submitError}
               </div>
             )}
 
-            {/* 提交按钮 */}
             <div className="pb-16">
               <button
                 onClick={handleSubmit}

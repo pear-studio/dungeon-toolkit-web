@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ruleset, Race, Subrace, CharClass, Subclass, Background, Spell
+from .models import Ruleset, Race, Subrace, CharClass, Subclass, Background, Spell, Item
 
 
 class RulesetSerializer(serializers.ModelSerializer):
@@ -96,3 +96,23 @@ class SpellDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'slug', 'name', 'name_en', 'level', 'school', 'school_display',
                   'casting_time', 'range', 'components', 'material', 'duration',
                   'concentration', 'ritual', 'description', 'higher_levels', 'classes']
+
+
+class ItemListSerializer(serializers.ModelSerializer):
+    """物品列表"""
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
+
+    class Meta:
+        model = Item
+        fields = ['id', 'slug', 'name', 'name_en', 'category', 'category_display',
+                  'cost', 'weight', 'damage', 'damage_type', 'properties', 'ac']
+
+
+class ItemDetailSerializer(serializers.ModelSerializer):
+    """物品详情"""
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
+
+    class Meta:
+        model = Item
+        fields = ['id', 'slug', 'name', 'name_en', 'category', 'category_display',
+                  'cost', 'weight', 'damage', 'damage_type', 'properties', 'ac', 'description']

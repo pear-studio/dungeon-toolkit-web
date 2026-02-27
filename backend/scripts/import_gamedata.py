@@ -16,7 +16,7 @@ sys.path.insert(0, BASE_DIR)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
 django.setup()
 
-from apps.gamedata.models import Ruleset, Race, Subrace, CharClass, Subclass, Background, Spell
+from apps.gamedata.models import Ruleset, Race, Subrace, CharClass, Subclass, Background, Spell, Item
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 
@@ -260,6 +260,36 @@ def import_spells(ruleset):
     print(f'  导入/更新法术: {count} 条')
 
 
+def import_items(ruleset):
+    """导入物品"""
+    path = os.path.join(DATA_DIR, ruleset.slug, 'items.json')
+    if not os.path.exists(path):
+        print(f'  [跳过] 未找到: {path}')
+        return
+
+    data = load_json(path)
+    count = 0
+    for item in data:
+        obj, created = Item.objects.update_or_create(
+            ruleset=ruleset,
+            slug=item['slug'],
+            defaults={
+                'name': item['name'],
+                'name_en': item.get('name_en', ''),
+                'category': item.get('category', 'adventuring-gear'),
+                'cost': item.get('cost', ''),
+                'weight': item.get('weight', 0),
+                'damage': item.get('damage', ''),
+                'damage_type': item.get('damage_type', ''),
+                'properties': item.get('properties', []),
+                'ac': item.get('ac'),
+                'description': item.get('description', ''),
+            }
+        )
+        count += 1
+    print(f'  导入/更新物品: {count} 条')
+
+
 def main():
     ruleset_slugs = ['dnd5e_2014']
 
@@ -285,6 +315,9 @@ def main():
 
         print('\n  → 导入法术...')
         import_spells(ruleset)
+
+        print('\n  → 导入物品...')
+        import_items(ruleset)
 
         print(f'\n✓ 规则集 {slug} 导入完成')
 

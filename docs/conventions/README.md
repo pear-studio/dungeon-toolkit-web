@@ -6,6 +6,7 @@
 
 | 文件 | 内容 |
 |------|------|
+| [`ai-usage.md`](./ai-usage.md) | AI 使用标准——数据查询规范、禁止行为 |
 | [`data-sources.md`](./data-sources.md) | 规则数据来源规范——所有 D&D 数据必须从 `rules_source/` 读取 |
 | [`frontend.md`](./frontend.md) | 前端开发规范——禁止硬编码游戏数据、组件命名、状态管理 |
 

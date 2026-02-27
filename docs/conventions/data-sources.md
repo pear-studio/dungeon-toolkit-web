@@ -114,6 +114,45 @@ const skillZh = (s: string) => SKILL_ZH[s] ?? SKILL_ZH[s.replace(/-/g, '_')] ?? 
 | ❌ 从第三方网站复制粘贴数据 | 版权风险，且翻译与本项目不统一 |
 | ❌ 跳过 `rules_source/` 直接写 JSON | 无法溯源，后续校对困难 |
 | ❌ 技能/属性 slug 中英文不经转换直接渲染 | 会显示英文原文；必须经过 `skillZh()` 或映射表转换 |
+| ❌ 直接修改 JSON 数据 | 必须使用 parsers 目录下的解析脚本 |
+
+---
+
+## AI 数据生成规范
+
+**所有 D&D 规则数据的生成/更新，必须使用 `backend/data/parsers/` 目录下的解析脚本。**
+
+### 解析脚本列表
+
+```
+backend/data/parsers/
+├── common.py              # 公共工具函数（HTML解析、路径定义）
+├── parse_races.py         # 解析种族数据 → races.json
+├── parse_spells.py        # 解析法术数据 → spells.json
+├── parse_classes.py       # 解析职业数据 → classes.json + subclasses.json
+├── parse_backgrounds.py  # 解析背景数据 → backgrounds.json
+└── parse_items.py         # 解析物品数据 → items.json
+```
+
+### 使用方法
+
+```bash
+cd backend/data/parsers
+
+# 解析单个数据文件
+python parse_races.py
+python parse_spells.py
+python parse_classes.py
+python parse_backgrounds.py
+python parse_items.py
+```
+
+### 为什么必须用解析脚本
+
+1. **数据溯源**：从 `rules_source/` HTML 文件解析，确保数据来源于权威原文
+2. **一致性**：统一的解析逻辑，避免手动编辑导致的数据不一致
+3. **可维护性**：修改解析逻辑只需改一处
+4. **避免错误**：AI 凭记忆生成的数据细节（伤害骰、射程等）极易出错
 
 ---
 

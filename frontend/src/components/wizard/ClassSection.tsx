@@ -1,19 +1,14 @@
+import { useMemo } from 'react'
 import { useGamedataStore } from '../../stores/gamedataStore'
-import { useWizardStore } from '../../stores/wizardStore'
+import { useWizardStore, selectTotalLevel } from '../../stores/wizardStore'
 
-const CLASS_FLAVOR: Record<string, string> = {
-  barbarian: '原始力量，战斗中进入狂暴状态。',
-  bard: '音乐与故事为武器，兼具法术与技能。',
-  cleric: '神明使者，拥有强力治疗与神圣法术。',
-  druid: '自然守护者，可变形为野兽。',
-  fighter: '全能战士，精通各类武器和战术。',
-  monk: '精通气功与武术，速度超凡。',
-  paladin: '神圣誓约守护者，结合战士与牧师之能。',
-  ranger: '荒野猎手，精通弓箭与追踪。',
-  rogue: '暗影潜行，致命偷袭一击。',
-  sorcerer: '天生魔法血脉，拥有法术点数。',
-  warlock: '与强大存在签订契约，获得奥秘爆发。',
-  wizard: '通过学习掌握魔法，法术最丰富。',
+const SKILL_ZH: Record<string, string> = {
+  acrobatics: '杂技', animal: '动物处理', arcana: '奥秘',
+  athletics: '运动', deception: '欺诈', history: '历史',
+  insight: '洞察', intimidation: '恐吓', investigation: '调查',
+  medicine: '医疗', nature: '自然', perception: '察觉',
+  performance: '表演', persuasion: '说服', religion: '宗教',
+  sleight: '巧手', stealth: '隐匿', survival: '生存',
 }
 
 const ABILITY_ZH: Record<string, string> = {
@@ -21,131 +16,251 @@ const ABILITY_ZH: Record<string, string> = {
   intelligence: '智力', wisdom: '感知', charisma: '魅力',
 }
 
-export default function ClassSection() {
-  const { data, update } = useWizardStore()
-  const { classes, loading } = useGamedataStore()
+const ABILITY_SHORT: Record<string, string> = {
+  str: '力量', dex: '敏捷', con: '体质',
+  int: '智力', wis: '感知', cha: '魅力',
+}
 
-  const isCustomClass = data.class_slug === 'custom'
-  const selectedClass = isCustomClass ? null : classes.find((c) => c.slug === data.class_slug)
+const PREREQUISITE_ABILITY: Record<string, string> = {
+  paladin: 'cha', ranger: 'wis', monk: 'wis', bard: 'cha',
+  sorcerer: 'cha', warlock: 'cha', druid: 'wis', cleric: 'wis',
+}
+
+export default function ClassSection() {
+  const { data, addClass, removeClass, updateClass, setChosenSkills } = useWizardStore()
+  const { classes, backgrounds } = useGamedataStore()
+  const totalLevel = selectTotalLevel(useWizardStore())
+
+  const currentClass = data.classes[0]?.class_slug
+  const selectedClass = currentClass ? classes.find(c => c.slug === currentClass) : null
+
+  const background = useMemo(() => {
+    return backgrounds.find(b => b.slug === data.background_slug)
+  }, [backgrounds, data.background_slug])
+
+  const backgroundSkills = background?.skill_proficiencies || []
+
+  const skillChoicesCount = selectedClass?.skill_choices_count || 2
+
+  const availableSkills = useMemo(() => {
+    if (!selectedClass?.skill_choices) return []
+    return selectedClass.skill_choices.map((s: string) => ({
+      slug: s,
+      name: SKILL_ZH[s] || s,
+      isFromBackground: backgroundSkills.includes(s),
+    }))
+  }, [selectedClass, backgroundSkills])
+
+  const handleSkillToggle = (skillSlug: string) => {
+    const current = data.chosen_skills || []
+    const isSelected = current.includes(skillSlug)
+    const isFromBackground = backgroundSkills.includes(skillSlug)
+
+    if (isFromBackground) return
+
+    if (isSelected) {
+      setChosenSkills(current.filter(s => s !== skillSlug))
+    } else if (current.length < skillChoicesCount) {
+      setChosenSkills([...current, skillSlug])
+    }
+  }
+
+  const canAddClass = totalLevel < 20 && data.classes.length < 3
+
+  const handleLevelChange = (index: number, newLevel: number) => {
+    const clampedLevel = Math.max(1, Math.min(20, newLevel))
+    const currentClassEntry = data.classes[index]
+    const otherClasses = data.classes.filter((_, i) => i !== index)
+    const otherLevels = otherClasses.reduce((sum, c) => sum + c.level, 0)
+    const maxForThis = Math.min(20 - otherLevels, clampedLevel)
+
+    updateClass(index, { ...currentClassEntry, level: clampedLevel > maxForThis ? maxForThis : clampedLevel })
+  }
+
+  const getClassFeatures = (classSlug: string, level: number) => {
+    const cls = classes.find(c => c.slug === classSlug)
+    if (!cls?.level_features) return []
+
+    const features: Array<{ level: number; name: string; description: string }> = []
+    for (let l = 1; l <= level; l++) {
+      const levelKey = String(l)
+      if (cls.level_features[levelKey]) {
+        cls.level_features[levelKey].forEach((f: { name: string; description: string }) => {
+          features.push({ level: l, ...f })
+        })
+      }
+    }
+    return features
+  }
+
+  const allFeatures = useMemo(() => {
+    return data.classes
+      .filter(c => c.class_slug)
+      .map(c => {
+        const cls = classes.find(x => x.slug === c.class_slug)
+        return {
+          className: cls?.name || c.class_slug,
+          features: getClassFeatures(c.class_slug, c.level),
+        }
+      })
+  }, [data.classes, classes])
+
+  const totalSelectedSkills = (data.chosen_skills?.length || 0) + backgroundSkills.length
 
   return (
     <section>
       <h2 className="text-base font-semibold text-slate-300 mb-3 flex items-center gap-2">
         <span className="w-6 h-6 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center">3</span>
-        职业
+        职业与等级
       </h2>
 
       <div className="space-y-4">
-        <p className="text-xs text-slate-500">职业决定你的战斗风格、特性、技能与生命值成长方向</p>
+        <p className="text-xs text-slate-500">
+          选择职业决定你的战斗风格、特性、技能与生命值成长方向。可添加兼职职业，但总等级不超过20级
+        </p>
 
-        {loading ? (
-          <div className="grid grid-cols-3 gap-2">
-            {Array(12).fill(0).map((_, i) => (
-              <div key={i} className="h-20 bg-slate-800 rounded-xl animate-pulse border border-slate-700" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {classes.map((cls) => {
-              const selected = data.class_slug === cls.slug
-              return (
-                <button
-                  key={cls.slug}
-                  onClick={() => update({ class_slug: cls.slug, class_custom_name: '' })}
-                  className={`p-3 rounded-xl border-2 text-left transition min-h-[4.5rem]
-                    ${selected
-                      ? 'border-amber-500 !bg-amber-500/10'
-                      : 'border-slate-700 !bg-slate-800 hover:border-slate-600'
-                    }`}
+        <div className="space-y-3">
+          {data.classes.map((classEntry, index) => (
+            <div key={index} className={`bg-slate-800 border rounded-xl p-4 ${index === 0 ? 'border-amber-500/30' : 'border-slate-700'}`}>
+              <div className="flex items-center gap-3 mb-3">
+                {index === 0 && <span className="text-xs font-medium text-amber-400">主职业</span>}
+                <select
+                  value={classEntry.class_slug}
+                  onChange={(e) => updateClass(index, { ...classEntry, class_slug: e.target.value })}
+                  className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm
+                             focus:outline-none focus:border-amber-500"
                 >
-                  <div className={`text-sm font-medium leading-tight ${selected ? 'text-amber-400' : 'text-slate-200'}`}>
-                    {cls.name}
-                  </div>
-                  <div className="text-xs text-slate-500 mt-0.5 leading-tight">
-                    d{cls.hit_die}
-                    {cls.is_spellcaster && <span className="ml-1 text-purple-400">·法</span>}
-                  </div>
-                </button>
-              )
-            })}
+                  <option value="">选择职业...</option>
+                  {classes.map(cls => (
+                    <option key={cls.slug} value={cls.slug}>{cls.name}</option>
+                  ))}
+                </select>
 
-            {/* 自定义职业 */}
-            <button
-              onClick={() => update({ class_slug: 'custom' })}
-              className={`p-3 rounded-xl border-2 text-left transition min-h-[4.5rem]
-                ${isCustomClass
-                  ? 'border-amber-500 !bg-amber-500/10'
-                  : 'border-slate-700 border-dashed !bg-slate-800/50 hover:border-slate-500'
-                }`}
-            >
-              <div className={`text-sm font-medium leading-tight ${isCustomClass ? 'text-amber-400' : 'text-slate-400'}`}>
-                自定义
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleLevelChange(index, classEntry.level - 1)}
+                    className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center"
+                  >
+                    -
+                  </button>
+                  <span className="text-white font-medium w-12 text-center">
+                    {classEntry.level}级
+                  </span>
+                  <button
+                    onClick={() => handleLevelChange(index, classEntry.level + 1)}
+                    disabled={totalLevel >= 20}
+                    className="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white flex items-center justify-center disabled:opacity-50"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {index > 0 && (
+                  <button
+                    onClick={() => removeClass(index)}
+                    className="text-red-400 hover:text-red-300 text-sm"
+                  >
+                    删除
+                  </button>
+                )}
               </div>
+
+              {classEntry.class_slug && (
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <span>总等级: {totalLevel}/20</span>
+                  {PREREQUISITE_ABILITY[classEntry.class_slug] && (
+                    <span className="text-yellow-500">
+                      需要{ABILITY_SHORT[PREREQUISITE_ABILITY[classEntry.class_slug]]}≥13可兼职
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {canAddClass && (
+            <button
+              onClick={addClass}
+              className="w-full py-2 border-2 border-dashed border-slate-700 rounded-xl text-slate-500 hover:border-amber-500/50 hover:text-amber-400 text-sm transition"
+            >
+              + 添加兼职职业
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* 自定义职业输入 */}
-        {isCustomClass && (
-          <div className="bg-slate-800 border border-amber-500/20 rounded-xl p-4">
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              自定义职业名称 <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              value={data.class_custom_name}
-              onChange={(e) => update({ class_custom_name: e.target.value })}
-              placeholder="例：影刃武者、龙血巫师……"
-              maxLength={30}
-              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm
-                         placeholder-slate-500 focus:outline-none focus:border-amber-500 transition"
-            />
-          </div>
-        )}
-
-        {/* 标准职业详情 */}
         {selectedClass && (
           <div className="bg-slate-800 border border-amber-500/20 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
+            <div>
+              <h3 className="font-bold text-white">{selectedClass.name}</h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                生命骰 d{selectedClass.hit_die} · 主要属性: {ABILITY_ZH[selectedClass.primary_ability] || selectedClass.primary_ability}
+                {selectedClass.is_spellcaster && ' · 可施法'}
+              </p>
+            </div>
+
+            {availableSkills.length > 0 && (
               <div>
-                <h3 className="font-bold text-white">{selectedClass.name}</h3>
-                <p className="text-xs text-slate-400 mt-0.5">{CLASS_FLAVOR[selectedClass.slug]}</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="bg-slate-700/60 rounded-lg p-2.5">
-                <div className="text-xs text-slate-400">生命骰</div>
-                <div className="text-base font-bold text-amber-400 mt-0.5">d{selectedClass.hit_die}</div>
-              </div>
-              <div className="bg-slate-700/60 rounded-lg p-2.5">
-                <div className="text-xs text-slate-400">主要属性</div>
-                <div className="text-sm font-bold text-white mt-0.5">
-                  {ABILITY_ZH[selectedClass.primary_ability] ?? selectedClass.primary_ability}
-                </div>
-              </div>
-              <div className="bg-slate-700/60 rounded-lg p-2.5">
-                <div className="text-xs text-slate-400">施法</div>
-                <div className="text-sm font-bold mt-0.5">
-                  {selectedClass.is_spellcaster
-                    ? <span className="text-purple-400">✓ 有</span>
-                    : <span className="text-slate-500">无</span>}
-                </div>
-              </div>
-            </div>
-            {selectedClass.saving_throws?.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-slate-500">豁免骰：</span>
-                {selectedClass.saving_throws.map((st) => (
-                  <span key={st} className="text-xs px-2 py-0.5 bg-slate-700 text-slate-300 rounded-full">
-                    {ABILITY_ZH[st] ?? st}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-slate-300">选择技能熟练 ({totalSelectedSkills}/{skillChoicesCount + backgroundSkills.length})</span>
+                  <span className="text-xs text-slate-500">
+                    职业选择 {skillChoicesCount} 项，背景包含 {backgroundSkills.length} 项
                   </span>
-                ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availableSkills.map(skill => {
+                    const isSelected = (data.chosen_skills || []).includes(skill.slug)
+                    const isDisabled = !isSelected && (data.chosen_skills?.length || 0) >= skillChoicesCount && !skill.isFromBackground
+                    return (
+                      <button
+                        key={skill.slug}
+                        onClick={() => handleSkillToggle(skill.slug)}
+                        disabled={isDisabled}
+                        className={`px-3 py-1.5 rounded-full text-xs transition
+                          ${skill.isFromBackground
+                            ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                            : isSelected
+                              ? 'bg-amber-500/20 text-amber-400 border border-amber-500'
+                              : isDisabled
+                                ? 'bg-slate-700 text-slate-600 cursor-not-allowed'
+                                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                          }`}
+                      >
+                        {skill.name}
+                        {skill.isFromBackground && ' (背景已有)'}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             )}
-            <p className="text-xs text-slate-500 border-t border-slate-700 pt-3">
-              💡 熟练加值在第1级时为 <span className="text-amber-400 font-medium">+2</span>，
-              1级生命值为 d{selectedClass.hit_die} 最大值 + 体质调整值（将在确定属性值后计算）
-            </p>
+
+            {allFeatures.length > 0 && (
+              <div>
+                <span className="text-sm text-slate-300 block mb-2">职业特性</span>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {allFeatures.map((classGroup, idx) => (
+                    <div key={idx}>
+                      <div className="text-xs text-amber-400 mb-1">{classGroup.className}</div>
+                      <div className="flex flex-wrap gap-1">
+                        {classGroup.features.map((f, fidx) => (
+                          <span
+                            key={fidx}
+                            className={`text-xs px-2 py-0.5 rounded ${
+                              [4, 8, 12, 16, 19].includes(f.level)
+                                ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
+                                : 'bg-slate-700 text-slate-400'
+                            }`}
+                          >
+                            {f.level}级 - {f.name}
+                            {[4, 8, 12, 16, 19].includes(f.level) && ' ⭐属性提升'}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

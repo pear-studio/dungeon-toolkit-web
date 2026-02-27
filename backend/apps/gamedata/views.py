@@ -1,13 +1,14 @@
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Ruleset, Race, CharClass, Background, Spell
+from .models import Ruleset, Race, CharClass, Background, Spell, Item
 from .serializers import (
     RulesetSerializer,
     RaceListSerializer, RaceDetailSerializer,
     CharClassListSerializer, CharClassDetailSerializer,
     BackgroundListSerializer, BackgroundDetailSerializer,
     SpellListSerializer, SpellDetailSerializer,
+    ItemListSerializer, ItemDetailSerializer,
 )
 
 
@@ -82,3 +83,18 @@ class SpellViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == 'retrieve':
             return SpellDetailSerializer
         return SpellListSerializer
+
+
+class ItemViewSet(viewsets.ReadOnlyModelViewSet):
+    """物品列表与详情（只读）"""
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['ruleset__slug', 'category']
+
+    def get_queryset(self):
+        return Item.objects.select_related('ruleset').all()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ItemDetailSerializer
+        return ItemListSerializer

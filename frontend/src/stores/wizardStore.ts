@@ -1,32 +1,29 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+export interface WizardClassEntry {
+  class_slug: string
+  level: number
+}
 
 export interface WizardData {
-  // 规则集
+  _v: number
   ruleset_slug: string
-  // Step 1 种族
   race_slug: string
   race_custom_name: string
   subrace_slug: string
-  // Step 2 职业
-  class_slug: string
+  classes: WizardClassEntry[]
   class_custom_name: string
-  // Step 3 属性值
-  score_method: 'standard' | 'roll' | 'pointbuy'  // 标准数列 / 随机骰 / 购点法
-  score_rolls: number[]        // 6个随机骰值（roll方式）
-  ability_assignment: {        // 六项属性分配的值（分配给各属性前）
-    slot0: number; slot1: number; slot2: number
-    slot3: number; slot4: number; slot5: number
-  }
-  ability_scores: {            // 最终属性值（含种族加成后）
-    str: number; dex: number; con: number
-    int: number; wis: number; cha: number
-  }
-  // Step 4 描述
+  chosen_skills: string[]
+  ability_method: string
+  score_method: string
+  score_rolls: number[]
+  ability_scores: Record<string, number>
+  background_slug: string
   name: string
   gender: string
   age: string
-  alignment: string            // 阵营：如 'lawful-good', 'neutral' 等
-  background_slug: string
+  alignment: string
   personality_traits: string
   ideals: string
   bonds: string
@@ -35,16 +32,17 @@ export interface WizardData {
 }
 
 const DEFAULT_DATA: WizardData = {
+  _v: 2,
   ruleset_slug: 'dnd5e_2014',
   race_slug: '',
   race_custom_name: '',
   subrace_slug: '',
-  class_slug: '',
+  classes: [{ class_slug: '', level: 1 }],
   class_custom_name: '',
+  chosen_skills: [],
+  ability_method: 'standard',
   score_method: 'standard',
   score_rolls: [],
-  ability_assignment: { slot0: 15, slot1: 14, slot2: 13, slot3: 12, slot4: 10, slot5: 8 },
-  // 初始按标准数列顺序分配（STR/DEX/CON/INT/WIS/CHA = 15/14/13/12/10/8）
   ability_scores: { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8 },
   name: '',
   gender: '',
@@ -58,19 +56,111 @@ const DEFAULT_DATA: WizardData = {
   appearance: '',
 }
 
+function migrateFromV1(data: Record<string, unknown>): WizardData {
+  const oldClassSlug = data.class_slug as string | undefined
+  if (oldClassSlug && typeof oldClassSlug === 'string' && oldClassSlug.trim()) {
+    return {
+      ...DEFAULT_DATA,
+      ...data,
+      _v: 2,
+      classes: [{ class_slug: oldClassSlug, level: 1 }],
+      score_method: (data.score_method as string) || 'standard',
+      score_rolls: (data.score_rolls as number[]) || [],
+    } as WizardData
+  }
+  return {
+    ...DEFAULT_DATA,
+    ...data,
+    _v: 2,
+    score_method: (data.score_method as string) || 'standard',
+    score_rolls: (data.score_rolls as number[]) || [],
+  } as WizardData
+}
+
+function migrateData(data: unknown): WizardData {
+  if (!data || typeof data !== 'object') {
+    return DEFAULT_DATA
+  }
+  const record = data as Record<string, unknown>
+  const version = record._v as number | undefined
+  if (!version || version < 2) {
+    return migrateFromV1(record)
+  }
+  return data as WizardData
+}
+
 interface WizardState {
   rulesetConfirmed: boolean
   data: WizardData
   confirmRuleset: () => void
   update: (patch: Partial<WizardData>) => void
+  addClass: () => void
+  removeClass: (index: number) => void
+  updateClass: (index: number, entry: WizardClassEntry) => void
+  setChosenSkills: (skills: string[]) => void
   reset: () => void
 }
 
-export const useWizardStore = create<WizardState>((set, get) => ({
-  rulesetConfirmed: false,
-  data: { ...DEFAULT_DATA },
+export const useWizardStore = create<WizardState>()(
+  persist(
+    (set, get) => ({
+      rulesetConfirmed: false,
+      data: { ...DEFAULT_DATA },
 
-  confirmRuleset: () => set({ rulesetConfirmed: true }),
-  update: (patch) => set({ data: { ...get().data, ...patch } }),
-  reset: () => set({ rulesetConfirmed: false, data: { ...DEFAULT_DATA } }),
-}))
+      confirmRuleset: () => set({ rulesetConfirmed: true }),
+
+      update: (patch) => set({ data: { ...get().data, ...patch } }),
+
+      addClass: () => {
+        const { classes } = get().data
+        if (classes.length < 3) {
+          set({
+            data: {
+              ...get().data,
+              classes: [...classes, { class_slug: '', level: 1 }],
+            },
+          })
+        }
+      },
+
+      removeClass: (index) => {
+        const { classes } = get().data
+        if (classes.length > 1 && index > 0) {
+          const newClasses = classes.filter((_, i) => i !== index)
+          set({ data: { ...get().data, classes: newClasses } })
+        }
+      },
+
+      updateClass: (index, entry) => {
+        const { classes } = get().data
+        const newClasses = [...classes]
+        newClasses[index] = entry
+        set({ data: { ...get().data, classes: newClasses } })
+      },
+
+      setChosenSkills: (skills) => {
+        set({ data: { ...get().data, chosen_skills: skills } })
+      },
+
+      reset: () => set({ rulesetConfirmed: false, data: { ...DEFAULT_DATA } }),
+    }),
+    {
+      name: 'wizard-storage',
+      partialize: (state) => ({ rulesetConfirmed: state.rulesetConfirmed, data: state.data }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          const migrated = migrateData(state.data)
+          state.data = migrated
+        }
+      },
+    }
+  )
+)
+
+export const selectTotalLevel = (state: WizardState): number => {
+  return state.data.classes.reduce((sum, cls) => sum + cls.level, 0)
+}
+
+export const selectMainClass = (state: WizardState): string => {
+  return state.data.classes[0]?.class_slug || ''
+}

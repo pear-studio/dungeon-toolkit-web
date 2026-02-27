@@ -161,7 +161,7 @@ class Spell(models.Model):
     name = models.CharField(max_length=100, help_text='中文名')
     name_en = models.CharField(max_length=100, blank=True)
     level = models.PositiveSmallIntegerField(help_text='法术环级，0=戏法')
-    school = models.CharField(max_length=20, choices=SCHOOL_CHOICES)
+    school = models.CharField(max_length=20, choices=SHOOL_CHOICES)
     casting_time = models.CharField(max_length=50, help_text='施法时间，如 1个动作')
     range = models.CharField(max_length=50, help_text='射程')
     components = models.JSONField(default=list, help_text='法术成分，如 ["V", "S", "M"]')
@@ -180,3 +180,36 @@ class Spell(models.Model):
 
     def __str__(self):
         return f'[{self.level}环] {self.name}'
+
+
+class Item(models.Model):
+    """物品（武器/护甲/冒险装备/工具）"""
+    CATEGORY_CHOICES = [
+        ('weapon', '武器'),
+        ('armor', '护甲'),
+        ('adventuring-gear', '冒险装备'),
+        ('tool', '工具'),
+        ('pack', '套装'),
+        ('vehicle', '载具'),
+        ('mount', '坐骑'),
+    ]
+
+    ruleset = models.ForeignKey(Ruleset, on_delete=models.CASCADE, related_name='items')
+    slug = models.SlugField(help_text='唯一标识符')
+    name = models.CharField(max_length=100, help_text='中文名')
+    name_en = models.CharField(max_length=100, blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, help_text='物品分类')
+    cost = models.CharField(max_length=20, blank=True, help_text='价格，如 10 gp')
+    weight = models.FloatField(default=0, help_text='重量（磅）')
+    damage = models.CharField(max_length=20, blank=True, help_text='伤害，如 1d8')
+    damage_type = models.CharField(max_length=20, blank=True, help_text='伤害类型')
+    properties = models.JSONField(default=list, help_text='武器属性列表')
+    ac = models.PositiveSmallIntegerField(null=True, blank=True, help_text='护甲AC')
+    description = models.TextField(blank=True, help_text='物品描述')
+
+    class Meta:
+        unique_together = ('ruleset', 'slug')
+        ordering = ['category', 'name']
+
+    def __str__(self):
+        return f'{self.name} ({self.get_category_display()})'
