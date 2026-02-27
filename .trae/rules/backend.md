@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 编写后端代码
+---
 # 后端开发规范
 
 ## 技术栈

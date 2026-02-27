@@ -1,3 +1,7 @@
+---
+alwaysApply: false
+description: 编写前端代码
+---
 # 前端开发规范
 
 ## 数据来源原则
