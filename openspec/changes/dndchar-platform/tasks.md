@@ -17,11 +17,12 @@
 - [x] 整理 races.json（9个基础种族 + 亚种族）
 - [x] 整理 classes.json（12个职业，含 hit_die / primary_ability / saving_throws / is_spellcaster）
 - [x] 整理 backgrounds.json（13个背景，含技能熟练、工具熟练、特性描述）
-- [ ] 整理 subclasses.json（各职业至少1个子职业）
-- [ ] 整理 spells.json（至少覆盖1-5环常用法术）
-- [ ] 整理 shared/conditions.json、damage_types.json
+- [x] 整理 subclasses.json（各职业至少1个子职业）⚠️ 需用 rules_source 校对
+- [x] 整理 spells.json（至少覆盖1-5环常用法术）⚠️ 需用 rules_source 校对
+- [x] 整理 shared/conditions.json、damage_types.json
 - [x] 编写 scripts/import_gamedata.py 导入脚本
-- [x] 验证导入脚本正确运行
+- [ ] 验证导入脚本正确运行
+- [ ] 用 rules_source/DND5e_chm/玩家手册/ 校对 subclasses.json 和 spells.json 数据准确性
 
 ### 后端：用户系统（users app）
 - [x] 自定义 User 模型（AbstractUser，UUID主键，email登录）

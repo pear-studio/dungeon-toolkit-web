@@ -3,12 +3,18 @@ import { useGamedataStore } from '../../stores/gamedataStore'
 import { useWizardStore } from '../../stores/wizardStore'
 
 const SKILL_ZH: Record<string, string> = {
-  acrobatics: '杂技', animal_handling: '驯兽', arcana: '奥秘', athletics: '运动',
+  acrobatics: '杂技',
+  animal_handling: '驯兽', 'animal-handling': '驯兽',
+  arcana: '奥秘', athletics: '运动',
   deception: '欺骗', history: '历史', insight: '洞察', intimidation: '威吓',
   investigation: '调查', medicine: '医疗', nature: '自然', perception: '察觉',
-  performance: '表演', persuasion: '说服', religion: '宗教', sleight_of_hand: '手法',
+  performance: '表演', persuasion: '说服', religion: '宗教',
+  sleight_of_hand: '手法', 'sleight-of-hand': '手法',
   stealth: '潜行', survival: '生存',
 }
+
+/** 将技能 slug（连字符或下划线）统一查中文名，查不到则原样返回 */
+const skillZh = (s: string) => SKILL_ZH[s] ?? SKILL_ZH[s.replace(/-/g, '_')] ?? s
 
 // 阵营数据（3×3方格）
 const ALIGNMENTS = [
@@ -90,7 +96,7 @@ export default function DescribeSection() {
                     </div>
                     {bg.skill_proficiencies?.length > 0 && (
                       <div className="text-xs text-slate-500 mt-0.5 leading-tight">
-                        {bg.skill_proficiencies.slice(0, 2).map((s) => SKILL_ZH[s] ?? s).join('、')}
+                        {bg.skill_proficiencies.slice(0, 2).map((s) => skillZh(s)).join('、')}
                         {bg.skill_proficiencies.length > 2 ? '…' : ''}
                       </div>
                     )}
@@ -107,7 +113,7 @@ export default function DescribeSection() {
               {selectedBg.skill_proficiencies?.length > 0 && (
                 <div className="text-xs text-slate-400">
                   <span className="text-slate-500">技能熟练：</span>
-                  {selectedBg.skill_proficiencies.map((s) => SKILL_ZH[s] ?? s).join('、')}
+                  {selectedBg.skill_proficiencies.map((s) => skillZh(s)).join('、')}
                 </div>
               )}
               {selectedBg.feature_name && (

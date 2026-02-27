@@ -15,11 +15,6 @@ const RACE_AGE_DESC: Record<string, string> = {
   dragonborn: '龙裔约 15 岁成年，寿命约 80 年',
 }
 
-// 特殊性别说明（部分种族）
-const RACE_GENDER_NOTE: Record<string, string> = {
-  dragonborn: '龙裔通常以雌雄区分，但也有无性别个体',
-  gnome: '侏儒个体差异较大，性别认知较为多元',
-}
 
 const GENDERS = [
   { value: '男', label: '男' },
@@ -49,7 +44,6 @@ export default function RaceSection() {
     if (!isNaN(n) && n >= 1) update({ age: String(n) })
   }
 
-  const genderNote = data.race_slug ? RACE_GENDER_NOTE[data.race_slug] : undefined
 
   return (
     <section>
@@ -154,9 +148,6 @@ export default function RaceSection() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   性别
-                  {genderNote && (
-                    <span className="ml-2 text-xs text-slate-500 font-normal">{genderNote}</span>
-                  )}
                 </label>
                 <div className="flex gap-2">
                   {GENDERS.map((g) => (

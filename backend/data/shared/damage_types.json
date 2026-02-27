@@ -1,0 +1,82 @@
+{
+  "damage_types": [
+    {
+      "slug": "acid",
+      "name": "强酸",
+      "name_en": "Acid",
+      "description": "腐蚀性液体造成的灼烧性伤害，例如黑龙的吐息或恶臭毒云。"
+    },
+    {
+      "slug": "bludgeoning",
+      "name": "钝击",
+      "name_en": "Bludgeoning",
+      "description": "由钝器、拳头、坠落或挤压造成的物理伤害。"
+    },
+    {
+      "slug": "cold",
+      "name": "寒冷",
+      "name_en": "Cold",
+      "description": "极度低温或冰冻能量造成的伤害，例如白龙的吐息或寒冰锥法术。"
+    },
+    {
+      "slug": "fire",
+      "name": "火焰",
+      "name_en": "Fire",
+      "description": "高温火焰造成的伤害，例如红龙的吐息或火球术。"
+    },
+    {
+      "slug": "force",
+      "name": "力场",
+      "name_en": "Force",
+      "description": "纯粹的魔法能量构成的伤害，是最难获得抗性或免疫的伤害类型。"
+    },
+    {
+      "slug": "lightning",
+      "name": "闪电",
+      "name_en": "Lightning",
+      "description": "电能造成的伤害，例如蓝龙的吐息或闪电束法术。"
+    },
+    {
+      "slug": "necrotic",
+      "name": "死灵",
+      "name_en": "Necrotic",
+      "description": "死灵魔法造成的伤害，侵蚀生命力，通常来自亡灵生物或死灵系法术。"
+    },
+    {
+      "slug": "piercing",
+      "name": "穿刺",
+      "name_en": "Piercing",
+      "description": "由矛、箭矢、牙齿或其他尖锐物品刺穿造成的物理伤害。"
+    },
+    {
+      "slug": "poison",
+      "name": "毒素",
+      "name_en": "Poison",
+      "description": "毒药、有毒生物的叮咬或有毒气体造成的伤害。"
+    },
+    {
+      "slug": "psychic",
+      "name": "心灵",
+      "name_en": "Psychic",
+      "description": "精神或心理伤害，由脑魔人的心灵爆裂或某些心灵系法术造成。"
+    },
+    {
+      "slug": "radiant",
+      "name": "光辉",
+      "name_en": "Radiant",
+      "description": "由神圣能量或强烈的光辉造成的伤害，通常来自神术或神圣武器。"
+    },
+    {
+      "slug": "slashing",
+      "name": "挥砍",
+      "name_en": "Slashing",
+      "description": "由剑、斧头、爪子或其他锋利物品划砍造成的物理伤害。"
+    },
+    {
+      "slug": "thunder",
+      "name": "雷鸣",
+      "name_en": "Thunder",
+      "description": "由强烈的声波或冲击波造成的伤害，例如雷鸣波法术或铜龙的吐息。"
+    }
+  ]
+}

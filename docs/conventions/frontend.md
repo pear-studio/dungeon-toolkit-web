@@ -74,3 +74,41 @@ useEffect(() => { fetchAll() }, [fetchAll])
 // ❌ 错误：用静态数据兜底掩盖问题
 const displayRaces = races.length > 0 ? races : BUILTIN_RACES
 ```
+
+---
+
+## 组件结构规范
+
+### 文件组织
+
+```
+frontend/src/
+├── pages/          # 页面级组件（对应路由）
+├── components/     # 通用复用组件
+│   └── wizard/     # 角色创建向导子组件
+├── stores/         # Zustand 状态管理
+├── api/            # Axios 请求封装
+└── types/          # TypeScript 类型定义
+```
+
+### 命名规范
+
+| 类型 | 规范 | 示例 |
+|------|------|------|
+| 页面组件 | PascalCase + `Page` 后缀 | `CharacterDetailPage.tsx` |
+| 通用组件 | PascalCase | `RaceCard.tsx` |
+| Store | camelCase + `Store` 后缀 | `gamedataStore.ts` |
+| API 模块 | camelCase | `characters.ts` |
+
+### 状态管理
+
+- 全局持久状态 → Zustand store
+- 表单/向导本地状态 → `useState` / `useReducer`
+- 服务端缓存 → gamedataStore（带 `loaded` flag 防重复请求）
+
+---
+
+## 相关规范
+
+- 规则数据来源：[`docs/conventions/data-sources.md`](./data-sources.md)
+- 部署配置：[`docs/deployment.md`](../deployment.md)

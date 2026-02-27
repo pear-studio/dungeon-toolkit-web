@@ -1,0 +1,94 @@
+{
+  "conditions": [
+    {
+      "slug": "blinded",
+      "name": "致盲",
+      "name_en": "Blinded",
+      "description": "致盲的生物无法看见，自动失去依赖视觉的任何能力检定。该生物进行攻击检定时具有减值，攻击它的攻击检定具有优势。"
+    },
+    {
+      "slug": "charmed",
+      "name": "魅惑",
+      "name_en": "Charmed",
+      "description": "被魅惑的生物无法攻击魅惑它的施法者，也无法以有害法术或效果瞄准它。施法者在进行社交互动的属性检定时，对被魅惑生物具有优势。"
+    },
+    {
+      "slug": "deafened",
+      "name": "耳聋",
+      "name_en": "Deafened",
+      "description": "耳聋的生物无法听到声音，自动失去依赖听觉的任何能力检定。"
+    },
+    {
+      "slug": "exhaustion",
+      "name": "精疲力竭",
+      "name_en": "Exhaustion",
+      "description": "精疲力竭共有6个等级：1级-检定减值；2级-移动速度减半；3级-攻击和豁免减值；4级-命中点数上限减半；5级-移动速度降为0；6级-死亡。"
+    },
+    {
+      "slug": "frightened",
+      "name": "恐惧",
+      "name_en": "Frightened",
+      "description": "恐惧的生物在能看见恐惧来源时，能力检定和攻击检定具有减值。该生物在能看见恐惧来源时无法自愿靠近恐惧来源。"
+    },
+    {
+      "slug": "grappled",
+      "name": "擒抱",
+      "name_en": "Grappled",
+      "description": "被擒抱的生物移动速度变为0，且无法从该速度中受益。如果擒抱者被失能，该状态结束。如果有效果将被擒抱生物移至擒抱者触及范围之外，该状态结束。"
+    },
+    {
+      "slug": "incapacitated",
+      "name": "失能",
+      "name_en": "Incapacitated",
+      "description": "失能的生物无法采取动作或反应动作。"
+    },
+    {
+      "slug": "invisible",
+      "name": "隐形",
+      "name_en": "Invisible",
+      "description": "隐形的生物不借助魔法或特殊感官无法看见。当它试图躲藏时，它的位置可以被听到。攻击隐形生物的攻击检定具有减值，该生物的攻击检定具有优势。"
+    },
+    {
+      "slug": "paralyzed",
+      "name": "麻痹",
+      "name_en": "Paralyzed",
+      "description": "麻痹的生物处于失能状态，无法移动或说话。该生物自动失败力量和敏捷豁免。攻击该生物的攻击检定具有优势，5尺以内命中该生物的攻击检定自动暴击。"
+    },
+    {
+      "slug": "petrified",
+      "name": "石化",
+      "name_en": "Petrified",
+      "description": "石化生物连同其携带的非魔法物品被变为固体无生命物质（通常是石头）。该生物的重量增加十倍，它停止老化。该生物处于失能状态，无法移动或说话，也无法意识到周围环境。攻击检定具有优势，自动失败力量和敏捷豁免，对所有伤害具有抗性，免疫毒素和疾病，但已染毒素和疾病依旧存在，只是被暂停。"
+    },
+    {
+      "slug": "poisoned",
+      "name": "中毒",
+      "name_en": "Poisoned",
+      "description": "中毒的生物在攻击检定和能力检定上具有减值。"
+    },
+    {
+      "slug": "prone",
+      "name": "倒地",
+      "name_en": "Prone",
+      "description": "倒地生物只能以匍匐方式移动（每移动1尺消耗2尺移动力），或站立（须消耗一半移动力）。该生物进行攻击检定具有减值。对5尺以内的倒地生物的攻击具有优势，否则具有减值。"
+    },
+    {
+      "slug": "restrained",
+      "name": "束缚",
+      "name_en": "Restrained",
+      "description": "被束缚生物的移动速度变为0，且无法从移动速度中受益。攻击被束缚生物的攻击检定具有优势，该生物进行攻击检定具有减值。该生物在敏捷豁免上具有减值。"
+    },
+    {
+      "slug": "stunned",
+      "name": "震慑",
+      "name_en": "Stunned",
+      "description": "震慑生物处于失能状态，无法移动，只能勉强说话。该生物自动失败力量和敏捷豁免。攻击该生物的攻击检定具有优势。"
+    },
+    {
+      "slug": "unconscious",
+      "name": "失去意识",
+      "name_en": "Unconscious",
+      "description": "失去意识的生物处于失能状态，无法移动或说话，且不知道周围情况。该生物丢下手中物品，倒在地上。该生物自动失败力量和敏捷豁免，攻击该生物的攻击检定具有优势，5尺内命中该生物的攻击自动暴击。"
+    }
+  ]
+}

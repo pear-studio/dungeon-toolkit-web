@@ -6,6 +6,7 @@
 """
 import json
 import os
+import re
 import sys
 import django
 
@@ -23,6 +24,36 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 def load_json(path):
     with open(path, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+def _parse_languages_count(languages_field) -> int:
+    """
+    从 backgrounds.json 的 languages 字段推断语言数量。
+    支持：
+      - int / str 数字：直接返回
+      - list：遍历每项，识别"两门"、"一门"等中文数词
+    """
+    if not languages_field:
+        return 0
+    if isinstance(languages_field, int):
+        return languages_field
+    if isinstance(languages_field, str):
+        return int(languages_field) if languages_field.isdigit() else 0
+
+    # list 形式
+    NUM_MAP = {'一': 1, '两': 2, '三': 3, '四': 4, '二': 2}
+    total = 0
+    for item in languages_field:
+        item = str(item)
+        # 匹配"任选两门"、"自选一门"等
+        m = re.search(r'([一两三四二\d])门', item)
+        if m:
+            ch = m.group(1)
+            total += NUM_MAP.get(ch, int(ch) if ch.isdigit() else 1)
+        elif item.strip():
+            # 普通语言名（如"精灵语"）算 1 门固定语言
+            total += 1
+    return total
 
 
 def import_ruleset(ruleset_slug):
@@ -153,7 +184,7 @@ def import_backgrounds(ruleset):
                 'description': item.get('description', ''),
                 'skill_proficiencies': item.get('skill_proficiencies', []),
                 'tool_proficiencies': item.get('tool_proficiencies', []),
-                'languages_count': item.get('languages', 0),
+                'languages_count': _parse_languages_count(item.get('languages', [])),
                 'feature_name': feature.get('name', ''),
                 'feature_description': feature.get('description', ''),
                 'starting_equipment': item.get('equipment', []),
@@ -165,6 +196,34 @@ def import_backgrounds(ruleset):
             }
         )
         print(f'  {"创建" if created else "更新"} 背景: {obj.name}')
+
+
+def import_subclasses(ruleset):
+    """从独立 subclasses.json 文件导入子职业"""
+    path = os.path.join(DATA_DIR, ruleset.slug, 'subclasses.json')
+    if not os.path.exists(path):
+        print(f'  [跳过] 未找到: {path}')
+        return
+
+    data = load_json(path)
+    for item in data:
+        try:
+            char_class = CharClass.objects.get(ruleset=ruleset, slug=item['class_slug'])
+        except CharClass.DoesNotExist:
+            print(f'  [跳过] 职业不存在: {item["class_slug"]}')
+            continue
+
+        subclass, created = Subclass.objects.update_or_create(
+            char_class=char_class,
+            slug=item['slug'],
+            defaults={
+                'name': item['name'],
+                'name_en': item.get('name_en', ''),
+                'description': item.get('description', ''),
+                'features': item.get('features', {}),
+            }
+        )
+        print(f'    {"创建" if created else "更新"} 子职业: {char_class.name} - {subclass.name}')
 
 
 def import_spells(ruleset):
@@ -220,6 +279,9 @@ def main():
 
         print('\n  → 导入背景...')
         import_backgrounds(ruleset)
+
+        print('\n  → 导入子职业...')
+        import_subclasses(ruleset)
 
         print('\n  → 导入法术...')
         import_spells(ruleset)
