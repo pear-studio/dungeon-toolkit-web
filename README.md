@@ -3,7 +3,7 @@
 > 面向中文 D&D 5e 玩家的开源工具箱 —— 向导式角色创建 · 角色卡管理
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 
 ## 项目简介
@@ -101,6 +101,43 @@ npm run dev
 | 健康检查 | http://localhost:8000/api/health/ |
 
 注册一个账户后即可登录进入冒险者大厅。
+
+---
+
+## 测试
+
+### 运行测试
+
+```bash
+cd backend
+
+# 激活虚拟环境
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS / Linux
+
+# 运行所有测试
+pytest
+
+# 运行带覆盖率报告
+pytest --cov=. --cov-report=html
+```
+
+### 测试账号
+
+项目提供了测试账号用于人工测试：
+
+```bash
+# 创建测试账号
+python manage.py create_test_users
+```
+
+| 用户名 | 密码 | 角色 |
+|--------|------|------|
+| testuser | TestPass1234 | 普通用户 |
+| admin | AdminPass1234 | 管理员 |
+| runner | RunnerPass1234 | CI/CD |
+
+详细测试说明请参阅 [docs/testing.md](docs/testing.md)。
 
 ---
 

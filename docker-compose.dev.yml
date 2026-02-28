@@ -1,11 +1,11 @@
 version: '3.9'
 
 # ============================================================
-# 本地开发环境配置
-# 只启动 PostgreSQL，Django 和 React 各自在本地运行
-#
+# 本地开发环境配置 - 完全在 Docker 中运行
 # 使用方法：
-#   docker-compose -f docker-compose.dev.yml up -d
+#   docker-compose -f docker-compose.dev.yml up -d --build
+#   访问前端: http://localhost:5173
+#   访问后端: http://localhost:8000
 # ============================================================
 
 services:
@@ -13,7 +13,7 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     ports:
-      - "5432:5432"    # 暴露端口供本地 Django 直连
+      - "5432:5432"
     environment:
       POSTGRES_DB: dungeon_toolkit
       POSTGRES_USER: dungeon_toolkit
@@ -25,6 +25,51 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - dev_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=dungeon_toolkit
+      - DB_USER=dungeon_toolkit
+      - DB_PASSWORD=dungeon_toolkit
+      - DJANGO_SETTINGS_MODULE=config.settings.development
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - dev_network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - dev_network
+
+networks:
+  dev_network:
+    driver: bridge
 
 volumes:
   postgres_dev_data:

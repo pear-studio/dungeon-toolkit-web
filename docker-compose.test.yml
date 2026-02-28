@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  db-test:
+    image: postgres:15-alpine
+    container_name: dungeon_toolkit_test_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dungeon_toolkit_test
+      POSTGRES_USER: dungeon_toolkit
+      POSTGRES_PASSWORD: dungeon_toolkit
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dungeon_toolkit -d dungeon_toolkit_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: dungeon_toolkit_backend_test
+    depends_on:
+      db-test:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db-test
+      - DB_PORT=5432
+      - DB_NAME=dungeon_toolkit_test
+      - DB_USER=dungeon_toolkit
+      - DB_PASSWORD=dungeon_toolkit
+    volumes:
+      - ./backend:/app/backend
+    working_dir: /app/backend
+    command: pytest
+
+volumes:
+  postgres_test_data:

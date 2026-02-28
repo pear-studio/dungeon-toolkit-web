@@ -39,6 +39,7 @@ frontend/dist/
 
 # Docker
 .docker/
+daemon.json
 
 # IDE
 .vscode/
@@ -48,3 +49,14 @@ frontend/dist/
 *~
 .DS_Store
 Thumbs.db
+
+# 测试
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+.pytest_cache/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json

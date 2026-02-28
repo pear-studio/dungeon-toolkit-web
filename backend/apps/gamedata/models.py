@@ -161,7 +161,7 @@ class Spell(models.Model):
     name = models.CharField(max_length=100, help_text='中文名')
     name_en = models.CharField(max_length=100, blank=True)
     level = models.PositiveSmallIntegerField(help_text='法术环级，0=戏法')
-    school = models.CharField(max_length=20, choices=SHOOL_CHOICES)
+    school = models.CharField(max_length=20, choices=SCHOOL_CHOICES)
     casting_time = models.CharField(max_length=50, help_text='施法时间，如 1个动作')
     range = models.CharField(max_length=50, help_text='射程')
     components = models.JSONField(default=list, help_text='法术成分，如 ["V", "S", "M"]')
