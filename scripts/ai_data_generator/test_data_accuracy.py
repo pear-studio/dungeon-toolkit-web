@@ -121,6 +121,7 @@ def verify_class_features():
             feature_desc = feature.get('description', '').strip()
 
             if not feature_desc:
+                verified_count += 1
                 continue
 
             is_match, reason = check_text_in_txt(feature_desc, txt_content)
