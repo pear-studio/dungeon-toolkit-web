@@ -22,7 +22,18 @@
       "军用武器"
     ],
     "subclass_level": 3,
-    "subclass_label": "原始道途"
+    "subclass_label": "原始道途",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "athletics",
+        "animal_handling",
+        "intimidation",
+        "nature",
+        "perception",
+        "survival"
+      ]
+    }
   },
   {
     "slug": "bard",
@@ -48,7 +59,23 @@
       "短剑"
     ],
     "subclass_level": 3,
-    "subclass_label": "诗人学院"
+    "subclass_label": "诗人学院",
+    "skill_choices": {
+      "count": 3,
+      "options": [
+        "acrobatics",
+        "deception",
+        "performance",
+        "persuasion",
+        "sleight_of_hand",
+        "stealth",
+        "history",
+        "insight",
+        "medicine",
+        "religion",
+        "animal_handling"
+      ]
+    }
   },
   {
     "slug": "cleric",
@@ -72,7 +99,17 @@
       "简单武器"
     ],
     "subclass_level": 1,
-    "subclass_label": "神圣领域"
+    "subclass_label": "神圣领域",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "history",
+        "insight",
+        "medicine",
+        "persuasion",
+        "religion"
+      ]
+    }
   },
   {
     "slug": "druid",
@@ -105,7 +142,19 @@
       "矛"
     ],
     "subclass_level": 2,
-    "subclass_label": "德鲁伊结社"
+    "subclass_label": "德鲁伊结社",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "animal_handling",
+        "insight",
+        "medicine",
+        "nature",
+        "perception",
+        "religion",
+        "survival"
+      ]
+    }
   },
   {
     "slug": "fighter",
@@ -129,7 +178,20 @@
       "军用武器"
     ],
     "subclass_level": 3,
-    "subclass_label": "武术原型"
+    "subclass_label": "武术原型",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "acrobatics",
+        "athletics",
+        "animal_handling",
+        "history",
+        "insight",
+        "intimidation",
+        "perception",
+        "survival"
+      ]
+    }
   },
   {
     "slug": "monk",
@@ -150,7 +212,19 @@
       "短剑"
     ],
     "subclass_level": 3,
-    "subclass_label": "武僧传统"
+    "subclass_label": "武僧传统",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "acrobatics",
+        "athletics",
+        "history",
+        "insight",
+        "medicine",
+        "religion",
+        "stealth"
+      ]
+    }
   },
   {
     "slug": "paladin",
@@ -174,7 +248,17 @@
       "军用武器"
     ],
     "subclass_level": 3,
-    "subclass_label": "神圣誓言"
+    "subclass_label": "神圣誓言",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "athletics",
+        "intimidation",
+        "medicine",
+        "persuasion",
+        "religion"
+      ]
+    }
   },
   {
     "slug": "ranger",
@@ -199,7 +283,20 @@
       "军用武器"
     ],
     "subclass_level": 3,
-    "subclass_label": "游侠原型"
+    "subclass_label": "游侠原型",
+    "skill_choices": {
+      "count": 3,
+      "options": [
+        "athletics",
+        "animal_handling",
+        "insight",
+        "investigation",
+        "nature",
+        "perception",
+        "stealth",
+        "survival"
+      ]
+    }
   },
   {
     "slug": "rogue",
@@ -225,7 +322,18 @@
       "短剑"
     ],
     "subclass_level": 3,
-    "subclass_label": "游荡者原型"
+    "subclass_label": "游荡者原型",
+    "skill_choices": {
+      "count": 4,
+      "options": [
+        "acrobatics",
+        "deception",
+        "insight",
+        "investigation",
+        "stealth",
+        "sleight_of_hand"
+      ]
+    }
   },
   {
     "slug": "sorcerer",
@@ -249,7 +357,18 @@
       "轻弩"
     ],
     "subclass_level": 1,
-    "subclass_label": "魔法起源"
+    "subclass_label": "魔法起源",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "arcana",
+        "deception",
+        "insight",
+        "intimidation",
+        "nature",
+        "religion"
+      ]
+    }
   },
   {
     "slug": "warlock",
@@ -271,7 +390,20 @@
       "简单武器"
     ],
     "subclass_level": 1,
-    "subclass_label": "神秘主顾"
+    "subclass_label": "神秘主顾",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "arcana",
+        "deception",
+        "history",
+        "insight",
+        "intimidation",
+        "investigation",
+        "nature",
+        "religion"
+      ]
+    }
   },
   {
     "slug": "wizard",
@@ -295,6 +427,17 @@
       "轻弩"
     ],
     "subclass_level": 2,
-    "subclass_label": "奥法传统"
+    "subclass_label": "奥法传统",
+    "skill_choices": {
+      "count": 2,
+      "options": [
+        "arcana",
+        "history",
+        "insight",
+        "investigation",
+        "medicine",
+        "religion"
+      ]
+    }
   }
 ]
