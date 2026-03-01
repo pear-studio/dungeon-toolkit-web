@@ -96,8 +96,7 @@ export default function DescribeSection() {
                     </div>
                     {bg.skill_proficiencies?.length > 0 && (
                       <div className="text-xs text-slate-500 mt-0.5 leading-tight">
-                        {bg.skill_proficiencies.slice(0, 2).map((s) => skillZh(s)).join('、')}
-                        {bg.skill_proficiencies.length > 2 ? '…' : ''}
+                        {bg.skill_proficiencies.map((s) => skillZh(s)).join('、')}
                       </div>
                     )}
                   </button>
