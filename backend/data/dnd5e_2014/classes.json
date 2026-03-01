@@ -556,86 +556,26 @@
       ]
     },
     "level_features": [
-      {
-        "level": 1,
-        "description": "未着装任何护甲也没持用盾牌时，如果你徒手或只持用武僧武器，则你发动的攻击拥有下列增益： 你使用徒手打击或武僧武器进行攻击时，可以用敏捷值代替力量值进行攻击检定和伤害掷骰。"
-      },
-      {
-        "level": 2,
-        "description": "你可以消耗气以行使各种特性。一开始你掌握三种特性：疾风连击，坚强防御，飞檐走壁。此后，随着此职业等级的提升你将习得更多的特性。 消耗掉的气必须在你短休或长休时完成至少30分钟的冥想，才能重获所有消耗掉的气值。"
-      },
-      {
-        "level": 3,
-        "description": "当被拨挡攻击的伤害减少至0，且实施伤害的飞弹可以被你单手抓住时，你可以用此时空闲的手去抓取该飞弹。此时你可以消耗1点气以该“飞弹”进行一次远程攻击，而该攻击将视为本次反应的一部分。无论你是否具有被拨挡武器的熟练项，本次攻击中你都视为进行具有熟练项的攻击，所使用的飞弹也视为武僧武器，其射程为20/60尺。 **属性值提升****Ability Score Improvement**"
-      },
-      {
-        "level": 4,
-        "description": "**额外攻击****Extra Attack**"
-      },
-      {
-        "level": 5,
-        "description": "**真气注拳****Ki-Empowered Strikes**"
-      },
-      {
-        "level": 6,
-        "description": "**反射闪避****Evasion**"
-      },
-      {
-        "level": 7,
-        "description": "**百病不侵****Purity of Body**"
-      },
-      {
-        "level": 8,
-        "description": "+3"
-      },
-      {
-        "level": 9,
-        "description": "**宗派****Monastic Tradition**"
-      },
-      {
-        "level": 10,
-        "description": "**天语通****Tongue of the Sun and Moon**"
-      },
-      {
-        "level": 11,
-        "description": "+4"
-      },
-      {
-        "level": 12,
-        "description": "+4"
-      },
-      {
-        "level": 13,
-        "description": "**金刚魂****Diamond Soul**"
-      },
-      {
-        "level": 14,
-        "description": "另外，当豁免失败时，你可以消耗1点气重掷豁免并使用重掷的结果。 **不朽身****Timeless Body**"
-      },
-      {
-        "level": 15,
-        "description": "**空灵体****Empty Body**"
-      },
-      {
-        "level": 16,
-        "description": "+5"
-      },
-      {
-        "level": 17,
-        "description": "+6"
-      },
-      {
-        "level": 18,
-        "description": "另外，你可以消耗8点气施展法术*星界投影**astral projection*，以该形式施展的法术不需要材料成分，且无法捎带其他生物与你同行。 **超凡入圣****Perfect Self**"
-      },
-      {
-        "level": 19,
-        "description": "+6"
-      },
-      {
-        "level": 20,
-        "description": "#### **武僧修道会****Monastic Orders****** D&D世界中存在许多不同的修道院与修行宗派。比如在被遗忘国度远东地区的受龙帝国Shou Lung，这片亚洲风情的大陆中，修道院会将哲学传统和武艺修行结合在一起。受龙帝国中的铁拳派Iron Hand School，五星派Five Star School，北拳派Northern Fist School和南星派Southern Star School等流派以不同的理念为其武僧教授身、心与灵各方面的训导。这些修道院中的某些分支甚至流传至费伦大陆西方，尤其是在那些有着大量受国人移民的地区，如赛斯克Thesk和西门Westgate等城镇。"
-      }
+      {"level": 1, "description": "无甲防御，武艺"},
+      {"level": 2, "description": "气，无甲移动"},
+      {"level": 3, "description": "选择宗派，拨挡飞弹"},
+      {"level": 4, "description": "属性值提升，轻身坠"},
+      {"level": 5, "description": "额外攻击，震慑拳"},
+      {"level": 6, "description": "真气注拳，宗派特性"},
+      {"level": 7, "description": "反射闪避，心如止水"},
+      {"level": 8, "description": "属性值提升"},
+      {"level": 9, "description": "无甲移动增效"},
+      {"level": 10, "description": "百病不侵"},
+      {"level": 11, "description": ""},
+      {"level": 12, "description": "属性值提升"},
+      {"level": 13, "description": "天语通"},
+      {"level": 14, "description": "钻石魂"},
+      {"level": 15, "description": "不朽身"},
+      {"level": 16, "description": "属性值提升"},
+      {"level": 17, "description": "宗派特性"},
+      {"level": 18, "description": "空灵体"},
+      {"level": 19, "description": "属性值提升"},
+      {"level": 20, "description": "超凡入圣"}
     ]
   },
   {
