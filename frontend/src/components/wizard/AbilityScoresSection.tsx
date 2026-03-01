@@ -205,7 +205,7 @@ export default function AbilityScoresSection() {
               }`}
           >
             <div className={`text-sm font-medium ${method === key ? 'text-amber-400' : 'text-slate-200'}`}>{label}</div>
-            <div className="text-xs text-slate-500 mt-0.5">{desc}</div>
+            <div className="text-xs text-slate-400 mt-0.5">{desc}</div>
           </button>
         ))}
       </div>
@@ -232,7 +232,7 @@ export default function AbilityScoresSection() {
 
           {(method === 'standard' || data.score_rolls.length === 6) && (
             <>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 将下方数值分配到各属性（点击数值，再点击属性）
               </p>
 
@@ -309,13 +309,13 @@ export default function AbilityScoresSection() {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-sm text-slate-500">
+                            <span className="text-sm text-slate-400">
                               {dragSlot !== null ? '← 点击分配' : '未分配'}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="text-xs text-slate-500 mt-0.5">{ab.desc}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">{ab.desc}</div>
                     </button>
                   )
                 })}
@@ -346,7 +346,7 @@ export default function AbilityScoresSection() {
 
           {/* 属性调节器 */}
           <div className="space-y-2">
-            <p className="text-xs text-slate-500">每项属性基础值范围 8~15（种族加成另计）</p>
+            <p className="text-xs text-slate-400">每项属性基础值范围 8~15（种族加成另计）</p>
             {ABILITIES.map((ab) => {
               const bonus = raceBonuses[ab.key] ?? 0
               const total = data.ability_scores[ab.key]
@@ -362,7 +362,7 @@ export default function AbilityScoresSection() {
                     <span className={`text-xs font-bold ${ab.color}`}>{ab.en}</span>
                     <span className="text-xs text-slate-400 ml-1.5 block leading-none mt-0.5">{ab.label}</span>
                   </div>
-                  <div className="flex-1 text-xs text-slate-500">{ab.desc}</div>
+                  <div className="flex-1 text-xs text-slate-400">{ab.desc}</div>
                   {bonus > 0 && (
                     <span className="text-xs text-blue-400 shrink-0">+{bonus}</span>
                   )}
@@ -388,7 +388,7 @@ export default function AbilityScoresSection() {
                                  text-sm font-bold transition flex items-center justify-center"
                     >+</button>
                   </div>
-                  <div className="text-xs text-slate-500 w-12 text-right shrink-0">{cost}点</div>
+                  <div className="text-xs text-slate-400 w-12 text-right shrink-0">{cost}点</div>
                 </div>
               )
             })}
@@ -399,7 +399,7 @@ export default function AbilityScoresSection() {
       {/* 属性总览 */}
       {method !== 'pointbuy' && (method === 'standard' || data.score_rolls.length === 6) && (
         <div className="mt-4 p-3 bg-slate-800/60 border border-slate-700 rounded-xl">
-          <div className="flex justify-between text-xs text-slate-500 mb-2">
+          <div className="flex justify-between text-xs text-slate-400 mb-2">
             <span>属性总览</span>
             <span>总和: {ABILITIES.reduce((s, ab) => s + (data.ability_scores[ab.key] ?? 0), 0)}</span>
           </div>

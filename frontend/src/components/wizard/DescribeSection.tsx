@@ -67,7 +67,7 @@ export default function DescribeSection() {
           <h3 className="text-sm font-semibold text-slate-300 mb-1">
             背景 <span className="text-red-400">*</span>
           </h3>
-          <p className="text-xs text-slate-500 mb-3">
+          <p className="text-xs text-slate-400 mb-3">
             背景代表冒险前的生活经历，赋予技能熟练、工具熟练和背景特性
           </p>
 
@@ -95,7 +95,7 @@ export default function DescribeSection() {
                       {bg.name}
                     </div>
                     {bg.skill_proficiencies?.length > 0 && (
-                      <div className="text-xs text-slate-500 mt-0.5 leading-tight">
+                      <div className="text-xs text-slate-400 mt-0.5 leading-tight">
                         {bg.skill_proficiencies.map((s) => skillZh(s)).join('、')}
                       </div>
                     )}
@@ -111,13 +111,13 @@ export default function DescribeSection() {
               <div className="font-semibold text-white text-sm">{selectedBg.name}</div>
               {selectedBg.skill_proficiencies?.length > 0 && (
                 <div className="text-xs text-slate-400">
-                  <span className="text-slate-500">技能熟练：</span>
+                  <span className="text-slate-400">技能熟练：</span>
                   {selectedBg.skill_proficiencies.map((s) => skillZh(s)).join('、')}
                 </div>
               )}
               {selectedBg.feature_name && (
                 <div className="text-xs">
-                  <span className="text-slate-500">特性：</span>
+                  <span className="text-slate-400">特性：</span>
                   <span className="text-amber-400/80">{selectedBg.feature_name}</span>
                 </div>
               )}
@@ -133,7 +133,7 @@ export default function DescribeSection() {
         {/* ── 阵营 ── */}
         <div>
           <h3 className="text-sm font-semibold text-slate-300 mb-1">阵营</h3>
-          <p className="text-xs text-slate-500 mb-3">
+          <p className="text-xs text-slate-400 mb-3">
             阵营代表角色的道德倾向，指引其做出决定。可选择或跳过。
           </p>
           <div className="grid grid-cols-3 gap-2">
@@ -161,7 +161,7 @@ export default function DescribeSection() {
             })}
           </div>
           {selectedAlignment && (
-            <p className="mt-2 text-xs text-slate-500 text-center">{selectedAlignment.desc}</p>
+            <p className="mt-2 text-xs text-slate-400 text-center">{selectedAlignment.desc}</p>
           )}
         </div>
 
@@ -169,7 +169,7 @@ export default function DescribeSection() {
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1.5">
             外貌描述
-            <span className="ml-2 text-xs text-slate-500 font-normal">（可选）</span>
+            <span className="ml-2 text-xs text-slate-400 font-normal">（可选）</span>
           </label>
           <textarea
             value={data.appearance}

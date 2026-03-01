@@ -103,7 +103,7 @@ export default function CharacterCard({ character, onDelete, onToggleShare }: Ch
             const mod = typeof val === 'number' ? Math.floor((val - 10) / 2) : null
             return (
               <div key={attr} className="text-center">
-                <div className="text-xs text-slate-500 uppercase">{attr}</div>
+                <div className="text-xs text-slate-400 uppercase">{attr}</div>
                 <div className="text-sm font-bold text-white">{val}</div>
                 {mod !== null && (
                   <div className="text-xs text-slate-400">

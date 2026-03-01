@@ -130,7 +130,7 @@ export default function CharacterPreview() {
               const sign = mod >= 0 ? '+' : ''
               return (
                 <div key={ability} className="bg-slate-700 rounded-lg p-2 text-center">
-                  <div className="text-xs text-slate-500">{ABILITY_ZH[ability]}</div>
+                  <div className="text-xs text-slate-400">{ABILITY_ZH[ability]}</div>
                   <div className="text-lg font-bold text-white">{value}</div>
                   <div className="text-xs text-amber-400">{sign}{mod}</div>
                 </div>
@@ -157,7 +157,7 @@ export default function CharacterPreview() {
                 {skillZh(skill)}
               </span>
             )) : (
-              <span className="text-slate-500 text-sm">—</span>
+              <span className="text-slate-400 text-sm">—</span>
             )}
           </div>
         </div>
@@ -172,7 +172,7 @@ export default function CharacterPreview() {
                 <div className="text-slate-400">特性：<span className="text-white">{background.feature_name}</span></div>
               )}
               {background.feature_description && (
-                <div className="text-xs text-slate-500 line-clamp-2">{background.feature_description}</div>
+                <div className="text-xs text-slate-400 line-clamp-2">{background.feature_description}</div>
               )}
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function CharacterPreview() {
               }
               return features.length > 0 ? (
                 <div key={idx} className="mb-2">
-                  <div className="text-xs text-slate-500 mb-1">{cls.name}</div>
+                  <div className="text-xs text-slate-400 mb-1">{cls.name}</div>
                   <div className="flex flex-wrap gap-1">
                     {features.map((f, fidx) => (
                       <span key={fidx} className="text-xs px-2 py-0.5 bg-slate-700 text-slate-400 rounded">
@@ -216,7 +216,7 @@ export default function CharacterPreview() {
             })}
           </div>
           {classEntries.length === 0 && (
-            <span className="text-slate-500 text-sm">—</span>
+            <span className="text-slate-400 text-sm">—</span>
           )}
         </div>
       </div>

@@ -117,7 +117,7 @@ export default function ClassSection() {
       </h2>
 
       <div className="space-y-4">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-400">
           选择职业决定你的战斗风格、特性、技能与生命值成长方向。可添加兼职职业，但总等级不超过20级
         </p>
 
@@ -168,7 +168,7 @@ export default function ClassSection() {
               </div>
 
               {classEntry.class_slug && (
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
                   <span>总等级: {totalLevel}/20</span>
                   {PREREQUISITE_ABILITY[classEntry.class_slug] && (
                     <span className="text-yellow-500">
@@ -183,7 +183,7 @@ export default function ClassSection() {
           {canAddClass && (
             <button
               onClick={addClass}
-              className="w-full py-2 border-2 border-dashed border-slate-700 rounded-xl text-slate-500 hover:border-amber-500/50 hover:text-amber-400 text-sm transition"
+              className="w-full py-2 border-2 border-dashed border-slate-700 rounded-xl text-slate-400 hover:border-amber-500/50 hover:text-amber-400 text-sm transition"
             >
               + 添加兼职职业
             </button>
@@ -204,7 +204,7 @@ export default function ClassSection() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-slate-300">选择技能熟练 ({totalSelectedSkills}/{skillChoicesCount + backgroundSkills.length})</span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-400">
                     职业选择 {skillChoicesCount} 项，背景包含 {backgroundSkills.length} 项
                   </span>
                 </div>
@@ -219,7 +219,7 @@ export default function ClassSection() {
                         disabled={isDisabled}
                         className={`px-3 py-1.5 rounded-full text-xs transition
                           ${skill.isFromBackground
-                            ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                            ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                             : isSelected
                               ? 'bg-amber-500/20 text-amber-400 border border-amber-500'
                               : isDisabled

@@ -16,7 +16,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
     >
       <div className="text-5xl mb-3 group-hover:scale-110 transition">✨</div>
       <p className="font-semibold text-base">创建你的第一个角色</p>
-      <p className="text-sm mt-1 text-slate-600">开始你的冒险</p>
+      <p className="text-sm mt-1 text-slate-400">开始你的冒险</p>
     </button>
   )
 }

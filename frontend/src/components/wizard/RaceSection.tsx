@@ -78,7 +78,7 @@ export default function RaceSection() {
                     {race.name}
                   </div>
                   {race.has_subraces && (
-                    <div className="text-xs text-slate-500 mt-0.5 leading-tight">有亚种族</div>
+                    <div className="text-xs text-slate-400 mt-0.5 leading-tight">有亚种族</div>
                   )}
                 </button>
               )
@@ -199,7 +199,7 @@ export default function RaceSection() {
                                [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-amber-500
                                [&::-moz-range-thumb]:border-0"
                   />
-                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>{ageRange.min}</span>
                     <span className="text-slate-400 text-center px-2">
                       {selectedRace ? (RACE_AGE_DESC[selectedRace.slug] ?? '') : ''}

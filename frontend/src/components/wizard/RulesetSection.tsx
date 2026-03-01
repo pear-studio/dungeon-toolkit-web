@@ -15,7 +15,7 @@ export default function RulesetSection() {
         {rulesetConfirmed && (
           <button
             onClick={() => update({ ruleset_slug: data.ruleset_slug })}
-            className="ml-auto text-xs text-slate-500 hover:text-amber-400 transition"
+            className="ml-auto text-xs text-slate-400 hover:text-amber-400 transition"
             title="切换规则集"
           >
             {/* 已锁定后允许点击修改 */}
@@ -79,7 +79,7 @@ export default function RulesetSection() {
               // 重置规则集确认状态，允许重新选择
               useWizardStore.setState({ rulesetConfirmed: false })
             }}
-            className="text-xs text-slate-500 hover:text-amber-400 transition underline underline-offset-2"
+            className="text-xs text-slate-400 hover:text-amber-400 transition underline underline-offset-2"
           >
             更换规则集
           </button>
