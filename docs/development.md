@@ -117,7 +117,37 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 docker compose -f docker-compose.dev.yml exec backend python manage.py create_test_users
 
 # 导入游戏数据（可选）
-docker compose -f docker-compose.dev.yml exec backend python manage.py import_gamedata
+docker compose -f docker-compose.dev.yml exec backend python scripts/import_gamedata.py
+```
+
+### 使用开发脚本
+
+项目提供了统一的开发脚本，简化常用操作：
+
+```bash
+# 进入项目目录（WSL Ubuntu）
+cd /mnt/c/Workspace/dungeon-toolkit-web  # 或 cd ~/dungeon-toolkit-web
+
+# 重建开发环境（停止、重新构建、迁移数据）
+bash scripts/dev.sh rebuild
+
+# 启动开发环境
+bash scripts/dev.sh start
+
+# 停止开发环境
+bash scripts/dev.sh stop
+
+# 查看环境状态
+bash scripts/dev.sh status
+
+# 运行测试
+bash scripts/dev.sh test
+
+# 运行代码检查
+bash scripts/dev.sh lint
+
+# 完整检查（测试 + lint）
+bash scripts/dev.sh check
 ```
 
 ---

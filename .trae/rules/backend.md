@@ -6,12 +6,16 @@ description: 编写后端代码
 
 ## 技术栈
 
-- Python 3.x
+- Python 3.12
 - Django 5.x
 - Django REST Framework (DRF)
-- PostgreSQL
+- PostgreSQL 15
 
----
+## 开发环境
+
+- **本地**: Windows + WSL2 (Ubuntu) + Docker
+- **数据库**: PostgreSQL 运行在 Docker 容器中
+- **启动**: `docker-compose -f docker-compose.dev.yml up -d`
 
 ## 项目结构
 

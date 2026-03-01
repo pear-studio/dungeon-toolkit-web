@@ -4,6 +4,21 @@ description: 编写前端代码
 ---
 # 前端开发规范
 
+## 技术栈
+
+- React 18 + TypeScript
+- Vite 7
+- Zustand (状态管理)
+- Tailwind CSS 4
+- Axios
+
+## 开发环境
+
+- **本地**: Windows + WSL2 (Ubuntu) + Docker
+- **前端服务**: 运行在 Docker 容器中 (localhost:5173)
+- **后端 API**: 运行在 Docker 容器中 (localhost:8000)
+- **启动**: `docker-compose -f docker-compose.dev.yml up -d`
+
 ## 数据来源原则
 
 ### 禁止硬编码游戏内容数据

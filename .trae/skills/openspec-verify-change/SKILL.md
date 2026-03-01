@@ -89,7 +89,30 @@ Verify that an implementation matches the change artifacts (specs, tasks, design
        - Add WARNING: "Scenario not covered: <scenario name>"
        - Recommendation: "Add test or implementation for scenario: <description>"
 
-7. **Verify Coherence**
+6. **Run Tests** (Automatic)
+
+   **Backend Tests**:
+   - Check if Docker environment is available
+   - Run pytest in backend container:
+     ```bash
+     docker compose exec -T backend pytest -v --tb=short
+     ```
+   - If tests fail:
+     - Add CRITICAL issue: "Backend tests failed: <test name>"
+     - Recommendation: "Fix failing tests before archiving"
+   - If tests pass: Note in report "✓ Backend tests passed"
+
+   **Frontend Lint**:
+   - Run ESLint in frontend container:
+     ```bash
+     docker compose exec -T frontend npm run lint
+     ```
+   - If lint fails:
+     - Add WARNING: "Frontend lint issues found"
+     - Recommendation: "Fix lint issues or document acceptable exceptions"
+   - If lint passes: Note in report "✓ Frontend lint passed"
+
+8. **Verify Coherence**
 
    **Design Adherence**:
    - If design.md exists in contextFiles:
@@ -107,18 +130,19 @@ Verify that an implementation matches the change artifacts (specs, tasks, design
      - Add SUGGESTION: "Code pattern deviation: <details>"
      - Recommendation: "Consider following project pattern: <example>"
 
-8. **Generate Verification Report**
+9. **Generate Verification Report**
 
    **Summary Scorecard**:
    ```
    ## Verification Report: <change-name>
 
    ### Summary
-   | Dimension    | Status           |
-   |--------------|------------------|
-   | Completeness | X/Y tasks, N reqs|
-   | Correctness  | M/N reqs covered |
-   | Coherence    | Followed/Issues  |
+   | Dimension    | Status                    |
+   |--------------|---------------------------|
+   | Completeness | X/Y tasks, N reqs        |
+   | Correctness  | M/N reqs covered          |
+   | Tests        | Backend: Pass/Fail, Frontend: Pass/Fail |
+   | Coherence    | Followed/Issues           |
    ```
 
    **Issues by Priority**:
