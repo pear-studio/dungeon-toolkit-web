@@ -73,9 +73,11 @@ wsl -d Ubuntu bash -c "docker compose -f docker-compose.dev.yml ps"
 
 ## 数据来源
 
-所有 D&D 规则内容数据的生成/更新，必须使用 `backend/data/parsers/` 目录下的解析脚本，**禁止凭记忆生成**。
+所有 D&D 规则内容数据的生成/更新，必须通过以下流程，**禁止凭记忆生成**。
 
-### 解析脚本
+### 流程一：Parsers 脚本（传统方式）
+
+使用 `backend/data/parsers/` 目录下的解析脚本：
 
 ```
 backend/data/parsers/
@@ -87,13 +89,32 @@ backend/data/parsers/
 └── parse_items.py         # 物品数据
 ```
 
+### 流程二：AI 辅助生成（实验性）
+
+使用 `scripts/ai_data_generator/` 目录下的工具：
+
+```
+scripts/ai_data_generator/
+├── html_to_txt.py         # HTML 预处理为 txt
+├── test_data_accuracy.py   # 回归测试验证
+└── analyze_accuracy.py    # 准确性分析
+```
+
+**流程**：
+1. 运行 `python html_to_txt.py <源文件夹>` 预处理 HTML
+2. AI 根据生成的 txt 文件直接生成 JSON
+3. 运行 `python test_data_accuracy.py` 验证（必须100%匹配）
+4. 提交 JSON
+
 ### 禁止行为
 
 | 行为 | 说明 |
 |------|------|
 | AI 凭训练记忆编写规则数据 | 细节（范围、骰子、豁免）极易出错 |
-| 直接修改 JSON 数据 | 必须使用 parsers 目录下的解析脚本 |
+| 直接修改 JSON 数据（无脚本） | 必须使用 parsers 或 ai_data_generator |
 | 跳过 rules_source 直接写 JSON | 无法溯源 |
+| 跳过 txt 直接生成 JSON | 必须基于预处理后的 txt 生成 |
+| 测试不通过仍提交 | 必须100%匹配才能提交 |
 
 ## 代码风格
 
