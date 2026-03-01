@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useGamedataStore } from '../../stores/gamedataStore'
 import { useWizardStore, selectTotalLevel } from '../../stores/wizardStore'
 
@@ -38,7 +38,9 @@ export default function ClassSection() {
     return backgrounds.find(b => b.slug === data.background_slug)
   }, [backgrounds, data.background_slug])
 
-  const backgroundSkills = background?.skill_proficiencies || []
+  const backgroundSkills = useMemo(() => {
+    return background?.skill_proficiencies || []
+  }, [background?.skill_proficiencies])
 
   const skillChoicesCount = selectedClass?.skill_choices_count || 2
 
@@ -77,7 +79,7 @@ export default function ClassSection() {
     updateClass(index, { ...currentClassEntry, level: clampedLevel > maxForThis ? maxForThis : clampedLevel })
   }
 
-  const getClassFeatures = (classSlug: string, level: number) => {
+  const getClassFeatures = useCallback((classSlug: string, level: number) => {
     const cls = classes.find(c => c.slug === classSlug)
     if (!cls?.level_features) return []
 
@@ -91,7 +93,7 @@ export default function ClassSection() {
       }
     }
     return features
-  }
+  }, [classes])
 
   const allFeatures = useMemo(() => {
     return data.classes
@@ -103,7 +105,7 @@ export default function ClassSection() {
           features: getClassFeatures(c.class_slug, c.level),
         }
       })
-  }, [data.classes, classes])
+  }, [data.classes, classes, getClassFeatures])
 
   const totalSelectedSkills = (data.chosen_skills?.length || 0) + backgroundSkills.length
 

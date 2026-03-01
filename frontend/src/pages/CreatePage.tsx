@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+/* eslint-disable react-refresh/only-export-components */
 import { useWizardStore, selectTotalLevel } from '../stores/wizardStore'
 import { useCharacterStore } from '../stores/characterStore'
 import { useGamedataStore } from '../stores/gamedataStore'

@@ -157,7 +157,7 @@ export default function AbilityScoresSection() {
 
   // 切换方式时重置属性值
   const switchMethod = (m: 'standard' | 'roll' | 'pointbuy') => {
-    let newScores = { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 } as Record<AbilityKey, number>
+    const newScores = { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 } as Record<AbilityKey, number>
     // 加上种族加成
     for (const ab of ABILITIES) {
       newScores[ab.key] += (raceBonuses[ab.key] ?? 0)
