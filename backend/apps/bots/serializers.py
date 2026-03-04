@@ -11,7 +11,7 @@ class BotSerializer(serializers.ModelSerializer):
             'description', 'is_public', 'status', 'last_seen',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'api_key', 'status', 'last_seen', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'api_key', 'master', 'status', 'last_seen', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         validated_data['api_key'] = secrets.token_hex(32)

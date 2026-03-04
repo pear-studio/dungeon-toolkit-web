@@ -18,9 +18,9 @@
 - [x] 2.7 Create BotDetailView (GET /api/bots/{id}/)
 - [x] 2.8 Create BotUpdateView (PUT /api/bots/{id}/update/) - owner only
 - [x] 2.9 Create BotDeleteView (DELETE /api/bots/{id}/delete/) - owner only
-- [ ] 2.10 Implement offline detection task
-- [ ] 2.11 Add API Key authentication class for robot endpoints
-- [ ] 2.12 Write unit tests for Bot CRUD and API endpoints
+- [x] 2.10 Implement offline detection task (check_bot_status management command)
+- [x] 2.11 Add API Key authentication class for robot endpoints
+- [x] 2.12 Write unit tests for Bot CRUD and API endpoints
 
 ## 3. Frontend - Auth Pages
 
@@ -58,4 +58,4 @@
 - [x] 7.1 Run backend tests
 - [x] 7.2 Run frontend build
 - [x] 7.3 Manual testing of all flows
-- [ ] 7.4 Fix any issues found
+- [x] 7.4 Fix any issues found

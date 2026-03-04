@@ -1,5 +1,4 @@
 from rest_framework import status, generics
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +9,7 @@ from .models import Bot
 from .serializers import (
     BotSerializer, BotRegistrationSerializer, BotHeartbeatSerializer
 )
+from .authentication import BotAuthentication
 
 
 class BotRegistrationView(APIView):
@@ -60,17 +60,12 @@ class BotRegistrationView(APIView):
 
 
 class BotHeartbeatView(APIView):
-    def post(self, request):
-        api_key = request.headers.get('X-API-Key')
-        if not api_key:
-            return Response(
-                {'error': 'Missing API Key'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+    authentication_classes = [BotAuthentication]
+    permission_classes = [AllowAny]
 
-        try:
-            bot = Bot.objects.get(api_key=api_key)
-        except Bot.DoesNotExist:
+    def post(self, request):
+        bot = request.user
+        if not bot or not isinstance(bot, Bot):
             return Response(
                 {'error': 'Invalid API Key'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -86,10 +81,17 @@ class BotHeartbeatView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BotListView(generics.ListAPIView):
+class BotListView(generics.ListCreateAPIView):
     queryset = Bot.objects.filter(is_public=True)
     serializer_class = BotSerializer
-    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        serializer.save(master=self.request.user)
 
 
 class BotDetailView(generics.RetrieveAPIView):

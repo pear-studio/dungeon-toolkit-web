@@ -14,6 +14,15 @@ def user(db):
 
 
 @pytest.fixture
+def other_user(db):
+    return User.objects.create_user(
+        username='otheruser',
+        email='other@example.com',
+        password='OtherPass123'
+    )
+
+
+@pytest.fixture
 def admin_user(db):
     return User.objects.create_superuser(
         username='admin',
