@@ -46,6 +46,17 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* Reset button styles for cards and other custom buttons */
+button[class*="bg-"],
+button[class*="hover:bg-"] {
+  background-color: transparent !important;
+  color: inherit;
+}
+button[class*="bg-"]:hover,
+button[class*="hover:bg-"]:hover {
+  background-color: inherit !important;
+}
+
 *:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;

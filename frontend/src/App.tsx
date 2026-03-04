@@ -8,6 +8,7 @@ import RobotPlazaPage from './pages/robots/RobotPlazaPage'
 import RobotDetailPage from './pages/robots/RobotDetailPage'
 import MyRobotsPage from './pages/robots/MyRobotsPage'
 import RobotFormPage from './pages/robots/RobotFormPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   const isLoading = useAuthStore((s) => s.isLoading)
@@ -58,8 +59,17 @@ function App() {
           }
         />
 
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/" element={<Navigate to="/robots" replace />} />
+        <Route path="*" element={<Navigate to="/robots" replace />} />
       </Routes>
     </BrowserRouter>
   )

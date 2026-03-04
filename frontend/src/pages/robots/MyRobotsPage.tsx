@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bot as BotIcon, Plus, RefreshCw, Trash2, Eye, EyeOff, Circle, ArrowLeft } from 'lucide-react'
+import { Bot as BotIcon, Plus, RefreshCw, Trash2, Eye, EyeOff, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import Header from '../../components/Header'
 
 function RobotCard({ bot, onDelete, onRegenerateKey }: { 
   bot: Bot; 
@@ -130,19 +131,11 @@ export default function MyRobotsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/dashboard')} 
-              className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
-              aria-label="返回仪表盘"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <BotIcon className="w-8 h-8 text-gray-700" aria-hidden="true" />
-            <span className="text-lg font-bold text-gray-900">我的机器人</span>
-          </div>
+      <Header />
+
+      <main className="max-w-6xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">我的机器人</h1>
           <button
             onClick={() => navigate('/robots/my/bind')}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
@@ -152,9 +145,6 @@ export default function MyRobotsPage() {
             绑定机器人
           </button>
         </div>
-      </nav>
-
-      <main className="max-w-6xl mx-auto px-4 py-8">
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
             {error}

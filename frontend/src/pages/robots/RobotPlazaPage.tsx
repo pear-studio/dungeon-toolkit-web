@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bot as BotIcon, Search, Filter, ArrowLeft, Circle } from 'lucide-react'
+import { Bot as BotIcon, Search, Filter, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import Header from '../../components/Header'
 
 function RobotCard({ bot }: { bot: Bot }) {
   const navigate = useNavigate()
@@ -19,9 +20,9 @@ function RobotCard({ bot }: { bot: Bot }) {
   return (
     <button
       onClick={() => navigate(`/robots/${bot.id}`)}
-      className="border border-gray-200 rounded-lg p-4 text-left
-                 hover:border-blue-600 hover:bg-blue-50 transition
-                 focus:outline-none focus:ring-2 focus:ring-blue-600"
+      className="border border-gray-300 rounded-lg p-4 text-left bg-gray-50
+                 hover:border-gray-400 hover:bg-gray-100 transition
+                 focus:outline-none focus:ring-2 focus:ring-gray-400"
     >
       <div className="flex items-start gap-4">
         <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -44,7 +45,6 @@ function RobotCard({ bot }: { bot: Bot }) {
 }
 
 export default function RobotPlazaPage() {
-  const navigate = useNavigate()
   const [bots, setBots] = useState<Bot[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -73,21 +73,7 @@ export default function RobotPlazaPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/dashboard')} 
-              className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
-              aria-label="返回仪表盘"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <BotIcon className="w-8 h-8 text-gray-700" aria-hidden="true" />
-            <span className="text-lg font-bold text-gray-900">机器人广场</span>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex gap-4 mb-6">

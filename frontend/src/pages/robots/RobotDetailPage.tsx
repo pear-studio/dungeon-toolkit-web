@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { Bot as BotIcon, ArrowLeft, Circle } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { Bot as BotIcon, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import Header from '../../components/Header'
 
 export default function RobotDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [bot, setBot] = useState<Bot | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -47,13 +47,7 @@ export default function RobotDetailPage() {
   if (error || !bot) {
     return (
       <div className="min-h-screen bg-white">
-        <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
-          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
-            <button onClick={() => navigate('/robots')} className="text-gray-700 hover:text-gray-900">
-              ← 返回
-            </button>
-          </div>
-        </nav>
+        <Header />
         <div className="max-w-6xl mx-auto px-4 py-8 text-center text-red-600">
           {error || '机器人不存在'}
         </div>
@@ -63,18 +57,7 @@ export default function RobotDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
-          <button 
-            onClick={() => navigate('/robots')} 
-            className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
-            aria-label="返回机器人广场"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <span className="ml-4 text-lg font-bold text-gray-900">机器人详情</span>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="border border-gray-200 rounded-lg p-6">

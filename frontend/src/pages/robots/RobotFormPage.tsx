@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Bot } from 'lucide-react'
 import { botApi } from '../../lib/api'
+import Header from '../../components/Header'
 
 export default function RobotFormPage() {
   const navigate = useNavigate()
@@ -33,21 +33,12 @@ export default function RobotFormPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center">
-          <button 
-            onClick={() => navigate('/robots/my')} 
-            className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
-            aria-label="返回我的机器人"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <Bot className="w-8 h-8 text-gray-700 ml-4" aria-hidden="true" />
-          <span className="ml-4 text-lg font-bold text-gray-900">绑定机器人</span>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-2xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">绑定机器人</h1>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
