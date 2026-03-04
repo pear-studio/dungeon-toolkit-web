@@ -4,6 +4,10 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import RobotPlazaPage from './pages/robots/RobotPlazaPage'
+import RobotDetailPage from './pages/robots/RobotDetailPage'
+import MyRobotsPage from './pages/robots/MyRobotsPage'
+import RobotFormPage from './pages/robots/RobotFormPage'
 
 function App() {
   const isLoading = useAuthStore((s) => s.isLoading)
@@ -30,6 +34,34 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/robots" element={<RobotPlazaPage />} />
+        <Route path="/robots/:id" element={<RobotDetailPage />} />
+
+        <Route
+          path="/robots/my"
+          element={
+            <ProtectedRoute>
+              <MyRobotsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/robots/my/new"
+          element={
+            <ProtectedRoute>
+              <RobotFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/robots/my/edit/:id"
+          element={
+            <ProtectedRoute>
+              <RobotFormPage />
             </ProtectedRoute>
           }
         />

@@ -8,7 +8,6 @@ const api = axios.create({
   },
 })
 
-// 请求拦截：自动带上 JWT token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
   if (token) {
@@ -17,8 +16,6 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// 响应拦截：401 时清除 token 并跳转登录
-// 注意：登录/注册接口本身返回 401 时不应跳转，只有"已登录但 token 失效"才跳转
 const AUTH_PATHS = ['/auth/login/', '/auth/register/', '/auth/token/refresh/']
 
 api.interceptors.response.use(
@@ -38,133 +35,58 @@ api.interceptors.response.use(
 
 // ── 类型定义 ──────────────────────────────────────────────
 
-export interface Character {
+export interface Bot {
   id: string
-  name: string
-  gender: string
-  age: number | null
-  appearance: string
-  backstory: string
-  ruleset_slug: string
-  race_slug: string
-  subrace_slug: string | null
-  class_slug: string
-  background_slug: string
-  alignment: string
-  level: number
-  experience_points: number
-  ability_scores: Record<string, number>
-  strength: number
-  dexterity: number
-  constitution: number
-  intelligence: number
-  wisdom: number
-  charisma: number
-  personality_trait: string
-  ideal: string
-  bond: string
-  flaw: string
+  bot_id: string
+  nickname: string
+  master: string
+  master_qq: string
+  version: string
+  description: string
   is_public: boolean
-  share_token: string
+  status: 'online' | 'offline' | 'unknown'
+  last_seen: string | null
   created_at: string
   updated_at: string
 }
 
-export interface Race {
-  id: string
-  slug: string
-  name: string
-  has_subraces: boolean
-  subraces?: { id: string; slug: string; name: string }[]
-  traits: Record<string, unknown>
+export interface LoginData {
+  identifier: string
+  password: string
 }
 
-export interface CharClass {
-  id: string
-  slug: string
-  name: string
-  is_spellcaster: boolean
-  hit_die: number
-  primary_ability: string
-  saving_throws: string[]
-  skill_choices_count?: number
-  skill_choices?: string[]
-  level_features?: Record<string, Array<{ name: string; description: string }>>
-  starting_equipment?: Array<{ option: string; items: string[] }>
-  subclasses?: Subclass[]
+export interface RegisterData {
+  email: string
+  username: string
+  password: string
 }
 
-export interface Subclass {
-  id: string
-  slug: string
-  name: string
-  name_en: string
-  description: string
-  features?: Record<string, Array<{ name: string; description: string }>>
-}
-
-export interface Background {
-  id: string
-  slug: string
-  name: string
-  skill_proficiencies: string[]
-  feature_name: string
-  feature_description: string
-  starting_equipment: string[]
-  tool_proficiencies?: string[]
-  languages_count?: number
-  starting_gold?: number
-  personality_traits?: string[]
-  ideals?: string[]
-  bonds?: string[]
-  flaws?: string[]
-}
-
-export interface Item {
-  id: string
-  slug: string
-  name: string
-  name_en: string
-  category: string
-  category_display: string
-  cost: string
-  weight: number
-  damage?: string
-  damage_type?: string
-  properties?: string[]
-  ac?: number
-  description?: string
+export interface AuthResponse {
+  user: {
+    id: string
+    email: string
+    username: string
+  }
+  access: string
+  refresh: string
 }
 
 // ── API 方法 ──────────────────────────────────────────────
 
-// 角色
-export const characterApi = {
-  list: () => api.get<Character[]>('/characters/'),
-  get: (id: string) => api.get<Character>(`/characters/${id}/`),
-  create: (data: Partial<Character>) => api.post<Character>('/characters/', data),
-  update: (id: string, data: Partial<Character>) => api.patch<Character>(`/characters/${id}/`, data),
-  delete: (id: string) => api.delete(`/characters/${id}/`),
-  toggleShare: (id: string) => api.post<Character>(`/characters/${id}/toggle_share/`),
+export const authApi = {
+  login: (data: LoginData) => api.post<AuthResponse>('/auth/login/', data),
+  register: (data: RegisterData) => api.post<AuthResponse>('/auth/register/', data),
+  me: () => api.get('/auth/me/'),
+  refresh: (refresh: string) => api.post('/auth/refresh/', { refresh }),
 }
 
-// DRF 分页响应包装
-export interface PagedResponse<T> {
-  count: number
-  next: string | null
-  previous: string | null
-  results: T[]
-}
-
-// 游戏数据
-export const gamedataApi = {
-  races: () => api.get<PagedResponse<Race>>('/gamedata/races/'),
-  race: (slug: string) => api.get<Race>(`/gamedata/races/${slug}/`),
-  classes: () => api.get<PagedResponse<CharClass>>('/gamedata/classes/'),
-  backgrounds: () => api.get<PagedResponse<Background>>('/gamedata/backgrounds/'),
-  items: (category?: string) => api.get<PagedResponse<Item>>('/gamedata/items/', {
-    params: category ? { category } : undefined,
-  }),
+export const botApi = {
+  list: (params?: { search?: string; status?: string }) =>
+    api.get<{ results: Bot[] }>('/bots/', { params }),
+  get: (id: string) => api.get<Bot>(`/bots/${id}/`),
+  create: (data: Partial<Bot>) => api.post<Bot>('/bots/', data),
+  update: (id: string, data: Partial<Bot>) => api.put<Bot>(`/bots/${id}/update/`, data),
+  delete: (id: string) => api.delete(`/bots/${id}/delete/`),
 }
 
 export default api

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django_filters',
     # 本项目 Apps
     'apps.users',
+    'apps.bots',
     'apps.gamedata',
     'apps.rules',
     'apps.aigc',
