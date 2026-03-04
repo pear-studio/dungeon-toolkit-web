@@ -2,13 +2,15 @@
 # ============================================================
 # dev.sh - 统一开发脚本
 # 用法（在 WSL Ubuntu 中执行）：
-#   bash scripts/dev.sh rebuild     # 重建环境（停止容器、重新构建、迁移数据）
-#   bash scripts/dev.sh test        # 运行测试
-#   bash scripts/dev.sh lint        # 代码检查
-#   bash scripts/dev.sh check       # 运行测试 + 代码检查
-#   bash scripts/dev.sh start       # 启动开发环境
-#   bash scripts/dev.sh stop        # 停止开发环境
-#   bash scripts/dev.sh status      # 查看环境状态
+#   bash scripts/dev.sh rebuild           # 重建环境（停止容器、重新构建、迁移数据）
+#   bash scripts/dev.sh test              # 运行测试
+#   bash scripts/dev.sh lint              # 代码检查
+#   bash scripts/dev.sh check             # 运行测试 + 代码检查
+#   bash scripts/dev.sh start             # 启动开发环境
+#   bash scripts/dev.sh stop              # 停止开发环境
+#   bash scripts/dev.sh status            # 查看环境状态
+#   bash scripts/dev.sh restart-frontend  # 只重启前端服务（修改网页布局时使用）
+#   bash scripts/dev.sh restart-backend   # 只重启后端服务（修改后端代码时使用）
 # ============================================================
 
 set -e
@@ -125,23 +127,45 @@ run_check() {
   run_lint
 }
 
+restart_frontend() {
+  echo ""
+  echo "▶ 重启前端服务..."
+  $DC -f docker-compose.dev.yml restart frontend
+  echo "  ✓ 前端已重启"
+  echo ""
+  echo "  访问：前端：http://localhost:5173"
+}
+
+restart_backend() {
+  echo ""
+  echo "▶ 重启后端服务..."
+  $DC -f docker-compose.dev.yml restart backend
+  echo "  ✓ 后端已重启"
+  echo ""
+  echo "  访问：后端：http://localhost:8000"
+}
+
 show_help() {
-  echo "用法: $0 <命令>"
+  echo "用法：$0 <命令>"
   echo ""
   echo "命令:"
-  echo "  rebuild  重建开发环境（停止、构建、迁移、导入数据）"
-  echo "  start    启动开发环境"
-  echo "  stop     停止开发环境"
-  echo "  status   查看环境状态"
-  echo "  test     运行测试"
-  echo "  lint     代码检查"
-  echo "  check    运行测试 + 代码检查"
-  echo "  help     显示帮助"
+  echo "  rebuild           重建开发环境（停止、构建、迁移、导入数据）"
+  echo "  start             启动开发环境"
+  echo "  stop              停止开发环境"
+  echo "  status            查看环境状态"
+  echo "  test              运行测试"
+  echo "  lint              代码检查"
+  echo "  check             运行测试 + 代码检查"
+  echo "  restart-frontend  只重启前端服务（修改网页布局时使用）"
+  echo "  restart-backend   只重启后端服务（修改后端代码时使用）"
+  echo "  help              显示帮助"
   echo ""
   echo "示例:"
   echo "  bash scripts/dev.sh rebuild"
   echo "  bash scripts/dev.sh test"
   echo "  bash scripts/dev.sh check"
+  echo "  bash scripts/dev.sh restart-frontend"
+  echo "  bash scripts/dev.sh restart-backend"
 }
 
 case "$COMMAND" in
@@ -166,11 +190,17 @@ case "$COMMAND" in
   check)
     run_check
     ;;
+  restart-frontend)
+    restart_frontend
+    ;;
+  restart-backend)
+    restart_backend
+    ;;
   help|--help|-h|"")
     show_help
     ;;
   *)
-    echo "未知命令: $COMMAND"
+    echo "未知命令：$COMMAND"
     echo ""
     show_help
     exit 1

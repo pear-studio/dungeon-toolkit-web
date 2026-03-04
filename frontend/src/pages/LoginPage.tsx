@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
+import { Sword } from 'lucide-react'
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
@@ -41,9 +42,9 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md px-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">⚔️</div>
+          <Sword className="w-16 h-16 text-amber-400 mx-auto mb-3" aria-hidden="true" />
           <h1 className="text-3xl font-bold text-amber-400">Dungeon Toolkit</h1>
-          <p className="text-slate-400 mt-1">你的 D&D 工具箱</p>
+          <p className="text-slate-300 mt-1">你的 D&D 工具箱</p>
         </div>
 
         {/* 表单卡片 */}
@@ -68,7 +69,7 @@ export default function LoginPage() {
                 required
                 placeholder="your@email.com 或 用户名"
                 className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1
+                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
                            focus:ring-amber-500 transition"
               />
             </div>
@@ -84,7 +85,7 @@ export default function LoginPage() {
                 required
                 placeholder="至少 8 位"
                 className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1
+                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
                            focus:ring-amber-500 transition"
               />
             </div>
@@ -94,16 +95,16 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/50
                          text-slate-900 font-semibold rounded-lg transition cursor-pointer
-                         disabled:cursor-not-allowed"
+                         disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               {loading ? '登录中...' : '登录'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
-            还没有账户？{' '}
-            <Link to="/register" className="text-amber-400 hover:text-amber-300 font-medium">
-              立即注册
+          <p className="mt-6 text-center text-sm text-slate-300">
+            已有账户？{' '}
+            <Link to="/login" className="text-amber-400 hover:text-amber-300 font-medium">
+              直接登录
             </Link>
           </p>
         </div>

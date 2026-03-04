@@ -42,18 +42,21 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 无障碍焦点样式：所有可交互元素必须显示可见焦点环 */
+*:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* 为使用 Tailwind focus:outline-none 的元素提供替代焦点样式 */
+button.focus\:outline-none:focus-visible,
+input.focus\:outline-none:focus-visible,
+select.focus\:outline-none:focus-visible,
+textarea.focus\:outline-none:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
 }
