@@ -65,9 +65,10 @@ rebuild_dev() {
 
   echo ""
   echo "▶ [2/4] 等待数据库就绪..."
+  sleep 5
   RETRY=0
   MAX_RETRY=30
-  until $DC exec -T db pg_isready -U "${POSTGRES_USER:-dungeon_toolkit}" > /dev/null 2>&1; do
+  until docker exec dungeon-toolkit-web-db-1 pg_isready -U "${POSTGRES_USER:-dungeon_toolkit}" > /dev/null 2>&1; do
     RETRY=$((RETRY + 1))
     if [ $RETRY -ge $MAX_RETRY ]; then
       echo "❌ 数据库超时"
