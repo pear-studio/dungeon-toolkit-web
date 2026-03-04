@@ -59,6 +59,55 @@ class BotRegistrationView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
+class BotBindView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        bot_id = request.data.get('bot_id')
+        if not bot_id:
+            return Response(
+                {'bot_id': '请输入机器人QQ号'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            bot = Bot.objects.get(bot_id=bot_id)
+        except Bot.DoesNotExist:
+            return Response(
+                {'detail': '机器人不存在，请确保机器人已通过注册API登记'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if bot.master == request.user:
+            return Response(
+                {'detail': '你已经绑定了这个机器人'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        bot.master = request.user
+        bot.save()
+
+        return Response({'message': '绑定成功'})
+
+
+class BotRegenerateKeyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            bot = Bot.objects.get(pk=pk, master=request.user)
+        except Bot.DoesNotExist:
+            return Response(
+                {'detail': '机器人不存在或无权限'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        bot.api_key = secrets.token_hex(32)
+        bot.save()
+
+        return Response({'api_key': bot.api_key})
+
+
 class BotHeartbeatView(APIView):
     authentication_classes = [BotAuthentication]
     permission_classes = [AllowAny]
@@ -93,21 +142,17 @@ class BotListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(master=self.request.user)
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return BotSerializer
+        return BotSerializer
+
 
 class BotDetailView(generics.RetrieveAPIView):
     queryset = Bot.objects.all()
     serializer_class = BotSerializer
     permission_classes = [AllowAny]
     lookup_field = 'id'
-
-
-class BotCreateView(generics.CreateAPIView):
-    queryset = Bot.objects.all()
-    serializer_class = BotSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(master=self.request.user)
 
 
 class BotUpdateView(generics.UpdateAPIView):
@@ -124,6 +169,14 @@ class BotDeleteView(generics.DestroyAPIView):
     queryset = Bot.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
+
+    def get_queryset(self):
+        return Bot.objects.filter(master=self.request.user)
+
+
+class MyBotListView(generics.ListAPIView):
+    serializer_class = BotSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Bot.objects.filter(master=self.request.user)

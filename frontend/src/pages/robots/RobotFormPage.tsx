@@ -1,73 +1,33 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { botApi } from '../../lib/api'
 
 export default function RobotFormPage() {
-  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const isEdit = Boolean(id)
 
-  const [loading, setLoading] = useState(isEdit)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const [form, setForm] = useState({
     bot_id: '',
-    nickname: '',
-    master_qq: '',
-    version: '',
-    description: '',
-    is_public: true,
   })
-
-  useEffect(() => {
-    if (isEdit && id) loadBot()
-  }, [id])
-
-  const loadBot = async () => {
-    try {
-      const res = await botApi.get(id!)
-      const bot = res.data
-      setForm({
-        bot_id: bot.bot_id,
-        nickname: bot.nickname,
-        master_qq: bot.master_qq,
-        version: bot.version || '',
-        description: bot.description || '',
-        is_public: bot.is_public,
-      })
-    } catch (e: any) {
-      setError(e.response?.data?.detail || '加载失败')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
     setError('')
+    setSuccess('')
 
     try {
-      if (isEdit && id) {
-        await botApi.update(id, form)
-      } else {
-        await botApi.create(form)
-      }
-      navigate('/robots/my')
+      await botApi.bind(form.bot_id)
+      setSuccess('绑定成功！')
+      setTimeout(() => navigate('/robots/my'), 1500)
     } catch (e: any) {
-      setError(e.response?.data?.detail || e.response?.data?.message || '保存失败')
+      setError(e.response?.data?.detail || e.response?.data?.message || '绑定失败')
     } finally {
       setSubmitting(false)
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-400">加载中...</div>
-      </div>
-    )
   }
 
   return (
@@ -77,9 +37,7 @@ export default function RobotFormPage() {
           <button onClick={() => navigate('/robots/my')} className="text-slate-400 hover:text-white">
             ← 返回
           </button>
-          <span className="ml-4 text-lg font-bold text-amber-400">
-            {isEdit ? '编辑机器人' : '添加机器人'}
-          </span>
+          <span className="ml-4 text-lg font-bold text-amber-400">绑定机器人</span>
         </div>
       </nav>
 
@@ -88,6 +46,12 @@ export default function RobotFormPage() {
           {error && (
             <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400">
+              {success}
             </div>
           )}
 
@@ -102,80 +66,11 @@ export default function RobotFormPage() {
               required
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
                          text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-              placeholder="机器人的QQ号"
+              placeholder="输入要绑定的机器人QQ号"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              机器人昵称 *
-            </label>
-            <input
-              type="text"
-              value={form.nickname}
-              onChange={(e) => setForm({ ...form, nickname: e.target.value })}
-              required
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
-                         text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-              placeholder="给机器人起个名字"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              你的QQ号 *
-            </label>
-            <input
-              type="text"
-              value={form.master_qq}
-              onChange={(e) => setForm({ ...form, master_qq: e.target.value })}
-              required
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
-                         text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-              placeholder="你的QQ号"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              版本
-            </label>
-            <input
-              type="text"
-              value={form.version}
-              onChange={(e) => setForm({ ...form, version: e.target.value })}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
-                         text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-              placeholder="如: v1.0.0"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              描述
-            </label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              rows={4}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
-                         text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-none"
-              placeholder="介绍一下你的机器人有什么功能"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="is_public"
-              checked={form.is_public}
-              onChange={(e) => setForm({ ...form, is_public: e.target.checked })}
-              className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-amber-500
-                         focus:ring-amber-500 focus:ring-offset-0"
-            />
-            <label htmlFor="is_public" className="text-slate-300">
-              公开显示在机器人广场
-            </label>
+            <p className="mt-2 text-sm text-slate-500">
+              输入机器人运行后通过注册 API 登记的 QQ 号，即可将其绑定到你的账号。
+            </p>
           </div>
 
           <div className="flex gap-4 pt-4">
@@ -193,7 +88,7 @@ export default function RobotFormPage() {
               className="flex-1 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg
                          transition disabled:opacity-50"
             >
-              {submitting ? '保存中...' : '保存'}
+              {submitting ? '绑定中...' : '绑定'}
             </button>
           </div>
         </form>

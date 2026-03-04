@@ -47,6 +47,7 @@ export interface Bot {
   status: 'online' | 'offline' | 'unknown'
   last_seen: string | null
   created_at: string
+  api_key?: string
   updated_at: string
 }
 
@@ -83,9 +84,10 @@ export const authApi = {
 export const botApi = {
   list: (params?: { search?: string; status?: string }) =>
     api.get<{ results: Bot[] }>('/bots/', { params }),
+  listMy: () => api.get<{ results: Bot[] }>('/bots/my/'),
   get: (id: string) => api.get<Bot>(`/bots/${id}/`),
-  create: (data: Partial<Bot>) => api.post<Bot>('/bots/', data),
-  update: (id: string, data: Partial<Bot>) => api.put<Bot>(`/bots/${id}/update/`, data),
+  bind: (botId: string) => api.post<{ message: string }>('/bots/bind/', { bot_id: botId }),
+  regenerateKey: (id: string) => api.post<{ api_key: string }>(`/bots/${id}/regenerate-key/`),
   delete: (id: string) => api.delete(`/bots/${id}/delete/`),
 }
 

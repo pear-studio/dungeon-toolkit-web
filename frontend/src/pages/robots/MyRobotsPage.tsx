@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { botApi, type Bot } from '../../lib/api'
-import { useAuthStore } from '../../stores/authStore'
 
-function RobotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string) => void }) {
+function RobotCard({ bot, onDelete, onRegenerateKey }: { 
+  bot: Bot; 
+  onDelete: (id: string) => void;
+  onRegenerateKey: (id: string) => void;
+}) {
   const navigate = useNavigate()
+  const [showKey, setShowKey] = useState(false)
+
   const statusColors = {
     online: 'bg-green-500',
     offline: 'bg-gray-500',
@@ -32,21 +37,40 @@ function RobotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string) => void
             )}
           </div>
         </div>
-        <div className="flex gap-2 ml-4">
-          <button
-            onClick={() => navigate(`/robots/my/edit/${bot.id}`)}
-            className="px-3 py-1.5 text-sm text-slate-400 hover:text-white border border-slate-600
-                       hover:border-slate-400 rounded-lg transition"
-          >
-            编辑
-          </button>
-          <button
-            onClick={() => onDelete(bot.id)}
-            className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 border border-red-900
-                       hover:border-red-700 rounded-lg transition"
-          >
-            删除
-          </button>
+      </div>
+
+      <div className="mt-4 pt-4 border-t border-slate-700">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <p className="text-xs text-slate-500 mb-1">API Key</p>
+            <div className="flex items-center gap-2">
+              <code className="text-sm text-amber-400 bg-slate-900 px-2 py-1 rounded flex-1 truncate">
+                {showKey ? bot.api_key : '••••••••••••••••••••••••••••••••'}
+              </code>
+              <button
+                onClick={() => setShowKey(!showKey)}
+                className="text-xs text-slate-400 hover:text-white px-2"
+              >
+                {showKey ? '隐藏' : '显示'}
+              </button>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onRegenerateKey(bot.id)}
+              className="px-3 py-1.5 text-sm text-slate-400 hover:text-white border border-slate-600
+                         hover:border-slate-400 rounded-lg transition"
+            >
+              刷新
+            </button>
+            <button
+              onClick={() => onDelete(bot.id)}
+              className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 border border-red-900
+                         hover:border-red-700 rounded-lg transition"
+            >
+              解绑
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -55,7 +79,6 @@ function RobotCard({ bot, onDelete }: { bot: Bot; onDelete: (id: string) => void
 
 export default function MyRobotsPage() {
   const navigate = useNavigate()
-  const user = useAuthStore((s) => s.user)
   const [bots, setBots] = useState<Bot[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -66,11 +89,8 @@ export default function MyRobotsPage() {
 
   const loadBots = async () => {
     try {
-      const res = await botApi.list()
-      const myBots = res.data.results.filter(
-        (bot) => bot.master === user?.username || bot.master === user?.id
-      )
-      setBots(myBots)
+      const res = await botApi.listMy()
+      setBots(res.data.results || res.data)
     } catch (e: any) {
       setError(e.response?.data?.detail || '加载失败')
     } finally {
@@ -79,12 +99,22 @@ export default function MyRobotsPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('确定要删除这个机器人吗？')) return
+    if (!confirm('确定要解绑这个机器人吗？')) return
     try {
       await botApi.delete(id)
       setBots(bots.filter((b) => b.id !== id))
     } catch (e: any) {
-      alert(e.response?.data?.detail || '删除失败')
+      alert(e.response?.data?.detail || '解绑失败')
+    }
+  }
+
+  const handleRegenerateKey = async (id: string) => {
+    if (!confirm('确定要刷新 API Key 吗？刷新后旧 Key 将失效。')) return
+    try {
+      const res = await botApi.regenerateKey(id)
+      setBots(bots.map(b => b.id === id ? { ...b, api_key: res.data.api_key } : b))
+    } catch (e: any) {
+      alert(e.response?.data?.detail || '刷新失败')
     }
   }
 
@@ -100,11 +130,11 @@ export default function MyRobotsPage() {
             <span className="text-lg font-bold text-amber-400">我的机器人</span>
           </div>
           <button
-            onClick={() => navigate('/robots/my/new')}
+            onClick={() => navigate('/robots/my/bind')}
             className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg
                        transition"
           >
-            + 添加机器人
+            + 绑定机器人
           </button>
         </div>
       </nav>
@@ -133,19 +163,27 @@ export default function MyRobotsPage() {
         ) : bots.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🤖</div>
-            <p className="text-slate-400 mb-4">你还没有登记机器人</p>
+            <p className="text-slate-400 mb-4">你还没有绑定机器人</p>
+            <p className="text-sm text-slate-500 mb-6">
+              机器人通过注册 API 登记后，你可以在这里绑定管理
+            </p>
             <button
-              onClick={() => navigate('/robots/my/new')}
+              onClick={() => navigate('/robots/my/bind')}
               className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg
                          transition"
             >
-              添加第一个机器人
+              绑定第一个机器人
             </button>
           </div>
         ) : (
           <div className="space-y-4">
             {bots.map((bot) => (
-              <RobotCard key={bot.id} bot={bot} onDelete={handleDelete} />
+              <RobotCard 
+                key={bot.id} 
+                bot={bot} 
+                onDelete={handleDelete}
+                onRegenerateKey={handleRegenerateKey}
+              />
             ))}
           </div>
         )}

@@ -50,15 +50,7 @@ function App() {
           }
         />
         <Route
-          path="/robots/my/new"
-          element={
-            <ProtectedRoute>
-              <RobotFormPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/robots/my/edit/:id"
+          path="/robots/my/bind"
           element={
             <ProtectedRoute>
               <RobotFormPage />
