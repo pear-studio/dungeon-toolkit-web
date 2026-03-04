@@ -6,9 +6,9 @@ import { botApi, type Bot } from '../../lib/api'
 function RobotCard({ bot }: { bot: Bot }) {
   const navigate = useNavigate()
   const statusColors = {
-    online: 'text-green-400',
+    online: 'text-green-600',
     offline: 'text-gray-400',
-    unknown: 'text-yellow-400',
+    unknown: 'text-yellow-600',
   }
   const statusTexts = {
     online: '在线',
@@ -19,23 +19,23 @@ function RobotCard({ bot }: { bot: Bot }) {
   return (
     <button
       onClick={() => navigate(`/robots/${bot.id}`)}
-      className="bg-slate-800 border border-slate-700 rounded-xl p-5 text-left
-                 hover:border-amber-500/50 transition
-                 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+      className="border border-gray-200 rounded-lg p-4 text-left
+                 hover:border-blue-600 hover:bg-blue-50 transition
+                 focus:outline-none focus:ring-2 focus:ring-blue-600"
     >
       <div className="flex items-start gap-4">
-        <div className="w-14 h-14 bg-slate-700 rounded-xl flex items-center justify-center">
-          <BotIcon className="w-8 h-8 text-slate-300" aria-hidden="true" />
+        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+          <BotIcon className="w-6 h-6 text-gray-600" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-white truncate">{bot.nickname}</h3>
+            <h3 className="font-medium text-gray-900 truncate">{bot.nickname}</h3>
             <Circle className={`w-2 h-2 fill-current ${statusColors[bot.status]}`} aria-hidden="true" />
-            <span className="sr-only">{statusTexts[bot.status]}</span>
+            <span className="text-xs text-gray-500">{statusTexts[bot.status]}</span>
           </div>
-          <p className="text-sm text-slate-300">QQ: {bot.bot_id}</p>
+          <p className="text-sm text-gray-600">QQ: {bot.bot_id}</p>
           {bot.description && (
-            <p className="text-sm text-slate-300 mt-1 line-clamp-2">{bot.description}</p>
+            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{bot.description}</p>
           )}
         </div>
       </div>
@@ -72,19 +72,19 @@ export default function RobotPlazaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
+    <div className="min-h-screen bg-white">
+      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/dashboard')} 
-              className="text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg p-2"
+              className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
               aria-label="返回仪表盘"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <BotIcon className="w-8 h-8 text-amber-400" aria-hidden="true" />
-            <span className="text-lg font-bold text-amber-400">机器人广场</span>
+            <BotIcon className="w-8 h-8 text-gray-700" aria-hidden="true" />
+            <span className="text-lg font-bold text-gray-900">机器人广场</span>
           </div>
         </div>
       </nav>
@@ -92,23 +92,23 @@ export default function RobotPlazaPage() {
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" aria-hidden="true" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
             <input
               type="text"
               placeholder="搜索机器人..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2
-                         text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2
+                         text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
             />
           </div>
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" aria-hidden="true" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-8 py-2
-                         text-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+              className="border border-gray-300 rounded-lg pl-10 pr-8 py-2
+                         text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
             >
               <option value="">全部状态</option>
               <option value="online">在线</option>
@@ -118,7 +118,7 @@ export default function RobotPlazaPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400" role="alert">
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
             {error}
           </div>
         )}
@@ -126,12 +126,12 @@ export default function RobotPlazaPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-slate-800 border border-slate-700 rounded-xl p-5 animate-pulse">
+              <div key={i} className="border border-gray-200 rounded-lg p-4 animate-pulse">
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-slate-700 rounded-xl" />
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-slate-700 rounded w-2/3" />
-                    <div className="h-3 bg-slate-700 rounded w-1/2" />
+                    <div className="h-4 bg-gray-100 rounded w-2/3" />
+                    <div className="h-3 bg-gray-100 rounded w-1/2" />
                   </div>
                 </div>
               </div>
@@ -139,8 +139,8 @@ export default function RobotPlazaPage() {
           </div>
         ) : bots.length === 0 ? (
           <div className="text-center py-20">
-            <BotIcon className="w-16 h-16 text-slate-500 mx-auto mb-4" aria-hidden="true" />
-            <p className="text-slate-300">暂无机器人</p>
+            <BotIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" aria-hidden="true" />
+            <p className="text-gray-600">暂无机器人</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

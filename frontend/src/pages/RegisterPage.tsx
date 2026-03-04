@@ -2,7 +2,6 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-import { Sword } from 'lucide-react'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -38,34 +37,23 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900">
-      {/* 背景装饰 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative w-full max-w-md px-4 py-8">
-        {/* Logo */}
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full max-w-md px-4 py-8">
         <div className="text-center mb-8">
-          <Sword className="w-16 h-16 text-amber-400 mx-auto mb-3" aria-hidden="true" />
-          <h1 className="text-3xl font-bold text-amber-400">Dungeon Toolkit</h1>
-          <p className="text-slate-300 mt-1">开始你的冒险之旅</p>
+          <h1 className="text-2xl font-bold text-gray-900">Dungeon Toolkit</h1>
+          <p className="text-gray-600 mt-2">创建账户</p>
         </div>
 
-        {/* 表单卡片 */}
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-xl font-semibold text-white mb-6">创建账户</h2>
-
+        <div className="border border-gray-200 rounded-lg p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 邮箱
               </label>
               <input
@@ -74,32 +62,32 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
-                           focus:ring-amber-500 transition"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
+                           focus:ring-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                冒险者名称（用户名）
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                用户名
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder="你的专属名号"
+                placeholder="请输入用户名"
                 minLength={2}
                 maxLength={50}
-                className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
-                           focus:ring-amber-500 transition"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
+                           focus:ring-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 密码
               </label>
               <input
@@ -108,14 +96,14 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="至少 8 位"
-                className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
-                           focus:ring-amber-500 transition"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
+                           focus:ring-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 确认密码
               </label>
               <input
@@ -123,28 +111,28 @@ export default function RegisterPage() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required
-                placeholder="再输一次"
-                className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white
-                           placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2
-                           focus:ring-amber-500 transition"
+                placeholder="再次输入密码"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
+                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
+                           focus:ring-blue-600"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/50
-                         text-slate-900 font-semibold rounded-lg transition cursor-pointer
-                         disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300
+                         text-white font-medium rounded-lg transition
+                         disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-600"
             >
-              {loading ? '注册中...' : '开始冒险'}
+              {loading ? '注册中...' : '注册'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-300">
+          <p className="mt-6 text-center text-sm text-gray-600">
             已有账户？{' '}
-            <Link to="/login" className="text-amber-400 hover:text-amber-300 font-medium">
-              直接登录
+            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              立即登录
             </Link>
           </p>
         </div>

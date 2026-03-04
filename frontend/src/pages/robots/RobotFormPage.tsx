@@ -32,37 +32,37 @@ export default function RobotFormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
+    <div className="min-h-screen bg-white">
+      <nav className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 h-16 flex items-center">
           <button 
             onClick={() => navigate('/robots/my')} 
-            className="text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg p-2"
+            className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-2"
             aria-label="返回我的机器人"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <Bot className="w-8 h-8 text-amber-400 ml-4" aria-hidden="true" />
-          <span className="ml-4 text-lg font-bold text-amber-400">绑定机器人</span>
+          <Bot className="w-8 h-8 text-gray-700 ml-4" aria-hidden="true" />
+          <span className="ml-4 text-lg font-bold text-gray-900">绑定机器人</span>
         </div>
       </nav>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400" role="alert">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400" role="alert">
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700" role="alert">
               {success}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               机器人 QQ 号 *
             </label>
             <input
@@ -70,11 +70,11 @@ export default function RobotFormPage() {
               value={form.bot_id}
               onChange={(e) => setForm({ ...form, bot_id: e.target.value })}
               required
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2
-                         text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2
+                         text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
               placeholder="输入要绑定的机器人 QQ 号"
             />
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-gray-500">
               输入机器人运行后通过注册 API 登记的 QQ 号，即可将其绑定到你的账号。
             </p>
           </div>
@@ -83,16 +83,16 @@ export default function RobotFormPage() {
             <button
               type="button"
               onClick={() => navigate('/robots/my')}
-              className="flex-1 px-6 py-3 border border-slate-700 text-slate-300 font-medium rounded-lg
-                         hover:border-slate-500 transition focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg
+                         hover:border-gray-400 transition focus:outline-none focus:ring-2 focus:ring-blue-600"
             >
               取消
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg
-                         transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
+                         transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
             >
               {submitting ? '绑定中...' : '绑定'}
             </button>
