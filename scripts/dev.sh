@@ -17,6 +17,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
+if [ -f backend/.env ]; then
+  set -a
+  source backend/.env
+  set +a
+fi
+
 COMMAND="${1:-help}"
 
 if command -v docker &>/dev/null && docker compose version &>/dev/null 2>&1; then
@@ -65,7 +71,6 @@ rebuild_dev() {
 
   echo ""
   echo "▶ [2/4] 等待数据库就绪..."
-  sleep 5
   RETRY=0
   MAX_RETRY=30
   until docker exec dungeon-toolkit-web-db-1 pg_isready -U "${POSTGRES_USER:-dungeon_toolkit}" > /dev/null 2>&1; do
