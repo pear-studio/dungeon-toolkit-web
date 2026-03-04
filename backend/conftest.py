@@ -1,6 +1,5 @@
 import pytest
 from django.contrib.auth import get_user_model
-from apps.characters.models import Character
 
 User = get_user_model()
 
@@ -20,18 +19,6 @@ def admin_user(db):
         username='admin',
         email='admin@example.com',
         password='AdminPass123'
-    )
-
-
-@pytest.fixture
-def character(db, user):
-    return Character.objects.create(
-        owner=user,
-        name='TestCharacter',
-        race_slug='human',
-        class_slug='fighter',
-        background_slug='soldier',
-        ruleset_slug='dnd5e_2014',
     )
 
 

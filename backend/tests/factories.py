@@ -1,7 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
 from apps.users.models import User
-from apps.characters.models import Character
 from apps.gamedata.models import Ruleset, Race, CharClass, Background
 
 
@@ -69,43 +68,3 @@ class BackgroundFactory(DjangoModelFactory):
     feature_description = '特性描述'
     starting_equipment = []
     starting_gold = 0
-
-
-class CharacterFactory(DjangoModelFactory):
-    class Meta:
-        model = Character
-
-    owner = factory.SubFactory(UserFactory)
-    name = factory.Sequence(lambda n: f'角色_{n}')
-    gender = 'unknown'
-    age = 25
-    appearance = ''
-    backstory = ''
-    ruleset_slug = 'dnd5e_2014'
-    race_slug = 'human'
-    subrace_slug = ''
-    class_slug = 'fighter'
-    background_slug = 'soldier'
-    level = 1
-    experience_points = 0
-    ability_method = 'standard_array'
-    strength = 10
-    dexterity = 10
-    constitution = 10
-    intelligence = 10
-    wisdom = 10
-    charisma = 10
-    skill_proficiencies = []
-    alignment = ''
-    personality_trait = ''
-    ideal = ''
-    bond = ''
-    flaw = ''
-    known_spells = []
-    prepared_spells = []
-    inventory = []
-    copper = 0
-    silver = 0
-    gold = 0
-    platinum = 0
-    is_public = False

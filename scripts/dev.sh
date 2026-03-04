@@ -84,11 +84,6 @@ rebuild_dev() {
   echo "  ✓ 迁移完成"
 
   echo ""
-  echo "▶ [4/4] 导入游戏数据..."
-  $DC exec -T backend python scripts/import_gamedata.py
-  echo "  ✓ 数据导入完成"
-
-  echo ""
   echo "🎉 重建完成！"
   echo ""
   echo "  访问："

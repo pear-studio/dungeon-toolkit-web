@@ -18,7 +18,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/health/', health_check, name='health'),
     path('api/auth/', include('apps.users.urls')),
-    path('api/characters/', include('apps.characters.urls')),
     path('api/gamedata/', include('apps.gamedata.urls')),
     path('api/rules/', include('apps.rules.urls')),
     path('api/aigc/', include('apps.aigc.urls')),
