@@ -17,7 +17,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(identifier, password)
-      navigate('/dashboard')
+      navigate('/robots')
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } } }
       const msg =

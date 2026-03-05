@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bot as BotIcon, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import { BOT_STATUS_COLORS, BOT_STATUS_TEXTS } from '../../lib/constants'
 import Header from '../../components/Header'
 
 export default function RobotDetailPage() {
@@ -18,22 +19,12 @@ export default function RobotDetailPage() {
     try {
       const res = await botApi.get(id!)
       setBot(res.data)
-    } catch (e: any) {
-      setError(e.response?.data?.detail || '加载失败')
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } }
+      setError(err.response?.data?.detail || '加载失败')
     } finally {
       setLoading(false)
     }
-  }
-
-  const statusColors = {
-    online: 'text-green-600',
-    offline: 'text-gray-400',
-    unknown: 'text-yellow-600',
-  }
-  const statusTexts = {
-    online: '在线',
-    offline: '离线',
-    unknown: '未知',
   }
 
   if (loading) {
@@ -68,9 +59,9 @@ export default function RobotDetailPage() {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-xl font-bold text-gray-900">{bot.nickname}</h1>
-                <span className={`font-medium ${statusColors[bot.status]} flex items-center gap-1 text-sm`}>
+                <span className={`font-medium ${BOT_STATUS_COLORS[bot.status]} flex items-center gap-1 text-sm`}>
                   <Circle className="w-2 h-2 fill-current" aria-hidden="true" />
-                  {statusTexts[bot.status]}
+                  {BOT_STATUS_TEXTS[bot.status]}
                 </span>
               </div>
               <p className="text-gray-600 mb-4">QQ: {bot.bot_id}</p>

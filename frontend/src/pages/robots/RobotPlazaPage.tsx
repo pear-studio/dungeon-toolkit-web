@@ -1,48 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Bot as BotIcon, Search, Filter, Circle } from 'lucide-react'
+import { Search, Filter } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
 import Header from '../../components/Header'
-
-function RobotCard({ bot }: { bot: Bot }) {
-  const navigate = useNavigate()
-  const statusColors = {
-    online: 'text-green-600',
-    offline: 'text-gray-400',
-    unknown: 'text-yellow-600',
-  }
-  const statusTexts = {
-    online: '在线',
-    offline: '离线',
-    unknown: '未知',
-  }
-
-  return (
-    <button
-      onClick={() => navigate(`/robots/${bot.id}`)}
-      className="border border-gray-300 rounded-lg p-4 text-left bg-gray-50
-                 hover:border-gray-400 hover:bg-gray-100 transition
-                 focus:outline-none focus:ring-2 focus:ring-gray-400"
-    >
-      <div className="flex items-start gap-4">
-        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-          <BotIcon className="w-6 h-6 text-gray-600" aria-hidden="true" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-medium text-gray-900 truncate">{bot.nickname}</h3>
-            <Circle className={`w-2 h-2 fill-current ${statusColors[bot.status]}`} aria-hidden="true" />
-            <span className="text-xs text-gray-500">{statusTexts[bot.status]}</span>
-          </div>
-          <p className="text-sm text-gray-600">QQ: {bot.bot_id}</p>
-          {bot.description && (
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{bot.description}</p>
-          )}
-        </div>
-      </div>
-    </button>
-  )
-}
+import RobotCard from '../../components/RobotCard'
+import RobotCardSkeleton from '../../components/RobotCardSkeleton'
+import EmptyState from '../../components/EmptyState'
 
 export default function RobotPlazaPage() {
   const [bots, setBots] = useState<Bot[]>([])
@@ -64,8 +26,9 @@ export default function RobotPlazaPage() {
       const res = await botApi.list(params)
       setBots(res.data.results)
       setError('')
-    } catch (e: any) {
-      setError(e.response?.data?.detail || '加载失败')
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { detail?: string } } }
+      setError(err.response?.data?.detail || '加载失败')
     } finally {
       setLoading(false)
     }
@@ -110,24 +73,9 @@ export default function RobotPlazaPage() {
         )}
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="border border-gray-200 rounded-lg p-4 animate-pulse">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-100 rounded w-2/3" />
-                    <div className="h-3 bg-gray-100 rounded w-1/2" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <RobotCardSkeleton count={6} layout="grid" />
         ) : bots.length === 0 ? (
-          <div className="text-center py-20">
-            <BotIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" aria-hidden="true" />
-            <p className="text-gray-600">暂无机器人</p>
-          </div>
+          <EmptyState title="暂无机器人" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {bots.map((bot) => (

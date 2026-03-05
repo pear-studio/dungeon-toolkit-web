@@ -1,69 +1,124 @@
 # Scripts
 
-## 前端代码质量检查
+本目录包含项目开发和部署所需的脚本。
+
+## 📁 文件说明
+
+| 脚本 | 平台 | 用途 |
+|------|------|------|
+| `dev.sh` | Linux/WSL | 统一开发脚本（推荐） |
+| `dev-rebuild.sh` | Linux/WSL | 快速重建开发环境 |
+| `dev-test.sh` | Linux/WSL | 运行测试 |
+| `dev-lint.sh` | Linux/WSL | 代码检查 |
+| `setup_server.sh` | Linux | 生产服务器初始化 |
+
+---
+
+## 🚀 dev.sh - 统一开发脚本
+
+这是主要的开发脚本，整合了所有开发相关命令。
 
 ### 使用方法
 
-在项目根目录执行：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/check-frontend-quality.ps1
-```
-
-### 检查项目
-
-1. **Emoji 检测** - 确保代码中不使用 emoji 字符
-2. **对比度检查** - 检测低对比度文本（text-slate-500/600/700）
-3. **焦点样式** - 确保所有按钮都有焦点样式
-4. **ARIA 属性** - 确保所有图标都有 aria-hidden 或 aria-label
-
-### 退出码
-
-- `0`: 检查通过（可能有警告）
-- `1`: 检查失败（发现错误）
-
-### 示例输出
-
-```
-================================
-  Frontend Code Quality Check
-================================
-
-Check 1/4: Detecting emoji characters...
-PASS: No emoji found
-
-Check 2/4: Detecting low contrast text...
-PASS: No low contrast issues
-
-Check 3/4: Detecting buttons without focus styles...
-PASS: All buttons have focus styles
-
-Check 4/4: Detecting icons without aria attributes...
-PASS: All icons have aria attributes
-
-================================
-  Check Complete!
-  Duration: 136ms
-  Errors: 0
-  Warnings: 0
-================================
-
-PASSED: All checks successful!
-```
-
-### Git Pre-commit Hook
-
-可以将此脚本添加到 Git pre-commit hook 中自动执行：
+在 WSL Ubuntu 中执行：
 
 ```bash
-#!/bin/bash
-powershell -ExecutionPolicy Bypass -File scripts/check-frontend-quality.ps1
-if [ $? -ne 0 ]; then
-    echo "Frontend quality check failed"
-    exit 1
-fi
+# 完整重建环境（停止容器、重新构建、迁移数据）
+bash scripts/dev.sh rebuild
+
+# 启动/停止/查看状态
+bash scripts/dev.sh start
+bash scripts/dev.sh stop
+bash scripts/dev.sh status
+
+# 运行测试
+bash scripts/dev.sh test
+
+# 代码检查
+bash scripts/dev.sh lint
+
+# 运行测试 + 代码检查
+bash scripts/dev.sh check
+
+# 只重启前端服务（修改网页布局时使用）
+bash scripts/dev.sh restart-frontend
+
+# 只重启后端服务（修改后端代码时使用）
+bash scripts/dev.sh restart-backend
+
+# 查看帮助
+bash scripts/dev.sh help
 ```
 
-### 详细文档
+### 服务地址
 
-查看 [docs/FRONTEND_QUALITY_CHECK.md](../docs/FRONTEND_QUALITY_CHECK.md) 了解更多细节。
+启动后可访问：
+- **前端**: http://localhost:5173
+- **后端**: http://localhost:8000
+- **数据库**: localhost:5432
+
+---
+
+## 🔧 快捷脚本
+
+这些脚本是 `dev.sh` 对应命令的快捷方式：
+
+```bash
+# 等同于 dev.sh rebuild
+bash scripts/dev-rebuild.sh
+
+# 等同于 dev.sh test
+bash scripts/dev-test.sh
+
+# 等同于 dev.sh lint
+bash scripts/dev-lint.sh
+```
+
+---
+
+## 🖥️ setup_server.sh - 生产服务器初始化
+
+用于在全新的 Ubuntu 服务器上初始化环境。
+
+### 使用方法
+
+```bash
+# 以 root 权限执行
+bash setup_server.sh
+```
+
+### 执行内容
+
+1. 更新系统包
+2. 安装 Docker 和 Docker Compose
+3. 安装常用工具（git, curl, vim, ufw）
+4. 配置防火墙（开放 22, 80, 443 端口）
+
+### 后续步骤
+
+脚本执行完成后，按照提示进行：
+
+```bash
+# 1. 拉取代码
+git clone <your-repo-url> /app/dungeon-toolkit
+
+# 2. 进入目录
+cd /app/dungeon-toolkit
+
+# 3. 配置环境变量
+cp .env.example .env && vim .env
+
+# 4. 启动服务
+docker compose up -d --build
+
+# 5. 访问网站
+http://<your-server-ip>
+```
+
+---
+
+## 📝 注意事项
+
+1. 所有 `.sh` 脚本需要在 **Linux 或 WSL** 环境下执行
+2. 开发脚本依赖 Docker 和 Docker Compose
+3. 首次运行 `dev.sh rebuild` 会自动创建数据库并执行迁移
