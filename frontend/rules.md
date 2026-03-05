@@ -101,6 +101,10 @@ export default function ComponentName({ prop1, prop2 }: Props) {
 - 错误信息添加 `role="alert"`
 - 表单控件关联 `label`
 
+### 4. UI 风格
+- **不滥用 emoji**：仅在必要时使用，保持界面简洁专业
+- 优先使用 `lucide-react` 图标库
+
 ## 常见错误
 
 ### ❌ 忘记内边距
