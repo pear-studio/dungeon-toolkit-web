@@ -19,7 +19,4 @@ urlpatterns = [
     path('api/health/', health_check, name='health'),
     path('api/auth/', include('apps.users.urls')),
     path('api/bots/', include('apps.bots.urls')),
-    path('api/gamedata/', include('apps.gamedata.urls')),
-    path('api/rules/', include('apps.rules.urls')),
-    path('api/aigc/', include('apps.aigc.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

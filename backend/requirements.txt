@@ -3,7 +3,6 @@ Django==4.2.16
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 django-cors-headers==4.4.0
-django-filter==24.3
 
 # 数据库
 psycopg2-binary==2.9.9
@@ -13,17 +12,6 @@ python-decouple==3.8
 
 # WSGI 服务器
 gunicorn==22.0.0
-
-# 工具
-Pillow==10.4.0
-python-slugify==8.0.4
-
-# AI
-openai==1.51.0
-
-# CHM/HTML 解析
-beautifulsoup4==4.12.3
-lxml==5.3.0
 
 # 测试
 pytest==7.4.3

@@ -1,7 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
 from apps.users.models import User
-from apps.gamedata.models import Ruleset, Race, CharClass, Background
 
 
 class UserFactory(DjangoModelFactory):
@@ -12,59 +11,3 @@ class UserFactory(DjangoModelFactory):
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
     password = factory.PostGenerationMethodCall('set_password', 'password123')
     avatar = ''
-
-
-class RulesetFactory(DjangoModelFactory):
-    class Meta:
-        model = Ruleset
-
-    slug = factory.Sequence(lambda n: f'ruleset_{n}')
-    name = factory.Sequence(lambda n: f'规则集 {n}')
-    is_active = True
-
-
-class RaceFactory(DjangoModelFactory):
-    class Meta:
-        model = Race
-
-    ruleset = factory.SubFactory(RulesetFactory)
-    slug = factory.Sequence(lambda n: f'race_{n}')
-    name = factory.Sequence(lambda n: f'种族{n}')
-    speed = 30
-    size = '中型'
-    ability_bonuses = {}
-    traits = []
-    languages = []
-    has_subraces = False
-
-
-class CharClassFactory(DjangoModelFactory):
-    class Meta:
-        model = CharClass
-
-    ruleset = factory.SubFactory(RulesetFactory)
-    slug = factory.Sequence(lambda n: f'class_{n}')
-    name = factory.Sequence(lambda n: f'职业{n}')
-    hit_die = 8
-    primary_ability = '力量'
-    saving_throw_proficiencies = []
-    armor_proficiencies = []
-    weapon_proficiencies = []
-    skill_choices_count = 2
-    skill_choices = []
-    is_spellcaster = False
-    level_features = {}
-    starting_equipment = []
-
-
-class BackgroundFactory(DjangoModelFactory):
-    class Meta:
-        model = Background
-
-    ruleset = factory.SubFactory(RulesetFactory)
-    slug = factory.Sequence(lambda n: f'background_{n}')
-    name = factory.Sequence(lambda n: f'背景{n}')
-    feature_name = '特性'
-    feature_description = '特性描述'
-    starting_equipment = []
-    starting_gold = 0
