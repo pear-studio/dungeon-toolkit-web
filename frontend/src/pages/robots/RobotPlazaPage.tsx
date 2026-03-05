@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import { INPUT, ALERT, LAYOUT } from '../../lib/constants'
+import { cn } from '../../lib/utils'
 import Header from '../../components/Header'
 import RobotCard from '../../components/RobotCard'
 import RobotCardSkeleton from '../../components/RobotCardSkeleton'
@@ -38,7 +40,7 @@ export default function RobotPlazaPage() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className={cn(LAYOUT.container, LAYOUT.section)}>
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -47,8 +49,7 @@ export default function RobotPlazaPage() {
               placeholder="搜索机器人..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2
-                         text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+              className={cn(INPUT.base, "pl-10")}
             />
           </div>
           <div className="relative">
@@ -56,8 +57,7 @@ export default function RobotPlazaPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-gray-300 rounded-lg pl-10 pr-8 py-2
-                         text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+              className="border border-gray-300 rounded-lg pl-10 pr-8 py-2 text-gray-900 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
             >
               <option value="">全部状态</option>
               <option value="online">在线</option>
@@ -67,7 +67,7 @@ export default function RobotPlazaPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
+          <div className={cn(ALERT.error, "mb-4")} role="alert">
             {error}
           </div>
         )}
@@ -77,7 +77,7 @@ export default function RobotPlazaPage() {
         ) : bots.length === 0 ? (
           <EmptyState title="暂无机器人" />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className={LAYOUT.grid3}>
             {bots.map((bot) => (
               <RobotCard key={bot.id} bot={bot} />
             ))}

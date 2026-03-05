@@ -1,71 +1,45 @@
 @import "tailwindcss";
 
-:root {
-  font-family: "Noto Sans SC", "Source Han Sans CN", system-ui, -apple-system, sans-serif;
-}
+/*
+ * Tailwind 的 @layer 系统确保样式按正确顺序加载：
+ * 1. @layer base       - 基础重置和默认样式（最低优先级）
+ * 2. @layer components - 组件样式
+ * 3. @layer utilities  - 工具类（最高优先级，如 bg-red-500）
+ *
+ * 我们在 base 层定义默认样式，这样 Tailwind 的工具类可以正常覆盖它们。
+ * 不再需要 !important 或复杂的选择器修复。
+ */
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: #ffffff;
-  color: #1a1a1a;
-}
+@layer base {
+  :root {
+    font-family: "Noto Sans SC", "Source Han Sans CN", system-ui, -apple-system, sans-serif;
+  }
 
-a {
-  font-weight: 500;
-  color: #2563eb;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #1d4ed8;
-}
+  body {
+    @apply m-0 min-h-screen bg-white text-gray-900;
+  }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+  a {
+    @apply font-medium text-blue-600 no-underline hover:text-blue-700;
+  }
 
-button {
-  border-radius: 6px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #2563eb;
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-button:hover {
-  background-color: #1d4ed8;
-}
-button:focus,
-button:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-}
+  h1 {
+    @apply text-4xl leading-tight;
+  }
 
-/* Reset button styles for cards and other custom buttons */
-button[class*="bg-"],
-button[class*="hover:bg-"] {
-  background-color: transparent !important;
-  color: inherit;
-}
-button[class*="bg-"]:hover,
-button[class*="hover:bg-"]:hover {
-  background-color: inherit !important;
-}
+  /* 
+   * 按钮基础样式
+   * 只设置布局和交互属性，不设置颜色
+   * 颜色由各组件通过 Tailwind 类自行定义（如 bg-blue-600）
+   */
+  button {
+    @apply rounded-md border border-transparent px-4 py-2 
+           text-base font-medium cursor-pointer 
+           transition-colors duration-150;
+  }
 
-*:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-}
-
-button.focus\:outline-none:focus-visible,
-input.focus\:outline-none:focus-visible,
-select.focus\:outline-none:focus-visible,
-textarea.focus\:outline-none:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
+  /* 焦点样式（无障碍访问 - 键盘导航时显示） */
+  :focus-visible {
+    @apply outline-2 outline-blue-600 outline-offset-2;
+  }
 }

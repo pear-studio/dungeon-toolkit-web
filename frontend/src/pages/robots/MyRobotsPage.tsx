@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
+import { TEXT, BUTTON, ALERT, LAYOUT } from '../../lib/constants'
+import { cn } from '../../lib/utils'
 import Header from '../../components/Header'
 import MyRobotCard from '../../components/MyRobotCard'
 import RobotCardSkeleton from '../../components/RobotCardSkeleton'
@@ -55,13 +57,12 @@ export default function MyRobotsPage() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className={cn(LAYOUT.container, LAYOUT.section)}>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">我的机器人</h1>
+          <h1 className={TEXT.h1}>我的机器人</h1>
           <button
             onClick={() => navigate('/profile')}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
-                       transition focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className={cn(BUTTON.base, BUTTON.primary, BUTTON.md)}
           >
             <Plus className="w-4 h-4 inline mr-1" aria-hidden="true" />
             绑定机器人
@@ -69,7 +70,7 @@ export default function MyRobotsPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
+          <div className={cn(ALERT.error, "mb-4")} role="alert">
             {error}
           </div>
         )}
@@ -83,15 +84,14 @@ export default function MyRobotsPage() {
             action={
               <button
                 onClick={() => navigate('/profile')}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
-                           transition focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className={cn(BUTTON.base, BUTTON.primary, BUTTON.md)}
               >
                 绑定机器人
               </button>
             }
           />
         ) : (
-          <div className="space-y-4">
+          <div className={LAYOUT.stack}>
             {bots.map((bot) => (
               <MyRobotCard
                 key={bot.id}

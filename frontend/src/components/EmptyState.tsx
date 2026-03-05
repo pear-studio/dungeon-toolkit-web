@@ -1,5 +1,7 @@
 import { Bot as BotIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { TEXT } from '../lib/constants'
+import { cn } from '../lib/utils'
 
 interface EmptyStateProps {
   icon?: ReactNode
@@ -15,8 +17,8 @@ export default function EmptyState({ icon, title, description, action }: EmptySt
   return (
     <div className="text-center py-20">
       {icon || <BotIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" aria-hidden="true" />}
-      <p className="text-gray-600 mb-2">{title}</p>
-      {description && <p className="text-sm text-gray-500 mb-6">{description}</p>}
+      <p className={cn(TEXT.body, "mb-2")}>{title}</p>
+      {description && <p className={cn(TEXT.caption, "mb-6")}>{description}</p>}
       {action}
     </div>
   )
