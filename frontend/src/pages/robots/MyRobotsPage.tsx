@@ -59,7 +59,7 @@ export default function MyRobotsPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">我的机器人</h1>
           <button
-            onClick={() => navigate('/robots/my/bind')}
+            onClick={() => navigate('/profile')}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
                        transition focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
@@ -82,11 +82,11 @@ export default function MyRobotsPage() {
             description="机器人通过注册 API 登记后，你可以在这里绑定管理"
             action={
               <button
-                onClick={() => navigate('/robots/my/bind')}
+                onClick={() => navigate('/profile')}
                 className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
                            transition focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
-                绑定第一个机器人
+                绑定机器人
               </button>
             }
           />

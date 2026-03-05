@@ -6,7 +6,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 import RobotPlazaPage from './pages/robots/RobotPlazaPage'
 import RobotDetailPage from './pages/robots/RobotDetailPage'
 import MyRobotsPage from './pages/robots/MyRobotsPage'
-import RobotFormPage from './pages/robots/RobotFormPage'
 import ProfilePage from './pages/ProfilePage'
 
 function App() {
@@ -14,10 +13,10 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="text-4xl mb-4 animate-spin">⚙️</div>
-          <p className="text-slate-400">加载中...</p>
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">加载中...</p>
         </div>
       </div>
     )
@@ -40,14 +39,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/robots/my/bind"
-          element={
-            <ProtectedRoute>
-              <RobotFormPage />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/profile"
@@ -58,7 +49,8 @@ function App() {
           }
         />
 
-        {/* 重定向旧路由 */}
+        {/* 重定向 */}
+        <Route path="/robots/my/bind" element={<Navigate to="/profile" replace />} />
         <Route path="/dashboard" element={<Navigate to="/robots" replace />} />
         <Route path="/" element={<Navigate to="/robots" replace />} />
         <Route path="*" element={<Navigate to="/robots" replace />} />
