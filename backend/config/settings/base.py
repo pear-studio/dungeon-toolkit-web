@@ -21,13 +21,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'django_filters',
     # 本项目 Apps
     'apps.users',
     'apps.bots',
-    'apps.gamedata',
-    'apps.rules',
-    'apps.aigc',
 ]
 
 MIDDLEWARE = [
@@ -116,8 +112,3 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# AI 配置
-AI_PROVIDER = config('AI_PROVIDER', default='')
-OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
-OPENAI_BASE_URL = config('OPENAI_BASE_URL', default='')
-OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')

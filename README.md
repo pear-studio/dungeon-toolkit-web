@@ -8,14 +8,8 @@
 
 ## 项目简介
 
-Dungeon Toolkit 是一个面向中文 D&D 5e 玩家的开源工具箱，计划提供：
-
-- 🧙 **向导式角色创建** — 8 步引导完成种族/职业/属性/背景全流程
-- 📋 **角色卡管理** — 查看与编辑你的角色，支持公开分享
-
-**当前进度：** Phase 1 MVP 开发中（用户注册/登录 + 基础框架已完成）
-
-> ⚠️ **免责声明**：本项目代码主要由 AI 辅助生成，可能存在错漏或不完善之处，欢迎提 Issue 和 PR。
+Dungeon Toolkit 是一个面向中文 D&D 5e 玩家的开源工具箱
+> 本项目代码主要由 AI 辅助生成，可能存在错漏或不完善之处，欢迎提 Issue 和 PR。
 
 ---
 
@@ -146,28 +140,19 @@ python manage.py create_test_users
 ```
 dungeon-toolkit/
 ├── backend/          # Django 后端
-│   ├── apps/         # 应用模块（users / characters / gamedata 等）
+│   ├── apps/         # 应用模块（users / bots）
 │   ├── config/       # Django 配置
 │   └── requirements.txt
 ├── frontend/         # React 前端
 │   └── src/
 │       ├── pages/    # 页面组件
 │       ├── stores/   # Zustand 状态管理
-│       └── api/      # Axios 请求层
+│       └── lib/      # API 请求层
 ├── nginx/            # Nginx 配置（生产环境）
 ├── openspec/         # 项目设计文档
 ├── docker-compose.yml          # 生产环境
 └── docker-compose.dev.yml      # 开发环境（仅数据库）
 ```
-
----
-
-## 开发状态
-
-- [x] 用户注册 / 登录（JWT）
-- [x] Dashboard 欢迎页
-- [ ] 向导式角色创建（开发中）
-- [ ] 角色卡管理
 
 ---
 
