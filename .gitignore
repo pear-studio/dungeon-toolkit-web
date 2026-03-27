@@ -46,7 +46,6 @@ daemon.json
 .idea/
 .trae/
 .cursor/
-.codemaker/
 *.swp
 *.swo
 *~
