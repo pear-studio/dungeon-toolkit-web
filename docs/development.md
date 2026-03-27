@@ -116,6 +116,9 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 # 创建测试用户
 docker compose -f docker-compose.dev.yml exec backend python manage.py create_test_users
 
+# 初始化固定测试夹具
+docker compose -f docker-compose.dev.yml exec backend python manage.py seed_test_data --profile baseline --strict
+
 # 当前主线不包含 import_gamedata.py，如需导入历史数据请参考 archive 文档
 ```
 
@@ -147,6 +150,14 @@ bash scripts/dev.sh lint
 
 # 完整检查（测试 + lint）
 bash scripts/dev.sh check
+
+# 初始化 / 重置 / 校验测试夹具
+bash scripts/dev.sh seed-test-data baseline
+bash scripts/dev.sh reset-test-data baseline
+bash scripts/dev.sh verify-test-data baseline
+
+# 调试异常环境可关闭 strict
+bash scripts/dev.sh reset-test-data baseline --no-strict
 ```
 
 ---

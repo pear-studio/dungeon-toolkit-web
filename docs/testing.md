@@ -53,20 +53,29 @@ bash scripts/dev.sh lint
 bash scripts/dev.sh check
 ```
 
-## 创建测试账号
+## 初始化测试夹具
 
 ```bash
 cd backend
-python manage.py create_test_users
+python manage.py seed_test_data --profile baseline --strict
+
+# 或使用统一脚本（推荐）
+bash scripts/dev.sh seed-test-data baseline
+bash scripts/dev.sh verify-test-data baseline
+bash scripts/dev.sh reset-test-data baseline
+# 宽松模式（调试坏环境时使用）
+bash scripts/dev.sh reset-test-data baseline --no-strict
 ```
 
-## 测试账号
+## 固定测试账号矩阵
 
-| 用户名 | 密码 | 角色 | 用途 |
+| 用户名 | 密码 | 场景 | 用途 |
 |--------|------|------|------|
-| testuser | TestPass1234 | 普通用户 | 通用测试 |
-| admin | AdminPass1234 | 管理员 | 管理员功能测试 |
-| runner | RunnerPass1234 | 普通用户 | CI/CD 自动化测试 |
+| fixture_normal | FixturePass1234 | 正常登录 | 常规点击/登录/个人页验证 |
+| fixture_expired | FixturePass1234 | access 过期恢复 | 验证 refresh 成功后恢复会话 |
+| fixture_refresh_fail | FixturePass1234 | refresh 失败 | 验证清理登录态并跳转 `/login` |
+
+> 兼容账号 `testuser/admin/runner` 仍可通过 `create_test_users` 创建，但回归清单优先使用 `fixture_*` 账号。
 
 ## 测试结构
 
@@ -125,3 +134,42 @@ DB_PASSWORD=dungeon_toolkit
 - 路由行为：
   - 访问 `/robots/my`、`/robots/my/bind` 应重定向到 `/profile`。
   - 首次进入未预加载页面时显示统一加载占位。
+
+## 手工回归脚本（从 reset 开始）
+
+每次执行前建议从统一基线开始：
+
+```bash
+bash scripts/dev.sh reset-test-data
+bash scripts/dev.sh verify-test-data
+```
+
+### 1) 正常登录与基础点击
+
+- 使用 `fixture_normal / FixturePass1234` 登录。
+- 验证个人页、机器人广场加载正常。
+- 搜索关键词 `alpha`、`beta`，确认结果稳定且可重复。
+
+### 2) `restoreSession -> /auth/me/ -> refresh` 成功分支
+
+- 使用 `fixture_expired` 登录后，在浏览器开发者工具中将 `access` token 替换为明显无效值（保留 `refresh`）。
+- 刷新页面触发会话恢复。
+- 预期：前端自动 refresh 一次并恢复登录态，不进入循环请求。
+
+### 3) refresh 失败分支
+
+- 使用 `fixture_refresh_fail` 登录后，同时将 `access` 与 `refresh` 置为无效值。
+- 刷新页面触发会话恢复。
+- 预期：前端清理本地鉴权信息并跳转 `/login`。
+
+### 4) 机器人广场空数据与错误态 Hook
+
+- 空数据：执行 `bash scripts/dev.sh reset-test-data empty-robot-plaza` 后访问机器人广场，预期展示空态。
+- 错误态：保持页面打开并临时停止后端服务，再触发广场请求，预期展示错误态且可恢复。
+
+## 夹具维护说明
+
+- 新增夹具账号时，优先使用 `fixture_` 前缀，避免影响真实开发账号。
+- 新增机器人夹具时，使用固定 `bot_id` 并确保可重复 `update_or_create`。
+- 若回归需要新增场景，优先通过 `seed_test_data --profile <name>` 扩展 profile，而不是手工改库。
+- 修改夹具后请执行 `verify_test_data`，并更新本页的账号矩阵与脚本步骤。

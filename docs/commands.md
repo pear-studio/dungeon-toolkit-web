@@ -33,6 +33,15 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 # 创建测试用户
 docker compose -f docker-compose.dev.yml exec backend python manage.py create_test_users
 
+# 初始化测试夹具
+docker compose -f docker-compose.dev.yml exec backend python manage.py seed_test_data --profile baseline --strict
+
+# 重置测试夹具
+docker compose -f docker-compose.dev.yml exec backend python manage.py reset_test_data --profile baseline
+
+# 校验测试夹具
+docker compose -f docker-compose.dev.yml exec backend python manage.py verify_test_data --profile baseline
+
 # 进入后端容器
 docker compose -f docker-compose.dev.yml exec backend bash
 
@@ -66,6 +75,15 @@ bash scripts/dev.sh rebuild
 bash scripts/dev.sh test
 bash scripts/dev.sh lint
 bash scripts/dev.sh check
+bash scripts/dev.sh seed-test-data baseline
+bash scripts/dev.sh reset-test-data baseline
+bash scripts/dev.sh verify-test-data baseline
+
+# 空广场 profile
+bash scripts/dev.sh reset-test-data empty-robot-plaza
+
+# 非严格重置
+bash scripts/dev.sh reset-test-data baseline --no-strict
 ```
 
 ## 测试环境（隔离）

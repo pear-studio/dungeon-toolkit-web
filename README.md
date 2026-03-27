@@ -128,15 +128,19 @@ pytest --cov=. --cov-report=html
 项目提供了测试账号用于人工测试：
 
 ```bash
-# 创建测试账号
-python manage.py create_test_users
+# 初始化固定测试夹具
+python manage.py seed_test_data --profile baseline --strict
+
+# 一键重置并校验（推荐）
+bash scripts/dev.sh reset-test-data
+bash scripts/dev.sh verify-test-data
 ```
 
-| 用户名 | 密码 | 角色 |
+| 用户名 | 密码 | 场景 |
 |--------|------|------|
-| testuser | TestPass1234 | 普通用户 |
-| admin | AdminPass1234 | 管理员 |
-| runner | RunnerPass1234 | CI/CD |
+| fixture_normal | FixturePass1234 | 常规登录/点击验证 |
+| fixture_expired | FixturePass1234 | access 过期恢复验证 |
+| fixture_refresh_fail | FixturePass1234 | refresh 失败回退验证 |
 
 详细测试说明请参阅 [docs/testing.md](docs/testing.md)。
 

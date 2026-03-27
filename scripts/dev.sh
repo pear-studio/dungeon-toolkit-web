@@ -11,6 +11,9 @@
 #   bash scripts/dev.sh status            # 查看环境状态
 #   bash scripts/dev.sh restart-frontend  # 只重启前端服务（修改网页布局时使用）
 #   bash scripts/dev.sh restart-backend   # 只重启后端服务（修改后端代码时使用）
+#   bash scripts/dev.sh seed-test-data    # 初始化测试夹具数据
+#   bash scripts/dev.sh reset-test-data   # 重置测试夹具数据
+#   bash scripts/dev.sh verify-test-data  # 校验测试夹具完整性
 # ============================================================
 
 set -e
@@ -145,6 +148,35 @@ restart_backend() {
   echo "  访问：后端：http://localhost:8000"
 }
 
+seed_test_data() {
+  local profile="${1:-baseline}"
+  echo ""
+  echo "▶ 初始化测试夹具数据 (profile=${profile})..."
+  $DC exec -T backend python manage.py seed_test_data --profile "$profile" --strict
+  echo "  ✓ 测试夹具已初始化"
+}
+
+reset_test_data() {
+  local profile="${1:-baseline}"
+  local strict_arg="${2:-strict}"
+  echo ""
+  echo "▶ 重置测试夹具数据 (profile=${profile}, mode=${strict_arg})..."
+  if [ "$strict_arg" = "--no-strict" ]; then
+    $DC exec -T backend python manage.py reset_test_data --profile "$profile" --no-strict
+  else
+    $DC exec -T backend python manage.py reset_test_data --profile "$profile"
+  fi
+  echo "  ✓ 测试夹具已重置"
+}
+
+verify_test_data() {
+  local profile="${1:-baseline}"
+  echo ""
+  echo "▶ 校验测试夹具数据 (profile=${profile})..."
+  $DC exec -T backend python manage.py verify_test_data --profile "$profile"
+  echo "  ✓ 测试夹具校验通过"
+}
+
 show_help() {
   echo "用法：$0 <命令>"
   echo ""
@@ -158,6 +190,9 @@ show_help() {
   echo "  check             运行测试 + 代码检查"
   echo "  restart-frontend  只重启前端服务（修改网页布局时使用）"
   echo "  restart-backend   只重启后端服务（修改后端代码时使用）"
+  echo "  seed-test-data    初始化测试夹具数据"
+  echo "  reset-test-data   重置测试夹具数据"
+  echo "  verify-test-data  校验测试夹具完整性"
   echo "  help              显示帮助"
   echo ""
   echo "示例:"
@@ -166,6 +201,9 @@ show_help() {
   echo "  bash scripts/dev.sh check"
   echo "  bash scripts/dev.sh restart-frontend"
   echo "  bash scripts/dev.sh restart-backend"
+  echo "  bash scripts/dev.sh seed-test-data [profile]"
+  echo "  bash scripts/dev.sh reset-test-data [profile] [--no-strict]"
+  echo "  bash scripts/dev.sh verify-test-data [profile]"
 }
 
 case "$COMMAND" in
@@ -195,6 +233,15 @@ case "$COMMAND" in
     ;;
   restart-backend)
     restart_backend
+    ;;
+  seed-test-data)
+    seed_test_data "${2:-baseline}"
+    ;;
+  reset-test-data)
+    reset_test_data "${2:-baseline}" "${3:-strict}"
+    ;;
+  verify-test-data)
+    verify_test_data "${2:-baseline}"
     ;;
   help|--help|-h|"")
     show_help
