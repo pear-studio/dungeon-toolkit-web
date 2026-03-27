@@ -1,6 +1,6 @@
-# ⚔️ Dungeon Toolkit
+# Dungeon Toolkit
 
-> 面向中文 D&D 5e 玩家的开源工具箱 —— 向导式角色创建 · 角色卡管理
+> 面向中文 D&D 玩家的开源工具箱 —— 向导式角色创建 · 角色卡管理
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
@@ -8,7 +8,7 @@
 
 ## 项目简介
 
-Dungeon Toolkit 是一个面向中文 D&D 5e 玩家的开源工具箱
+Dungeon Toolkit 是一个面向中文 D&D 玩家的开源工具箱
 > 本项目代码主要由 AI 辅助生成，可能存在错漏或不完善之处，欢迎提 Issue 和 PR。
 
 ---
