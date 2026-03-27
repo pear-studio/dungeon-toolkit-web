@@ -1,0 +1,29 @@
+# Normalize text files in repository while keeping platform-friendly checkout.
+* text=auto
+
+# Shell scripts must stay LF for Linux/WSL execution.
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Python source and config are better kept LF across platforms.
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+
+# Windows command scripts use CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Common binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
