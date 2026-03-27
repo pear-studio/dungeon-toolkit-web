@@ -1,6 +1,9 @@
 # 中文规则书源码（本地参考，不上传）
 rules_source/
 
+# OpenSpec（本地变更与归档，不上传）
+openspec/
+
 # Python
 __pycache__/
 *.py[cod]
