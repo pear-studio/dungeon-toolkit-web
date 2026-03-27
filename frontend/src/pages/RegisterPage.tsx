@@ -23,7 +23,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await register(email, username, password)
-      navigate('/dashboard')
+      navigate('/robots')
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: Record<string, string[]> } }
       const data = axiosErr.response?.data
