@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
+import { TEXT, BUTTON, CARD, INPUT, ALERT, LINK } from '../lib/constants'
+import { cn } from '../lib/utils'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -40,20 +42,20 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="w-full max-w-md px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dungeon Toolkit</h1>
-          <p className="text-gray-600 mt-2">创建账户</p>
+          <h1 className={TEXT.h1}>Dungeon Toolkit</h1>
+          <p className={cn(TEXT.body, "mt-2")}>创建账户</p>
         </div>
 
-        <div className="border border-gray-200 rounded-lg p-6">
+        <div className={CARD.base}>
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className={cn(ALERT.error, "mb-4 text-sm")}>
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={cn(TEXT.label, "mb-1")}>
                 邮箱
               </label>
               <input
@@ -62,14 +64,12 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
-                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
-                           focus:ring-blue-600"
+                className={cn(INPUT.base, "w-full")}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={cn(TEXT.label, "mb-1")}>
                 用户名
               </label>
               <input
@@ -80,14 +80,12 @@ export default function RegisterPage() {
                 placeholder="请输入用户名"
                 minLength={2}
                 maxLength={50}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
-                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
-                           focus:ring-blue-600"
+                className={cn(INPUT.base, "w-full")}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={cn(TEXT.label, "mb-1")}>
                 密码
               </label>
               <input
@@ -96,14 +94,12 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="至少 8 位"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
-                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
-                           focus:ring-blue-600"
+                className={cn(INPUT.base, "w-full")}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={cn(TEXT.label, "mb-1")}>
                 确认密码
               </label>
               <input
@@ -112,26 +108,22 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 placeholder="再次输入密码"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900
-                           placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1
-                           focus:ring-blue-600"
+                className={cn(INPUT.base, "w-full")}
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300
-                         text-white font-medium rounded-lg transition
-                         disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className={cn(BUTTON.base, BUTTON.primary, BUTTON.md, "w-full")}
             >
               {loading ? '注册中...' : '注册'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className={cn(TEXT.bodySmall, "mt-6 text-center")}>
             已有账户？{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link to="/login" className={LINK.primary}>
               立即登录
             </Link>
           </p>

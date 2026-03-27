@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bot as BotIcon, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
-import { BOT_STATUS_COLORS, BOT_STATUS_TEXTS } from '../../lib/constants'
+import { TEXT, CARD, LAYOUT, STATUS_COLORS, STATUS_TEXTS } from '../../lib/constants'
+import { cn } from '../../lib/utils'
 import Header from '../../components/Header'
 
 export default function RobotDetailPage() {
@@ -30,7 +31,7 @@ export default function RobotDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-600">加载中...</div>
+        <p className={TEXT.body}>加载中...</p>
       </div>
     )
   }
@@ -39,8 +40,8 @@ export default function RobotDetailPage() {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <div className="max-w-6xl mx-auto px-4 py-8 text-center text-red-600">
-          {error || '机器人不存在'}
+        <div className={cn(LAYOUT.container, LAYOUT.section, "text-center")}>
+          <p className={TEXT.error}>{error || '机器人不存在'}</p>
         </div>
       </div>
     )
@@ -51,44 +52,44 @@ export default function RobotDetailPage() {
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="border border-gray-200 rounded-lg p-6">
+        <div className={cn(CARD.base, "p-6")}>
           <div className="flex items-start gap-6">
             <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
               <BotIcon className="w-10 h-10 text-gray-600" aria-hidden="true" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-xl font-bold text-gray-900">{bot.nickname}</h1>
-                <span className={`font-medium ${BOT_STATUS_COLORS[bot.status]} flex items-center gap-1 text-sm`}>
+                <h1 className={TEXT.h2}>{bot.nickname}</h1>
+                <span className={cn("flex items-center gap-1 text-sm font-medium", STATUS_COLORS[bot.status])}>
                   <Circle className="w-2 h-2 fill-current" aria-hidden="true" />
-                  {BOT_STATUS_TEXTS[bot.status]}
+                  {STATUS_TEXTS[bot.status]}
                 </span>
               </div>
-              <p className="text-gray-600 mb-4">QQ: {bot.bot_id}</p>
+              <p className={cn(TEXT.bodySmall, "mb-4")}>QQ: {bot.bot_id}</p>
               {bot.description && (
-                <p className="text-gray-600 mb-4">{bot.description}</p>
+                <p className={cn(TEXT.body, "mb-4")}>{bot.description}</p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
+          <div className={cn(LAYOUT.grid2, "mt-6 pt-6 border-t border-gray-200")}>
             <div>
-              <p className="text-gray-500 text-sm">版本</p>
-              <p className="text-gray-900">{bot.version || '-'}</p>
+              <p className={TEXT.caption}>版本</p>
+              <p className={TEXT.body}>{bot.version || '-'}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">主人</p>
-              <p className="text-gray-900">QQ: {bot.master_qq}</p>
+              <p className={TEXT.caption}>主人</p>
+              <p className={TEXT.body}>QQ: {bot.master_qq}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">最后在线</p>
-              <p className="text-gray-900">
+              <p className={TEXT.caption}>最后在线</p>
+              <p className={TEXT.body}>
                 {bot.last_seen ? new Date(bot.last_seen).toLocaleString('zh-CN') : '-'}
               </p>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">添加时间</p>
-              <p className="text-gray-900">{new Date(bot.created_at).toLocaleDateString('zh-CN')}</p>
+              <p className={TEXT.caption}>添加时间</p>
+              <p className={TEXT.body}>{new Date(bot.created_at).toLocaleDateString('zh-CN')}</p>
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { Bot as BotIcon, Circle } from 'lucide-react'
 import { type Bot } from '../lib/api'
-import { BOT_STATUS_COLORS, BOT_STATUS_TEXTS } from '../lib/constants'
+import { TEXT, CARD, STATUS_COLORS, STATUS_TEXTS } from '../lib/constants'
+import { cn } from '../lib/utils'
 
 interface RobotCardProps {
   bot: Bot
@@ -16,23 +17,41 @@ export default function RobotCard({ bot }: RobotCardProps) {
   return (
     <button
       onClick={() => navigate(`/robots/${bot.id}`)}
-      className="border border-gray-300 rounded-lg p-4 text-left bg-gray-50
-                 hover:border-gray-400 hover:bg-gray-100 transition
-                 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      aria-label={`查看机器人 ${bot.nickname} 详情`}
+      className={cn(
+        CARD.interactive,
+        "w-full p-4 text-left",
+        "focus:ring-2 focus:ring-gray-400"
+      )}
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+        {/* 头像 */}
+        <div className={cn(
+          "w-12 h-12 rounded-lg",
+          "bg-gray-100",
+          "flex items-center justify-center"
+        )}>
           <BotIcon className="w-6 h-6 text-gray-600" aria-hidden="true" />
         </div>
+
+        {/* 信息区域 */}
         <div className="flex-1 min-w-0">
+          {/* 标题行 */}
           <div className="flex items-center gap-2">
-            <h3 className="font-medium text-gray-900 truncate">{bot.nickname}</h3>
-            <Circle className={`w-2 h-2 fill-current ${BOT_STATUS_COLORS[bot.status]}`} aria-hidden="true" />
-            <span className="text-xs text-gray-500">{BOT_STATUS_TEXTS[bot.status]}</span>
+            <h3 className={cn(TEXT.h3, "truncate")}>{bot.nickname}</h3>
+            <Circle 
+              className={cn("w-2 h-2 fill-current", STATUS_COLORS[bot.status])} 
+              aria-hidden="true" 
+            />
+            <span className={TEXT.caption}>{STATUS_TEXTS[bot.status]}</span>
           </div>
-          <p className="text-sm text-gray-600">QQ: {bot.bot_id}</p>
+
+          {/* QQ号 */}
+          <p className={TEXT.bodySmall}>QQ: {bot.bot_id}</p>
+
+          {/* 描述（可选） */}
           {bot.description && (
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{bot.description}</p>
+            <p className={cn(TEXT.bodySmall, "mt-1 line-clamp-2")}>{bot.description}</p>
           )}
         </div>
       </div>

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import { User, Bot as BotIcon, LogOut } from 'lucide-react'
 import { botApi, type Bot } from '../lib/api'
+import { TEXT, BUTTON, CARD, INPUT, ALERT, LAYOUT } from '../lib/constants'
+import { cn } from '../lib/utils'
 import Header from '../components/Header'
 import MyRobotCard from '../components/MyRobotCard'
 import RobotCardSkeleton from '../components/RobotCardSkeleton'
@@ -85,30 +87,29 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className={cn(LAYOUT.container, LAYOUT.section)}>
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">个人中心</h1>
-          <p className="text-gray-600">管理您的账号信息和绑定的机器人</p>
+          <h1 className={cn(TEXT.h1, "mb-2")}>个人中心</h1>
+          <p className={TEXT.body}>管理您的账号信息和绑定的机器人</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 用户信息卡片 */}
           <div className="lg:col-span-1">
-            <div className="border border-gray-200 rounded-lg p-6">
+            <div className={CARD.base}>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
                   <User className="w-8 h-8 text-blue-600" aria-hidden="true" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">{user.username}</h2>
-                  <p className="text-sm text-gray-600">{user.email}</p>
+                  <h2 className={TEXT.h3}>{user.username}</h2>
+                  <p className={TEXT.bodySmall}>{user.email}</p>
                 </div>
               </div>
 
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 border border-red-200
-                           hover:bg-red-50 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500"
+                className={cn(BUTTON.base, BUTTON.danger, BUTTON.md, "w-full")}
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
                 退出登录
@@ -119,22 +120,20 @@ export default function ProfilePage() {
           {/* 机器人管理区域 */}
           <div className="lg:col-span-2">
             {/* 绑定新机器人 */}
-            <div className="border border-gray-200 rounded-lg p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">绑定新机器人</h2>
+            <div className={cn(CARD.base, "mb-6")}>
+              <h2 className={cn(TEXT.h3, "mb-4")}>绑定新机器人</h2>
               <form onSubmit={handleBindBot} className="flex gap-4">
                 <input
                   type="text"
                   value={bindBotId}
                   onChange={(e) => setBindBotId(e.target.value)}
                   placeholder="输入机器人 QQ 号"
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2
-                             text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                  className={cn(INPUT.base, "flex-1")}
                 />
                 <button
                   type="submit"
                   disabled={binding || !bindBotId.trim()}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
-                             transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className={cn(BUTTON.base, BUTTON.primary, BUTTON.md)}
                 >
                   {binding ? '绑定中...' : '绑定'}
                 </button>
@@ -142,14 +141,14 @@ export default function ProfilePage() {
             </div>
 
             {/* 我的机器人列表 */}
-            <div className="border border-gray-200 rounded-lg p-6">
+            <div className={CARD.base}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">我的机器人</h2>
-                <span className="text-sm text-gray-600">{bots.length} 个</span>
+                <h2 className={TEXT.h3}>我的机器人</h2>
+                <span className={TEXT.bodySmall}>{bots.length} 个</span>
               </div>
 
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700" role="alert">
+                <div className={cn(ALERT.error, "mb-4")} role="alert">
                   {error}
                 </div>
               )}
@@ -163,7 +162,7 @@ export default function ProfilePage() {
                   description="在上方输入机器人 QQ 号进行绑定"
                 />
               ) : (
-                <div className="space-y-4">
+                <div className={LAYOUT.stack}>
                   {bots.map((bot) => (
                     <MyRobotCard
                       key={bot.id}
