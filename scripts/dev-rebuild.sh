@@ -68,9 +68,13 @@ echo "  ✓ 迁移完成"
 
 # ── 4. 导入游戏数据 ────────────────────────────────────────
 echo ""
-echo "▶ [4/4] 导入游戏数据..."
-$DC exec -T backend python scripts/import_gamedata.py
-echo "  ✓ 数据导入完成"
+echo "▶ [4/4] 导入游戏数据（可选）..."
+if $DC exec -T backend sh -lc "test -f scripts/import_gamedata.py"; then
+  $DC exec -T backend python scripts/import_gamedata.py
+  echo "  ✓ 数据导入完成"
+else
+  echo "  ⚠ 未找到 scripts/import_gamedata.py，跳过导入步骤"
+fi
 
 # ── 完成 ───────────────────────────────────────────────────
 echo ""

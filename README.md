@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
-![React](https://img.shields.io/badge/React-18-61dafb)
+![React](https://img.shields.io/badge/React-19-61dafb)
 
 ## 项目简介
 
@@ -17,7 +17,7 @@ Dungeon Toolkit 是一个面向中文 D&D 5e 玩家的开源工具箱
 
 | 层级 | 技术 |
 |------|------|
-| 前端 | React 18 + TypeScript + Vite + Tailwind CSS |
+| 前端 | React 19 + TypeScript + Vite + Tailwind CSS |
 | 后端 | Django 4 + Django REST Framework + SimpleJWT |
 | 数据库 | PostgreSQL 15 |
 | 容器化 | Docker + Docker Compose |
@@ -44,7 +44,7 @@ cd dungeon-toolkit-web
 
 ```bash
 # 仅启动 PostgreSQL 容器
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 ### 3. 启动后端
@@ -133,6 +133,18 @@ python manage.py create_test_users
 
 详细测试说明请参阅 [docs/testing.md](docs/testing.md)。
 
+### 一键开发脚本（Docker）
+
+项目根目录提供 `scripts/dev.sh` 统一入口（建议在 WSL/bash 中执行）：
+
+```bash
+bash scripts/dev.sh start    # 启动开发环境
+bash scripts/dev.sh test     # 后端 pytest + 前端 lint
+bash scripts/dev.sh lint     # 前端 lint
+bash scripts/dev.sh check    # test + lint
+bash scripts/dev.sh rebuild  # 停止、重建、迁移
+```
+
 ---
 
 ## 目录结构
@@ -159,3 +171,12 @@ dungeon-toolkit/
 ## License
 
 [MIT](LICENSE)
+
+---
+
+## 文档索引
+
+- 开发指南：`docs/development.md`
+- 测试指南：`docs/testing.md`
+- 部署指南：`docs/deployment.md`
+- 命令速查：`docs/commands.md`

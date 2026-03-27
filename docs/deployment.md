@@ -47,8 +47,10 @@ apt install docker.io -y
 curl -L "https://ghfast.top/https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 hash -r
-docker-compose --version  # 应输出 Docker Compose version v2.24.6
+docker compose version  # 应输出 Docker Compose version v2.24.6
 ```
+
+> 本文档默认使用 `docker compose`（Compose v2）。如果你的环境仅支持 `docker-compose`，请将命令中的 `docker compose` 替换为 `docker-compose`。
 
 ### 配置 Docker 国内镜像源
 
@@ -114,7 +116,7 @@ DB_PASSWORD=自定义强密码
 
 ### 创建 .env 软链接
 
-> docker-compose 默认从根目录读取 `.env` 做变量插值，软链接让两者共用同一份文件，避免重复维护。
+> docker compose 默认从根目录读取 `.env` 做变量插值，软链接让两者共用同一份文件，避免重复维护。
 
 ```bash
 ln -s backend/.env .env
@@ -123,7 +125,7 @@ ln -s backend/.env .env
 ### 启动服务
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 第一次启动会拉取镜像、编译前端，约需 **3~5 分钟**。
@@ -131,7 +133,7 @@ docker-compose up -d --build
 ### 验证启动状态
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 四个服务（db / backend / frontend / nginx）均显示 `running` 或 `exited`（frontend 构建完就退出，正常）即为成功。
@@ -144,22 +146,22 @@ docker-compose ps
 
 ```bash
 # 查看所有服务状态
-docker-compose ps
+docker compose ps
 
 # 查看后端日志（实时）
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # 查看 nginx 日志
-docker-compose logs -f nginx
+docker compose logs -f nginx
 
 # 重启某个服务
-docker-compose restart backend
+docker compose restart backend
 
 # 停止所有服务
-docker-compose down
+docker compose down
 
 # 拉取新代码并重新部署
-git pull && docker-compose up -d --build
+git pull && docker compose up -d --build
 ```
 
 ---
@@ -168,5 +170,5 @@ git pull && docker-compose up -d --build
 
 - `.env` 文件包含密钥和密码，**不要提交到 Git**（已在 `.gitignore` 中忽略）
 - 数据库密码在 `backend/.env` 和 `docker-compose.yml` 中需要保持一致
-- 每次执行 `docker-compose` 命令都需要在项目根目录下，或确保根目录有 `.env` 软链接
-- 升级 docker-compose 后旧版路径可能还在 PATH 缓存中，执行 `hash -r` 刷新
+- 每次执行 `docker compose` 命令都需要在项目根目录下，或确保根目录有 `.env` 软链接
+- 升级 Compose 后旧版路径可能还在 PATH 缓存中，执行 `hash -r` 刷新

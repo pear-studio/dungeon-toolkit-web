@@ -2,7 +2,7 @@
 # ============================================================
 # dev.sh - 统一开发脚本
 # 用法（在 WSL Ubuntu 中执行）：
-#   bash scripts/dev.sh rebuild           # 重建环境（停止容器、重新构建、迁移数据）
+#   bash scripts/dev.sh rebuild           # 重建环境（停止容器、重新构建、迁移）
 #   bash scripts/dev.sh test              # 运行测试
 #   bash scripts/dev.sh lint              # 代码检查
 #   bash scripts/dev.sh check             # 运行测试 + 代码检查
@@ -101,14 +101,14 @@ rebuild_dev() {
 
 run_tests() {
   echo ""
-  echo "▶ 运行测试..."
+  echo "▶ 运行测试与前端检查..."
   echo "========================================"
 
   $DC exec -T backend pytest -v --tb=short
   $DC exec -T frontend npm run lint
 
   echo ""
-  echo "🎉 测试通过！"
+  echo "🎉 测试与前端检查通过！"
 }
 
 run_lint() {
@@ -149,11 +149,11 @@ show_help() {
   echo "用法：$0 <命令>"
   echo ""
   echo "命令:"
-  echo "  rebuild           重建开发环境（停止、构建、迁移、导入数据）"
+  echo "  rebuild           重建开发环境（停止、构建、迁移）"
   echo "  start             启动开发环境"
   echo "  stop              停止开发环境"
   echo "  status            查看环境状态"
-  echo "  test              运行测试"
+  echo "  test              运行后端测试 + 前端 lint"
   echo "  lint              代码检查"
   echo "  check             运行测试 + 代码检查"
   echo "  restart-frontend  只重启前端服务（修改网页布局时使用）"

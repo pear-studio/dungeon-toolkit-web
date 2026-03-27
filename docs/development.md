@@ -42,10 +42,10 @@ sudo chmod +x /usr/local/bin/docker-compose
 hash -r
 
 # 验证版本（应该是 v2.24.6）
-docker-compose --version
+docker compose version
 ```
 
-> **注意**: 如果 `docker-compose`（v2 子命令）不可用，但 `docker-compose --version` 显示 v2.x，可以使用 `docker-compose` 代替 `docker compose`（将所有命令中的空格改为连字符）。
+> **注意**: 本文档默认使用 `docker compose`（Compose v2）。如果你的环境仅支持 `docker-compose`，请将命令中的 `docker compose` 替换为 `docker-compose`。
 
 ---
 
@@ -60,13 +60,13 @@ docker-compose --version
 
 ```bash
 # 1. 构建并启动所有服务（首次约需 3-5 分钟）
-docker-compose -f docker-compose.dev.yml up -d --build
+docker compose -f docker-compose.dev.yml up -d --build
 
 # 2. 查看服务状态
-docker-compose -f docker-compose.dev.yml ps
+docker compose -f docker-compose.dev.yml ps
 
 # 3. 查看日志
-docker-compose -f docker-compose.dev.yml logs -f
+docker compose -f docker-compose.dev.yml logs -f
 ```
 
 ### 访问服务
@@ -116,8 +116,7 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 # 创建测试用户
 docker compose -f docker-compose.dev.yml exec backend python manage.py create_test_users
 
-# 导入游戏数据（可选）
-docker compose -f docker-compose.dev.yml exec backend python scripts/import_gamedata.py
+# 当前主线不包含 import_gamedata.py，如需导入历史数据请参考 archive 文档
 ```
 
 ### 使用开发脚本
@@ -128,7 +127,7 @@ docker compose -f docker-compose.dev.yml exec backend python scripts/import_game
 # 进入项目目录（WSL Ubuntu）
 cd /mnt/c/Workspace/dungeon-toolkit-web  # 或 cd ~/dungeon-toolkit-web
 
-# 重建开发环境（停止、重新构建、迁移数据）
+# 重建开发环境（停止、重新构建、迁移）
 bash scripts/dev.sh rebuild
 
 # 启动开发环境
@@ -159,7 +158,7 @@ bash scripts/dev.sh check
 ### 1. 启动 Docker 数据库
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d db
+docker compose -f docker-compose.dev.yml up -d db
 ```
 
 ### 2. 安装依赖

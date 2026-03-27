@@ -2,41 +2,61 @@
 
 ## 概述
 
-本文档介绍 Dungeon Toolkit Web 项目的测试体系，包括如何运行测试、使用测试账号等。
+本文档介绍当前仓库的测试方式与测试目录。当前后端业务 app 主要为 `users` 与 `bots`。
 
 ## 测试框架
 
 - **pytest** - Python 主流测试框架
 - **pytest-django** - Django 集成
+- **pytest-cov** - 覆盖率报告
 - **factory-boy** - 测试数据工厂
 
 ## 快速开始
 
-### 安装依赖
+### 本地运行（不使用 Docker）
 
 ```bash
 cd backend
 pip install -r requirements.txt
-```
 
-### 运行测试
-
-```bash
 # 运行所有测试
 pytest
 
-# 运行指定应用的测试
-pytest apps/users/
-pytest apps/characters/
-pytest apps/gamedata/
+# 运行指定模块测试
+pytest apps/users/tests/
+pytest apps/bots/tests.py
 
 # 运行带覆盖率报告
 pytest --cov=. --cov-report=html
 ```
 
-### 创建测试账号
+### Docker 运行
 
 ```bash
+# 启动开发环境
+docker compose -f docker-compose.dev.yml up -d --build
+
+# 在后端容器中运行测试
+docker compose -f docker-compose.dev.yml exec backend pytest
+```
+
+### 使用项目脚本运行
+
+```bash
+# 后端 pytest + 前端 lint
+bash scripts/dev.sh test
+
+# 前端 lint
+bash scripts/dev.sh lint
+
+# test + lint
+bash scripts/dev.sh check
+```
+
+## 创建测试账号
+
+```bash
+cd backend
 python manage.py create_test_users
 ```
 
@@ -52,25 +72,17 @@ python manage.py create_test_users
 
 ```
 backend/
-├── pytest.ini              # pytest 配置
-├── conftest.py            # 全局 fixtures
+├── pytest.ini               # pytest 配置
 ├── tests/
-│   ├── __init__.py
-│   └── factories.py        # 测试数据工厂
+│   └── factories.py         # 测试数据工厂
 └── apps/
     ├── users/
     │   └── tests/
     │       ├── test_models.py
     │       ├── test_serializers.py
     │       └── test_views.py
-    ├── characters/
-    │   └── tests/
-    │       ├── test_models.py
-    │       ├── test_serializers.py
-    │       └── test_views.py
-    └── gamedata/
-        └── tests/
-            └── test_views.py
+    └── bots/
+        └── tests.py
 ```
 
 ## 测试数据工厂
@@ -78,60 +90,23 @@ backend/
 项目使用 `factory-boy` 创建测试数据：
 
 ```python
-from tests.factories import UserFactory, CharacterFactory, RaceFactory
+from tests.factories import UserFactory
 
-# 创建用户
 user = UserFactory()
-
-# 创建角色
-character = CharacterFactory(owner=user)
-
-# 创建游戏数据
-race = RaceFactory()
 ```
-
-## 在 Docker 中运行测试
-
-```bash
-# 启动开发环境
-docker-compose -f docker-compose.dev.yml up -d
-
-# 进入后端容器
-docker-compose exec backend bash
-
-# 运行测试
-python manage.py test
-# 或
-pytest
-```
-
-## 测试覆盖范围
-
-### Users App
-- User 模型创建与验证
-- 注册/登录序列化器
-- 认证视图
-
-### Characters App
-- Character 模型与字段验证
-- CRUD 序列化器
-- 角色管理视图与权限
-
-### Gamedata App
-- 游戏数据查询 API
-- 过滤与分页
 
 ## 常见问题
 
-### 数据库错误
+### 数据库连接错误
 
-确保环境变量正确配置：
-```
+确保环境变量正确配置（示例）：
+
+```env
 DB_NAME=dungeon_toolkit
-DB_USER=dungeon_user
-DB_PASSWORD=your_password
+DB_USER=dungeon_toolkit
+DB_PASSWORD=dungeon_toolkit
 ```
 
 ### ImportError
 
-确保在正确的目录运行测试，且 Django settings 配置正确。
+确保在 `backend/` 目录运行测试，且 Django settings 使用开发或测试配置。
