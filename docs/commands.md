@@ -49,6 +49,9 @@ docker compose -f docker-compose.dev.yml exec backend pytest
 # 前端 lint
 docker compose -f docker-compose.dev.yml exec frontend npm run lint
 
+# 前端构建（验证路由懒加载与产物可构建）
+docker compose -f docker-compose.dev.yml exec frontend npm run build
+
 # 本地（不进容器）后端测试
 cd backend && pytest
 ```

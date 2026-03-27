@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Search, Filter } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
 import { INPUT, ALERT, LAYOUT } from '../../lib/constants'
@@ -10,31 +10,45 @@ import EmptyState from '../../components/EmptyState'
 
 export default function RobotPlazaPage() {
   const [bots, setBots] = useState<Bot[]>([])
-  const [loading, setLoading] = useState(true)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const latestRequestId = useRef(0)
 
   useEffect(() => {
-    loadBots()
-  }, [search, statusFilter])
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim())
+    }, 350)
 
-  const loadBots = async () => {
-    setLoading(true)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  const loadBots = useCallback(async () => {
+    const requestId = ++latestRequestId.current
     try {
       const params: { search?: string; status?: string } = {}
-      if (search) params.search = search
+      if (debouncedSearch) params.search = debouncedSearch
       if (statusFilter) params.status = statusFilter
       const res = await botApi.list(params)
+      if (requestId !== latestRequestId.current) return
       setBots(res.data.results)
       setError('')
     } catch (e: unknown) {
+      if (requestId !== latestRequestId.current) return
       const err = e as { response?: { data?: { detail?: string } } }
       setError(err.response?.data?.detail || '加载失败')
     } finally {
-      setLoading(false)
+      if (requestId === latestRequestId.current) {
+        setIsInitialLoading(false)
+      }
     }
-  }
+  }, [debouncedSearch, statusFilter])
+
+  useEffect(() => {
+    void loadBots()
+  }, [loadBots])
 
   return (
     <div className="min-h-screen bg-white">
@@ -72,7 +86,7 @@ export default function RobotPlazaPage() {
           </div>
         )}
 
-        {loading ? (
+        {isInitialLoading ? (
           <RobotCardSkeleton count={6} layout="grid" />
         ) : bots.length === 0 ? (
           <EmptyState title="暂无机器人" />
@@ -83,6 +97,7 @@ export default function RobotPlazaPage() {
             ))}
           </div>
         )}
+
       </main>
     </div>
   )

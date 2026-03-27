@@ -95,12 +95,24 @@ LINK.primary | LINK.secondary | LINK.nav
 ## 全局状态
 ```typescript
 import { useAuthStore } from '../stores/authStore'
-const { user, isAuthenticated, login, logout, restoreSession } = useAuthStore()
+const user = useAuthStore((s) => s.user)
+const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+const login = useAuthStore((s) => s.login)
+const logout = useAuthStore((s) => s.logout)
+const restoreSession = useAuthStore((s) => s.restoreSession)
 
 // Token 存储
 localStorage.getItem('access_token')
 localStorage.getItem('refresh_token')
 ```
+
+## 性能与请求约定
+
+- 搜索输入默认使用防抖（建议 300-400ms），避免每个按键都发请求。
+- 列表查询需处理竞态：只渲染最新一次请求的结果（latest-response-wins）。
+- 路由页面优先使用懒加载（`React.lazy` + `Suspense`）并保持统一 fallback。
+- 鉴权 401 默认走 refresh-first 策略，refresh 失败再执行登出退化流程。
+- 生产环境禁止输出调试级 `console.log`。
 
 ## 错误处理
 ```tsx

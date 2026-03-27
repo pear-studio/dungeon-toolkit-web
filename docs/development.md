@@ -219,6 +219,11 @@ docker compose -f docker-compose.test.yml exec backend-test pytest
 | `DB_PASSWORD` | dungeon_toolkit | 数据库密码 |
 | `VITE_API_BASE_URL` | http://backend:8000 | 前端 API 代理目标 |
 
+### 前端接口约定补充
+
+- JWT 刷新端点使用 `/api/auth/refresh/`（前端 `authApi.refresh` 与拦截器白名单须保持一致）。
+- 受保护请求返回 401 时，前端先尝试一次 refresh，再决定是否清理登录态并跳转登录页。
+
 ---
 
 ## 常见问题

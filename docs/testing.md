@@ -110,3 +110,18 @@ DB_PASSWORD=dungeon_toolkit
 ### ImportError
 
 确保在 `backend/` 目录运行测试，且 Django settings 使用开发或测试配置。
+
+## 前端回归检查（frontend-optimization-plan）
+
+建议在本地或 dev 容器前端服务下执行以下手工回归：
+
+- 机器人广场搜索：
+  - 快速输入关键词时，请求不应按每个按键都触发。
+  - 搜索与状态筛选组合时，加载/空态/错误态表现一致。
+  - 快速连续切换关键词时，页面应展示最后一次输入对应结果。
+- 鉴权链路：
+  - access token 失效时，前端先走 refresh，再重试原请求。
+  - refresh 失败时，前端清理 token 并跳转 `/login`，且无循环重试。
+- 路由行为：
+  - 访问 `/robots/my`、`/robots/my/bind` 应重定向到 `/profile`。
+  - 首次进入未预加载页面时显示统一加载占位。

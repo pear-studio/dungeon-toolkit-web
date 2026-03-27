@@ -6,7 +6,9 @@ import { cn } from '../lib/utils'
 
 export default function Header() {
   const navigate = useNavigate()
-  const { isAuthenticated, user, logout } = useAuthStore()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
 
   const handleLogout = () => {
     logout()

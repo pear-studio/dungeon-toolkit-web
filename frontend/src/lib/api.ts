@@ -16,15 +16,66 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-const AUTH_PATHS = ['/auth/login/', '/auth/register/', '/auth/token/refresh/']
+const AUTH_PATHS = ['/auth/login/', '/auth/register/', '/auth/refresh/']
+const REFRESH_PATH = '/auth/refresh/'
+let isRefreshing = false
+let refreshPromise: Promise<string> | null = null
+
+interface RetryableRequestConfig {
+  _retry?: boolean
+  headers?: Record<string, string>
+  url?: string
+}
+
+async function refreshAccessToken(): Promise<string> {
+  if (refreshPromise) {
+    return refreshPromise
+  }
+
+  const refresh = localStorage.getItem('refresh_token')
+  if (!refresh) {
+    throw new Error('No refresh token available')
+  }
+
+  isRefreshing = true
+  refreshPromise = api
+    .post<{ access: string }>(REFRESH_PATH, { refresh })
+    .then((res) => {
+      const nextAccess = res.data.access
+      localStorage.setItem('access_token', nextAccess)
+      return nextAccess
+    })
+    .finally(() => {
+      isRefreshing = false
+      refreshPromise = null
+    })
+
+  return refreshPromise
+}
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    const requestUrl = error.config?.url ?? ''
+  async (error) => {
+    const originalRequest = (error.config ?? {}) as RetryableRequestConfig
+    const requestUrl = originalRequest.url ?? ''
     const isAuthEndpoint = AUTH_PATHS.some((p) => requestUrl.includes(p))
+    const isUnauthorized = error.response?.status === 401
 
-    if (error.response?.status === 401 && !isAuthEndpoint) {
+    if (isUnauthorized && !isAuthEndpoint && !originalRequest._retry) {
+      originalRequest._retry = true
+      try {
+        const nextAccess = isRefreshing ? await refreshPromise! : await refreshAccessToken()
+        originalRequest.headers = {
+          ...originalRequest.headers,
+          Authorization: `Bearer ${nextAccess}`,
+        }
+        return api(originalRequest)
+      } catch {
+        // Refresh failed, fallback to logout flow.
+      }
+    }
+
+    if (isUnauthorized && !isAuthEndpoint) {
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       window.location.href = '/login'
@@ -78,7 +129,7 @@ export const authApi = {
   login: (data: LoginData) => api.post<AuthResponse>('/auth/login/', data),
   register: (data: RegisterData) => api.post<AuthResponse>('/auth/register/', data),
   me: () => api.get('/auth/me/'),
-  refresh: (refresh: string) => api.post('/auth/refresh/', { refresh }),
+  refresh: (refresh: string) => api.post(REFRESH_PATH, { refresh }),
 }
 
 export const botApi = {

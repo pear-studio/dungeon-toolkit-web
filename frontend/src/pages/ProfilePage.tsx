@@ -12,7 +12,8 @@ import EmptyState from '../components/EmptyState'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
   const [bots, setBots] = useState<Bot[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -39,7 +40,7 @@ export default function ProfilePage() {
     if (!confirm('确定要解绑这个机器人吗？')) return
     try {
       await botApi.delete(id)
-      setBots(bots.filter((b) => b.id !== id))
+      setBots((prev) => prev.filter((b) => b.id !== id))
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } }
       alert(err.response?.data?.detail || '解绑失败')
@@ -50,7 +51,7 @@ export default function ProfilePage() {
     if (!confirm('确定要刷新 API Key 吗？刷新后旧 Key 将失效。')) return
     try {
       const res = await botApi.regenerateKey(id)
-      setBots(bots.map(b => b.id === id ? { ...b, api_key: res.data.api_key } : b))
+      setBots((prev) => prev.map((b) => (b.id === id ? { ...b, api_key: res.data.api_key } : b)))
     } catch (e: unknown) {
       const err = e as { response?: { data?: { detail?: string } } }
       alert(err.response?.data?.detail || '刷新失败')

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bot as BotIcon, Circle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
@@ -13,20 +13,32 @@ export default function RobotDetailPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (id) loadBot()
-  }, [id])
+    if (!id) return
 
-  const loadBot = async () => {
-    try {
-      const res = await botApi.get(id!)
-      setBot(res.data)
-    } catch (e: unknown) {
-      const err = e as { response?: { data?: { detail?: string } } }
-      setError(err.response?.data?.detail || '加载失败')
-    } finally {
-      setLoading(false)
+    let cancelled = false
+    const loadBot = async () => {
+      setLoading(true)
+      try {
+        const res = await botApi.get(id)
+        if (cancelled) return
+        setBot(res.data)
+        setError('')
+      } catch (e: unknown) {
+        if (cancelled) return
+        const err = e as { response?: { data?: { detail?: string } } }
+        setError(err.response?.data?.detail || '加载失败')
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
     }
-  }
+
+    void loadBot()
+    return () => {
+      cancelled = true
+    }
+  }, [id])
 
   if (loading) {
     return (

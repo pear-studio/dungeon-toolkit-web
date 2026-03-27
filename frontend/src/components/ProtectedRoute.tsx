@@ -10,7 +10,8 @@ interface ProtectedRouteProps {
  * 受保护的路由：未登录时跳转到 /login
  */
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isLoading = useAuthStore((s) => s.isLoading)
 
   if (isLoading) {
     return (
