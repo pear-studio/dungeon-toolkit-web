@@ -2,9 +2,9 @@
 
 ## 说明
 
-- 默认使用 `docker compose`（Compose v2）
-- 如果你的环境仅支持 `docker-compose`，请将下方命令整体替换
-- 命令均在项目根目录执行：`dungeon-toolkit-web/`
+- 默认使用 `docker compose`(Compose v2)
+- 如果你的环境仅支持 `docker-compose`, 请将下方命令整体替换
+- 命令均在项目根目录执行: `dungeon-toolkit-web/`
 
 ---
 
@@ -58,10 +58,10 @@ docker compose -f docker-compose.dev.yml exec backend pytest
 # 前端 lint
 docker compose -f docker-compose.dev.yml exec frontend npm run lint
 
-# 前端构建（验证路由懒加载与产物可构建）
+# 前端构建(验证路由懒加载与产物可构建)
 docker compose -f docker-compose.dev.yml exec frontend npm run build
 
-# 本地（不进容器）后端测试
+# 本地(不进容器)后端测试
 cd backend && pytest
 ```
 
@@ -86,7 +86,7 @@ bash scripts/dev.sh reset-test-data empty-robot-plaza
 bash scripts/dev.sh reset-test-data baseline --no-strict
 ```
 
-## 测试环境（隔离）
+## 测试环境(隔离)
 
 ```bash
 # 启动测试环境

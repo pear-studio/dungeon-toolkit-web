@@ -108,11 +108,11 @@ localStorage.getItem('refresh_token')
 
 ## 性能与请求约定
 
-- 搜索输入默认使用防抖（建议 300-400ms），避免每个按键都发请求。
-- 列表查询需处理竞态：只渲染最新一次请求的结果（latest-response-wins）。
-- 路由页面优先使用懒加载（`React.lazy` + `Suspense`）并保持统一 fallback。
-- 鉴权 401 默认走 refresh-first 策略，refresh 失败再执行登出退化流程。
-- 生产环境禁止输出调试级 `console.log`。
+- 搜索输入默认使用防抖(建议 300-400ms), 避免每个按键都发请求.
+- 列表查询需处理竞态: 只渲染最新一次请求的结果(latest-response-wins).
+- 路由页面优先使用懒加载(`React.lazy` + `Suspense`)并保持统一 fallback.
+- 鉴权 401 默认走 refresh-first 策略, refresh 失败再执行登出退化流程.
+- 生产环境禁止输出调试级 `console.log`.
 
 ## 错误处理
 ```tsx
@@ -151,13 +151,13 @@ export default function ComponentName({ prop1 }: Props) {
 
 ## 关键规则
 ### 必须
-- 使用 Design Tokens（`lib/constants.ts`）
+- 使用 Design Tokens(`lib/constants.ts`)
 - 使用 `cn()` 合并类名
 - 使用 `lucide-react` 图标
 
 ### 禁止
 - 硬编码 Tailwind 类
-- 滥用 emoji（保持专业）
+- 滥用 emoji(保持专业)
 - 跳过错误处理
 
 ## 详细规范

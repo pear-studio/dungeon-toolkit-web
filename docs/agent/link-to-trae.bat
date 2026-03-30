@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-:: 创建符号链接：docs/agent/ -> .trae/
+:: 创建符号链接: docs/agent/ -> .trae/
 :: 需要管理员权限运行
 
 cd /d %~dp0\..\..

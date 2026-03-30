@@ -1,6 +1,6 @@
 # 开发环境设置
 
-> **推荐方式**: 完全在 Docker 中运行开发环境，无需在本地安装 Python、Node.js 等工具
+> **推荐方式**: 完全在 Docker 中运行开发环境, 无需在本地安装 Python, Node.js 等工具
 
 ---
 
@@ -8,10 +8,10 @@
 
 ### 1. 安装/升级 Docker
 
-如果还没有安装 Docker，或需要升级到最新版本：
+如果还没有安装 Docker, 或需要升级到最新版本:
 
 ```bash
-# 安装 Docker（Ubuntu/Debian）
+# 安装 Docker(Ubuntu/Debian)
 sudo apt update
 sudo apt install docker.io
 
@@ -19,10 +19,10 @@ sudo apt install docker.io
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# 将当前用户加入 docker 组（可选，避免每次加 sudo）
+# 将当前用户加入 docker 组(可选, 避免每次加 sudo)
 sudo usermod -aG docker $USER
 
-# 重新登录后生效，或执行以下命令立即生效
+# 重新登录后生效, 或执行以下命令立即生效
 newgrp docker
 
 # 验证 Docker 版本
@@ -41,15 +41,15 @@ sudo chmod +x /usr/local/bin/docker-compose
 # 刷新 PATH 缓存
 hash -r
 
-# 验证版本（应该是 v2.24.6）
+# 验证版本(应该是 v2.24.6)
 docker compose version
 ```
 
-> **注意**: 本文档默认使用 `docker compose`（Compose v2）。如果你的环境仅支持 `docker-compose`，请将命令中的 `docker compose` 替换为 `docker-compose`。
+> **注意**: 本文档默认使用 `docker compose`(Compose v2). 如果你的环境仅支持 `docker-compose`, 请将命令中的 `docker compose` 替换为 `docker-compose`.
 
 ---
 
-## 方式一：Docker 中运行开发环境（推荐）
+## 方式一: Docker 中运行开发环境(推荐)
 
 ### 前置要求
 
@@ -59,7 +59,7 @@ docker compose version
 ### 快速启动
 
 ```bash
-# 1. 构建并启动所有服务（首次约需 3-5 分钟）
+# 1. 构建并启动所有服务(首次约需 3-5 分钟)
 docker compose -f docker-compose.dev.yml up -d --build
 
 # 2. 查看服务状态
@@ -79,13 +79,13 @@ docker compose -f docker-compose.dev.yml logs -f
 
 ### 代码修改
 
-- **后端**: 修改 `backend/` 目录下的代码，会自动热重载
-- **前端**: 修改 `frontend/` 目录下的代码，会自动热重载
+- **后端**: 修改 `backend/` 目录下的代码, 会自动热重载
+- **前端**: 修改 `frontend/` 目录下的代码, 会自动热重载
 
 ### 常用命令
 
 ```bash
-# 重新构建（代码有更新时）
+# 重新构建(代码有更新时)
 docker compose -f docker-compose.dev.yml up -d --build
 
 # 停止服务
@@ -97,10 +97,10 @@ docker compose -f docker-compose.dev.yml logs -f backend
 # 查看前端日志
 docker compose -f docker-compose.dev.yml logs -f frontend
 
-# 进入后端容器（调试用）
+# 进入后端容器(调试用)
 docker compose -f docker-compose.dev.yml exec backend bash
 
-# 进入前端容器（调试用）
+# 进入前端容器(调试用)
 docker compose -f docker-compose.dev.yml exec frontend sh
 
 # 运行测试
@@ -119,18 +119,18 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py create_te
 # 初始化固定测试夹具
 docker compose -f docker-compose.dev.yml exec backend python manage.py seed_test_data --profile baseline --strict
 
-# 当前主线不包含 import_gamedata.py，如需导入历史数据请参考 archive 文档
+# 当前主线不包含 import_gamedata.py, 如需导入历史数据请参考 archive 文档
 ```
 
 ### 使用开发脚本
 
-项目提供了统一的开发脚本，简化常用操作：
+项目提供了统一的开发脚本, 简化常用操作:
 
 ```bash
-# 进入项目目录（WSL Ubuntu）
+# 进入项目目录(WSL Ubuntu)
 cd /mnt/c/Workspace/dungeon-toolkit-web  # 或 cd ~/dungeon-toolkit-web
 
-# 重建开发环境（停止、重新构建、迁移）
+# 重建开发环境(停止, 重新构建, 迁移)
 bash scripts/dev.sh rebuild
 
 # 启动开发环境
@@ -148,7 +148,7 @@ bash scripts/dev.sh test
 # 运行代码检查
 bash scripts/dev.sh lint
 
-# 完整检查（测试 + lint）
+# 完整检查(测试 + lint)
 bash scripts/dev.sh check
 
 # 初始化 / 重置 / 校验测试夹具
@@ -162,9 +162,9 @@ bash scripts/dev.sh reset-test-data baseline --no-strict
 
 ---
 
-## 方式二：本地运行（不推荐）
+## 方式二: 本地运行(不推荐)
 
-如果需要本地运行（不通过 Docker），请参考以下步骤：
+如果需要本地运行(不通过 Docker), 请参考以下步骤:
 
 ### 1. 启动 Docker 数据库
 
@@ -205,7 +205,7 @@ npm run dev
 
 ## 测试环境
 
-测试环境使用独立的数据库和服务：
+测试环境使用独立的数据库和服务:
 
 ```bash
 # 启动测试环境
@@ -232,8 +232,8 @@ docker compose -f docker-compose.test.yml exec backend-test pytest
 
 ### 前端接口约定补充
 
-- JWT 刷新端点使用 `/api/auth/refresh/`（前端 `authApi.refresh` 与拦截器白名单须保持一致）。
-- 受保护请求返回 401 时，前端先尝试一次 refresh，再决定是否清理登录态并跳转登录页。
+- JWT 刷新端点使用 `/api/auth/refresh/`(前端 `authApi.refresh` 与拦截器白名单须保持一致).
+- 受保护请求返回 401 时, 前端先尝试一次 refresh, 再决定是否清理登录态并跳转登录页.
 
 ---
 
@@ -241,18 +241,18 @@ docker compose -f docker-compose.test.yml exec backend-test pytest
 
 ### 前端无法连接后端
 
-确保 `VITE_API_BASE_URL` 环境变量设置为 `http://backend:8000`（Docker 内部网络）。
+确保 `VITE_API_BASE_URL` 环境变量设置为 `http://backend:8000`(Docker 内部网络).
 
 ### 数据库连接失败
 
-检查数据库是否启动：
+检查数据库是否启动:
 ```bash
 docker compose -f docker-compose.dev.yml ps db
 ```
 
 ### 端口被占用
 
-修改 `docker-compose.dev.yml` 中的端口映射：
+修改 `docker-compose.dev.yml` 中的端口映射:
 ```yaml
 ports:
   - "8001:8000"  # 后端

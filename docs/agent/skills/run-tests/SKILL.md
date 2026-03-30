@@ -1,129 +1,137 @@
 ---
 name: openspec-run-tests
-description: Run tests for the project. Executes backend pytest and frontend lint to validate implementation correctness.
+description: 运行项目测试. 在 backend 容器中执行 pytest, 在 frontend 容器中执行 lint, 用于校验实现是否正确.
 license: MIT
-compatibility: Requires openspec CLI.
+compatibility: 需要 openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
   generatedBy: "1.1.1"
 ---
 
-Run tests for the Dungeon Toolkit project to validate implementation correctness.
+为 Dungeon Toolkit 项目运行测试, 校验实现是否正确.
 
-**Input**: Optionally specify which tests to run. If omitted, run all tests.
+**输入**: 可选, 指定要跑哪些测试. 若省略则跑全部.
 
-**Prerequisites**
+**前置条件**
 
-- Docker must be running
-- Development environment must be started: `docker-compose -f docker-compose.dev.yml up -d`
+- Docker 必须已启动
+- 开发环境已拉起: `docker-compose -f docker-compose.dev.yml up -d`
 
-**Steps**
+**Shell (Windows)**
 
-1. **Check Docker environment**
+Cursor 终端常默认为 **PowerShell**, 此时 `PATH` 里可能没有 `docker`, 但 WSL 里 Docker 仍可用. 与 `docs/agent/rules/ai-usage.md` 一致: 在 **WSL** 中执行下面命令, 保证能解析 `docker compose`, 例如:
 
-   Verify Docker daemon is running:
+`wsl -d Ubuntu bash -lc "cd /mnt/d/Workplace/dungeon-toolkit-web && docker compose -f docker-compose.dev.yml ps"`.
+
+或在项目根目录于 WSL 中执行 `bash scripts/dev.sh check`.
+
+**步骤**
+
+1. **检查 Docker 环境**
+
+   确认 Docker 守护进程在运行(与下面步骤使用同一环境 -  - 在 Windows 上通常为 WSL):
    ```bash
    docker info
    ```
 
-   If Docker is not running:
-   - Add CRITICAL issue: "Docker daemon not running"
-   - Recommendation: "Start Docker and run: docker-compose -f docker-compose.dev.yml up -d"
+   若 Docker 未运行:
+   - 记为 **严重** 问题: "Docker 守护进程未运行"
+   - 建议: "启动 Docker 后执行: docker-compose -f docker-compose.dev.yml up -d"
 
-2. **Check containers are running**
+2. **检查容器是否在跑**
 
-   Verify backend and frontend containers are up:
+   确认 backend, frontend 等开发容器已启动:
    ```bash
    docker compose -f docker-compose.dev.yml ps
    ```
 
-   If containers are not running:
-   - Add CRITICAL issue: "Development containers not running"
-   - Recommendation: "Run: docker-compose -f docker-compose.dev.yml up -d"
+   若容器未运行:
+   - 记为 **严重** 问题: "开发容器未运行"
+   - 建议: "执行: docker-compose -f docker-compose.dev.yml up -d"
 
-3. **Run Backend Tests**
+3. **运行后端测试**
 
-   Execute pytest in backend container:
+   在 backend 容器中执行 pytest:
    ```bash
    docker compose exec -T backend pytest -v --tb=short
    ```
 
-   Parse the output:
-   - Count passed tests
-   - Count failed tests
-   - Note any errors or warnings
+   解析输出:
+   - 统计通过用例数
+   - 统计失败用例数
+   - 记录错误与告警
 
-   **Test Results**:
-   - If tests pass: Add to report "✓ Backend tests: X passed"
-   - If tests fail:
-     - Add CRITICAL issue: "Backend tests failed: <test name>"
-     - List failing tests
-     - Recommendation: "Fix failing tests before continuing"
+   **测试结果**:
+   - 全部通过: 报告中写入"✓ 后端测试: X 通过"
+   - 有失败:
+     - 记为 **严重** 问题: "后端测试失败: <用例名>"
+     - 列出失败用例
+     - 建议: "先修复失败用例再继续"
 
-4. **Run Frontend Lint**
+4. **运行前端 Lint**
 
-   Execute ESLint in frontend container:
+   在 frontend 容器中执行 ESLint:
    ```bash
    docker compose exec -T frontend npm run lint
    ```
 
-   Parse the output:
-   - Count lint errors
-   - Count lint warnings
+   解析输出:
+   - 统计 lint 错误数
+   - 统计 lint 警告数
 
-   **Lint Results**:
-   - If no issues: Add to report "✓ Frontend lint: passed"
-   - If issues found:
-     - Add WARNING: "Frontend lint issues: N errors, M warnings"
-     - List critical issues
-     - Recommendation: "Fix lint issues or update .eslintrc if false positives"
+   **Lint 结果**:
+   - 无问题: 报告中写入"✓ 前端 lint: 通过"
+   - 有问题:
+     - 记为 **警告**: "前端 lint: N 个错误, M 个警告"
+     - 列出关键问题
+     - 建议: "修复 lint 问题; 若为误报可调整 .eslintrc"
 
-5. **Generate Test Report**
+5. **生成测试报告**
 
-   Create a summary report:
+   汇总报告形如:
 
    ```
-   ## Test Report
+   ## 测试报告
 
-   ### Backend Tests
-   | Status   | Passed | Failed | Duration |
-   |----------|--------|--------|----------|
-   | Pass/Fail| X      | Y      | ~Zs      |
+   ### 后端测试
+   | 状态     | 通过 | 失败 | 耗时   |
+   |----------|------|------|--------|
+   | 通过/失败 | X    | Y    | 约 Zs |
 
-   ### Frontend Lint
-   | Status | Errors | Warnings |
-   |--------|--------|----------|
-   | Pass   | 0      | 0        |
+   ### 前端 Lint
+   | 状态 | 错误 | 警告 |
+   |------|------|------|
+   | 通过 | 0    | 0    |
 
-   ### Final Assessment
-   - If backend tests fail: "X test(s) failed. Fix before proceeding."
-   - If only lint warnings: "Lint warnings found, but tests pass."
-   - If all pass: "All tests and checks passed! ✓"
+   ### 结论
+   - 后端失败: "X 个用例失败, 请先修复再继续."
+   - 仅有 lint 警告: "存在 lint 警告, 但测试已通过."
+   - 全部通过: "测试与检查均通过 ✓"
    ```
 
-**Options**
+**选项**
 
-- `--backend, -b`: Run only backend tests (pytest)
-- `--frontend, -f`: Run only frontend lint
-- `--all, -a`: Run all tests (default)
+- `--backend, -b`: 仅后端 pytest
+- `--frontend, -f`: 仅前端 lint
+- `--all, -a`: 全部(默认)
 
-**Usage Examples**
+**用法示例**
 
 ```bash
-# Run all tests
+# 运行全部
 openspec-run-tests
 
-# Run only backend tests
+# 仅后端
 openspec-run-tests --backend
 
-# Run only frontend lint
+# 仅前端 lint
 openspec-run-tests --frontend
 ```
 
-**Exit Criteria**
+**退出标准**
 
-- Backend tests must pass (exit code 0)
-- Frontend lint should pass (warnings are acceptable but will be noted)
+- 后端测试必须通过(退出码 0)
+- 前端 lint 应通过(允许警告, 但需在报告中注明)
 
-If tests fail, report specific failing tests and suggest fixes.
+若测试失败, 需报告具体失败用例并给出修复方向.
