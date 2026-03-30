@@ -49,6 +49,7 @@ daemon.json
 .idea/
 .trae/
 .cursor/
+.claude/
 *.swp
 *.swo
 *~
