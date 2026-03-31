@@ -48,6 +48,12 @@ bash scripts/dev.sh restart-backend
 
 # 查看帮助
 bash scripts/dev.sh help
+
+# 启动 Web + Bot 联调（--bot-id 必填）
+bash scripts/dev.sh dev-with-bot --bot-id 123456789
+
+# 查看 Bot 日志
+bash scripts/dev.sh logs-bot --tail 100 --follow
 ```
 
 ### 服务地址
@@ -56,6 +62,18 @@ bash scripts/dev.sh help
 - **前端**: http://localhost:5173
 - **后端**: http://localhost:8000
 - **数据库**: localhost:5432
+- **Bot API**: http://localhost:8080（默认，可通过 `--bot-port` 覆盖）
+
+### Bot 联调参数
+
+- `--bot-id`（必填）：机器人标识，必须为数字字符串
+- `--hub-url`：Web 后端 API 根地址；容器内默认建议 `http://backend:8000`
+- `--master-id`：默认 `admin`
+- `--nickname`：默认 `StandaloneBot`
+- `--bot-port`：默认 `8080`
+- `--health-timeout`：默认 `60` 秒
+
+> 网络提示：`host.docker.internal` 在 Windows/macOS 的 Docker Desktop 常见可用；Linux/部分 WSL 场景可改用局域网 IP、`172.17.0.1` 或 `extra_hosts`。
 
 ---
 

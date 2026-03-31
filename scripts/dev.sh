@@ -148,6 +148,268 @@ restart_backend() {
   echo "  访问：后端：http://localhost:8000"
 }
 
+print_bot_failure_diagnostics() {
+  echo ""
+  echo "⚠ Bot 健康检查失败诊断信息："
+  echo "  - BOT_ID: ${BOT_ID}"
+  echo "  - HUB_URL: ${HUB_URL}"
+  echo "  - 运行状态："
+  $DC -f docker-compose.dev.yml --profile bot ps
+  echo ""
+  echo "  - Bot 最近日志（20行）："
+  $DC -f docker-compose.dev.yml --profile bot logs --tail 20 bot || true
+  echo ""
+  echo "  - 提示：请确认 BOT_ID 未与测试夹具 ID (880001-880005) 冲突"
+}
+
+wait_backend_health() {
+  local timeout_secs="${1:-60}"
+  local retry=0
+  local max_retry=$((timeout_secs / 2))
+  if [ "$max_retry" -lt 1 ]; then
+    max_retry=1
+  fi
+
+  echo ""
+  echo "▶ 等待后端健康检查..."
+  until curl -fsS "http://localhost:8000/api/health/" > /dev/null 2>&1; do
+    retry=$((retry + 1))
+    if [ "$retry" -ge "$max_retry" ]; then
+      echo "❌ 后端健康检查超时"
+      return 1
+    fi
+    printf "  等待中... (%d/%d)\n" "$retry" "$max_retry"
+    sleep 2
+  done
+  echo "  ✓ 后端已就绪"
+}
+
+wait_bot_container_healthy() {
+  local timeout_secs="${1:-60}"
+  local retry=0
+  local max_retry=$((timeout_secs / 2))
+  local container_id=""
+  local health_status=""
+  if [ "$max_retry" -lt 1 ]; then
+    max_retry=1
+  fi
+
+  echo ""
+  echo "▶ 等待 Bot 容器健康状态..."
+  container_id="$($DC -f docker-compose.dev.yml --profile bot ps -q bot)"
+  if [ -z "$container_id" ]; then
+    echo "❌ 未找到 Bot 容器"
+    return 1
+  fi
+
+  while true; do
+    health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container_id" 2>/dev/null || echo "unknown")"
+    if [ "$health_status" = "healthy" ]; then
+      echo "  ✓ Bot 容器健康检查通过"
+      return 0
+    fi
+    retry=$((retry + 1))
+    if [ "$retry" -ge "$max_retry" ]; then
+      echo "❌ Bot 容器健康检查超时（当前状态: ${health_status}）"
+      return 1
+    fi
+    printf "  等待中... (%d/%d), 状态=%s\n" "$retry" "$max_retry" "$health_status"
+    sleep 2
+  done
+}
+
+wait_bot_registered_online() {
+  local timeout_secs="${1:-60}"
+  local retry=0
+  local max_retry=$((timeout_secs / 2))
+  local page=1
+  local response=""
+  local parse_result=""
+  local found="0"
+  if [ "$max_retry" -lt 1 ]; then
+    max_retry=1
+  fi
+
+  echo ""
+  echo "▶ 等待 Bot 注册并在线 (BOT_ID=${BOT_ID})..."
+  while [ "$retry" -lt "$max_retry" ]; do
+    page=1
+    found="0"
+
+    while true; do
+      response="$(curl -fsS "http://localhost:8000/api/bots/?page=${page}" 2>/dev/null || true)"
+      if [ -z "$response" ]; then
+        break
+      fi
+
+      parse_result="$(API_JSON="$response" python3 - "$BOT_ID" <<'PY'
+import json
+import os
+import sys
+
+bot_id = sys.argv[1]
+payload = json.loads(os.environ["API_JSON"])
+for bot in payload.get("results", []):
+    if str(bot.get("bot_id")) == bot_id:
+        status = str(bot.get("status", ""))
+        last_seen = str(bot.get("last_seen", ""))
+        print(f"FOUND|{status}|{last_seen}")
+        raise SystemExit(0)
+next_url = payload.get("next")
+if next_url:
+    print("NEXT")
+else:
+    print("NONE")
+PY
+)"
+
+      if [[ "$parse_result" == FOUND\|* ]]; then
+        found="1"
+        IFS='|' read -r _ bot_status bot_last_seen <<< "$parse_result"
+        if [ "$bot_status" = "online" ] && [ -n "$bot_last_seen" ] && [ "$bot_last_seen" != "None" ]; then
+          echo "  ✓ Bot 已在线 (status=${bot_status}, last_seen=${bot_last_seen})"
+          return 0
+        fi
+        # Best-effort fallback based on nonebot-dicepp standalone API contract:
+        # when bot is registered but not yet online, trigger /dpp/heartbeat once.
+        curl -fsS -X POST "http://127.0.0.1:${BOT_PORT}/dpp/heartbeat" > /dev/null 2>&1 || true
+        break
+      fi
+
+      if [ "$parse_result" = "NEXT" ]; then
+        page=$((page + 1))
+      else
+        break
+      fi
+    done
+
+    retry=$((retry + 1))
+    if [ "$found" = "1" ]; then
+      printf "  已找到 Bot 记录，等待在线心跳... (%d/%d)\n" "$retry" "$max_retry"
+    else
+      printf "  等待注册记录出现... (%d/%d)\n" "$retry" "$max_retry"
+    fi
+    sleep 2
+  done
+
+  echo "❌ Bot 业务健康检查超时"
+  return 1
+}
+
+dev_with_bot() {
+  local bot_id=""
+  local hub_url="http://backend:8000"
+  local master_id="admin"
+  local nickname="StandaloneBot"
+  local bot_port="8080"
+  local health_timeout="60"
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --bot-id)
+        bot_id="${2:-}"
+        shift 2
+        ;;
+      --hub-url)
+        hub_url="${2:-}"
+        shift 2
+        ;;
+      --master-id)
+        master_id="${2:-}"
+        shift 2
+        ;;
+      --nickname)
+        nickname="${2:-}"
+        shift 2
+        ;;
+      --bot-port)
+        bot_port="${2:-}"
+        shift 2
+        ;;
+      --health-timeout)
+        health_timeout="${2:-}"
+        shift 2
+        ;;
+      *)
+        echo "❌ 未知参数: $1"
+        echo ""
+        show_help
+        exit 1
+        ;;
+    esac
+  done
+
+  if [ -z "$bot_id" ]; then
+    echo "❌ dev-with-bot 缺少必填参数: --bot-id"
+    echo ""
+    show_help
+    exit 1
+  fi
+
+  if ! [[ "$bot_id" =~ ^[0-9]+$ ]]; then
+    echo "❌ --bot-id 必须为纯数字字符串"
+    exit 1
+  fi
+  if [ "${#bot_id}" -gt 20 ]; then
+    echo "❌ --bot-id 长度不能超过 20 位"
+    exit 1
+  fi
+
+  export BOT_ID="$bot_id"
+  export HUB_URL="$hub_url"
+  export MASTER_ID="$master_id"
+  export NICKNAME="$nickname"
+  export BOT_PORT="$bot_port"
+
+  echo ""
+  echo "▶ 启动 Web + Bot 联调环境..."
+  echo "  - BOT_ID: $BOT_ID"
+  echo "  - HUB_URL: $HUB_URL"
+  echo "  - MASTER_ID: $MASTER_ID"
+  echo "  - NICKNAME: $NICKNAME"
+  echo "  - BOT_PORT: $BOT_PORT"
+  $DC -f docker-compose.dev.yml --profile bot up -d
+
+  wait_backend_health "$health_timeout" || { print_bot_failure_diagnostics; exit 1; }
+  wait_bot_container_healthy "$health_timeout" || { print_bot_failure_diagnostics; exit 1; }
+  wait_bot_registered_online "$health_timeout" || { print_bot_failure_diagnostics; exit 1; }
+
+  echo ""
+  echo "🎉 联调环境启动完成"
+  echo ""
+  echo "  服务地址："
+  echo "    前端: http://localhost:5173"
+  echo "    后端: http://localhost:8000"
+  echo "    Bot API: http://localhost:${BOT_PORT}"
+  echo "  机器人状态：在线 (BOT_ID=${BOT_ID})"
+}
+
+logs_bot() {
+  local tail_lines="100"
+  local follow_flag=""
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --tail)
+        tail_lines="${2:-100}"
+        shift 2
+        ;;
+      --follow|-f)
+        follow_flag="-f"
+        shift
+        ;;
+      *)
+        echo "❌ 未知参数: $1"
+        echo ""
+        show_help
+        exit 1
+        ;;
+    esac
+  done
+
+  $DC -f docker-compose.dev.yml --profile bot logs --tail "$tail_lines" $follow_flag bot
+}
+
 seed_test_data() {
   local profile="${1:-baseline}"
   echo ""
@@ -193,6 +455,8 @@ show_help() {
   echo "  seed-test-data    初始化测试夹具数据"
   echo "  reset-test-data   重置测试夹具数据"
   echo "  verify-test-data  校验测试夹具完整性"
+  echo "  dev-with-bot      启动 Web + Standalone Bot 联调环境（需 --bot-id）"
+  echo "  logs-bot          查看 Bot 容器日志"
   echo "  help              显示帮助"
   echo ""
   echo "示例:"
@@ -204,6 +468,8 @@ show_help() {
   echo "  bash scripts/dev.sh seed-test-data [profile]"
   echo "  bash scripts/dev.sh reset-test-data [profile] [--no-strict]"
   echo "  bash scripts/dev.sh verify-test-data [profile]"
+  echo "  bash scripts/dev.sh dev-with-bot --bot-id 123456789 [--hub-url http://backend:8000] [--master-id admin] [--nickname StandaloneBot] [--bot-port 8080] [--health-timeout 60]"
+  echo "  bash scripts/dev.sh logs-bot [--tail 100] [--follow]"
 }
 
 case "$COMMAND" in
@@ -242,6 +508,12 @@ case "$COMMAND" in
     ;;
   verify-test-data)
     verify_test_data "${2:-baseline}"
+    ;;
+  dev-with-bot)
+    dev_with_bot "${@:2}"
+    ;;
+  logs-bot)
+    logs_bot "${@:2}"
     ;;
   help|--help|-h|"")
     show_help

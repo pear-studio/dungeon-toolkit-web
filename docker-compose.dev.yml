@@ -67,9 +67,38 @@ services:
     networks:
       - dev_network
 
+  bot:
+    profiles: ["bot"]
+    build:
+      context: ../nonebot-dicepp
+      dockerfile: Dockerfile.standalone
+    restart: unless-stopped
+    ports:
+      - "${BOT_PORT:-8080}:${BOT_PORT:-8080}"
+    environment:
+      - BOT_ID=${BOT_ID:-}
+      - HUB_URL=${HUB_URL:-http://backend:8000}
+      - MASTER_ID=${MASTER_ID:-admin}
+      - NICKNAME=${NICKNAME:-StandaloneBot}
+      - PORT=${BOT_PORT:-8080}
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - bot_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '8080') + '/dpp/', timeout=3)\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    networks:
+      - dev_network
+
 networks:
   dev_network:
     driver: bridge
 
 volumes:
   postgres_dev_data:
+  bot_data:

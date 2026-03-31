@@ -156,6 +156,13 @@ bash scripts/dev.sh check    # test + lint
 bash scripts/dev.sh rebuild  # 停止、重建、迁移
 ```
 
+可选：启动 Web + Standalone Bot 联调环境（依赖相邻目录存在 `../nonebot-dicepp`）：
+
+```bash
+bash scripts/dev.sh dev-with-bot --bot-id 123456789
+bash scripts/dev.sh logs-bot --tail 100 --follow
+```
+
 ---
 
 ## 目录结构
