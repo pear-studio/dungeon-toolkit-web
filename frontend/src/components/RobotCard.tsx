@@ -1,18 +1,20 @@
 import { useNavigate } from 'react-router-dom'
-import { Bot as BotIcon, Circle } from 'lucide-react'
+import { Bot as BotIcon, Circle, MessageCircle } from 'lucide-react'
 import { type Bot } from '../lib/api'
-import { TEXT, CARD, STATUS_COLORS, STATUS_TEXTS } from '../lib/constants'
+import { BUTTON, TEXT, CARD, STATUS_COLORS, STATUS_TEXTS } from '../lib/constants'
 import { cn } from '../lib/utils'
 
 interface RobotCardProps {
   bot: Bot
+  onOpenChat?: (bot: Bot) => void
 }
 
 /**
  * 机器人卡片组件 - 用于广场列表展示
  */
-export default function RobotCard({ bot }: RobotCardProps) {
+export default function RobotCard({ bot, onOpenChat }: RobotCardProps) {
   const navigate = useNavigate()
+  const canOpenChat = bot.status === 'online'
 
   return (
     <button
@@ -52,6 +54,21 @@ export default function RobotCard({ bot }: RobotCardProps) {
           {/* 描述（可选） */}
           {bot.description && (
             <p className={cn(TEXT.bodySmall, "mt-1 line-clamp-2")}>{bot.description}</p>
+          )}
+
+          {onOpenChat && canOpenChat && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onOpenChat(bot)
+              }}
+              className={cn(BUTTON.base, BUTTON.outline, BUTTON.sm, 'mt-2')}
+            >
+              <MessageCircle className="w-4 h-4 inline mr-1" aria-hidden="true" />
+              打开聊天
+            </button>
           )}
         </div>
       </div>

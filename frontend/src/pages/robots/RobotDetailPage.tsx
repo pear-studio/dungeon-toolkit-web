@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Bot as BotIcon, Circle } from 'lucide-react'
+import { Bot as BotIcon, Circle, MessageCircle } from 'lucide-react'
 import { botApi, type Bot } from '../../lib/api'
-import { TEXT, CARD, LAYOUT, STATUS_COLORS, STATUS_TEXTS } from '../../lib/constants'
+import { BUTTON, TEXT, CARD, LAYOUT, STATUS_COLORS, STATUS_TEXTS } from '../../lib/constants'
 import { cn } from '../../lib/utils'
 import Header from '../../components/Header'
+import ChatDialog from '../../components/ChatDialog'
 
 export default function RobotDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [bot, setBot] = useState<Bot | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [chatOpen, setChatOpen] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -58,6 +60,7 @@ export default function RobotDetailPage() {
       </div>
     )
   }
+  const canOpenChat = bot.status === 'online'
 
   return (
     <div className="min-h-screen bg-white">
@@ -80,6 +83,16 @@ export default function RobotDetailPage() {
               <p className={cn(TEXT.bodySmall, "mb-4")}>QQ: {bot.bot_id}</p>
               {bot.description && (
                 <p className={cn(TEXT.body, "mb-4")}>{bot.description}</p>
+              )}
+              {canOpenChat && (
+                <button
+                  type="button"
+                  onClick={() => setChatOpen(true)}
+                  className={cn(BUTTON.base, BUTTON.primary, BUTTON.md)}
+                >
+                  <MessageCircle className="w-4 h-4 inline mr-1" aria-hidden="true" />
+                  打开聊天
+                </button>
               )}
             </div>
           </div>
@@ -106,6 +119,8 @@ export default function RobotDetailPage() {
           </div>
         </div>
       </main>
+
+      {chatOpen && <ChatDialog bot={bot} onClose={() => setChatOpen(false)} />}
     </div>
   )
 }

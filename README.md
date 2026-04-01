@@ -165,6 +165,57 @@ bash scripts/dev.sh logs-bot --tail 100 --follow
 
 ---
 
+## WebSocket 网关（网页聊天）
+
+### 端点
+
+- 用户端：`/ws/chat/<bot_uuid>/?token=<access_token>`
+- 机器人端：`/ws/bot/`
+
+### 本地运行（ASGI）
+
+后端 WebSocket 需要 ASGI 入口，本项目默认使用 `config.asgi:application`：
+
+```bash
+cd backend
+uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --reload
+```
+
+### 协议文档
+
+完整协议（`ack` / `system` / `bot_message` / `user_message`）见 [docs/websocket-gateway.md](docs/websocket-gateway.md)。
+
+### Mock Bot（独立测试）
+
+```bash
+cd backend
+python scripts/mock_bot.py --base-url ws://localhost:8000 --api-key <BOT_API_KEY>
+```
+
+### 验收前置条件（网页聊天）
+
+1. 准备测试账号并登录（建议使用 `fixture_normal / FixturePass1234`）
+2. 确认浏览器已存在 `access_token`（登录后自动写入）
+3. 启动后端 ASGI 服务与前端页面，并确保 `/ws/` 可访问
+4. （可选）启动 Mock Bot；若不启动，聊天页面应出现机器人离线提示且输入框禁用
+
+### 验收步骤（登录态相关）
+
+1. 未登录访问聊天：应显示“请先登录后再使用聊天”，输入框与发送按钮禁用
+2. 登录后访问聊天：
+   - WebSocket 通道连通且机器人在线时，输入框可用
+   - 机器人离线时，显示离线提示且输入框禁用
+3. 同一账号同一机器人打开第二个标签页时，旧标签页应收到提示并被断开
+
+### 生产部署说明
+
+- Nginx 需为 `/ws/` 配置 `Upgrade`/`Connection` 头并提升 `proxy_read_timeout`
+- 当前 `CHANNEL_LAYERS` 使用 `InMemoryChannelLayer`，**仅支持单进程**
+- 生产若继续使用 InMemory，ASGI worker 必须为 `1`
+- 多 worker / 多实例场景需切换到 Redis Channel Layer
+
+---
+
 ## 目录结构
 
 ```

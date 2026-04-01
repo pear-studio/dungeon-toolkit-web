@@ -7,6 +7,7 @@ import Header from '../../components/Header'
 import RobotCard from '../../components/RobotCard'
 import RobotCardSkeleton from '../../components/RobotCardSkeleton'
 import EmptyState from '../../components/EmptyState'
+import ChatDialog from '../../components/ChatDialog'
 
 export default function RobotPlazaPage() {
   const [bots, setBots] = useState<Bot[]>([])
@@ -15,6 +16,7 @@ export default function RobotPlazaPage() {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [chatBot, setChatBot] = useState<Bot | null>(null)
   const latestRequestId = useRef(0)
 
   useEffect(() => {
@@ -93,12 +95,13 @@ export default function RobotPlazaPage() {
         ) : (
           <div className={LAYOUT.grid3}>
             {bots.map((bot) => (
-              <RobotCard key={bot.id} bot={bot} />
+              <RobotCard key={bot.id} bot={bot} onOpenChat={setChatBot} />
             ))}
           </div>
         )}
-
       </main>
+
+      {chatBot && <ChatDialog bot={chatBot} onClose={() => setChatBot(null)} />}
     </div>
   )
 }

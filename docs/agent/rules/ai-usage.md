@@ -63,3 +63,11 @@ wsl -d Ubuntu bash -c "cd /mnt/d/Workplace/dungeon-toolkit-web && bash scripts/d
 - Agent 规则: `docs/agent/rules/`
 - 后端详细规范: `backend/rules.md`
 - 前端详细规范: `frontend/rules.md`
+
+## WebSocket 网关约定（web-chat-gateway）
+
+- 用户端 WS: `/ws/chat/<bot_uuid>/?token=<access_token>`，其中 `<bot_uuid>` 是 `Bot.id`（UUID）
+- 机器人端 WS: `/ws/bot/`，首帧必须发送 `{"v":1,"type":"auth","api_key":"..."}`
+- `ChatRelay` 用户分组命名固定为 `chat_user_{user_uuid}_{bot_uuid}`
+- 协议中的 `user_id` 为站点用户主键 UUID（`users.User.id`），**不是 QQ/OneBot user_id**
+- 在 InMemory Channel Layer 下仅支持单进程；多 worker/多实例需迁移 Redis Channel Layer
