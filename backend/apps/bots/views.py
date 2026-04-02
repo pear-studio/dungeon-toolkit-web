@@ -1,5 +1,5 @@
 from rest_framework import status, generics
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -10,6 +10,7 @@ from .serializers import (
     BotSerializer, BotRegistrationSerializer, BotHeartbeatSerializer
 )
 from .authentication import BotAuthentication
+from .chat_relay import BotConnectionRegistry
 
 
 class BotRegistrationView(APIView):
@@ -180,3 +181,38 @@ class MyBotListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Bot.objects.filter(master=self.request.user)
+
+
+class WsStatusView(APIView):
+    """WebSocket 连接诊断端点 - 仅 DEBUG 模式可用，仅 admin 可访问"""
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, pk):
+        try:
+            bot = Bot.objects.get(pk=pk)
+        except Bot.DoesNotExist:
+            return Response(
+                {'detail': 'Bot not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 查询 Registry 实时状态
+        is_online = BotConnectionRegistry.is_online(bot.api_key)
+        channel_name = BotConnectionRegistry.get_channel_name(bot.api_key)
+
+        # 构建响应
+        registry_data = {
+            'is_online': is_online,
+            'channel_name': channel_name,
+        }
+        db_data = {
+            'status': bot.status,
+            'last_seen': bot.last_seen.isoformat() if bot.last_seen else None,
+        }
+        consistent = is_online == (bot.status == 'online')
+
+        return Response({
+            'registry': registry_data,
+            'db': db_data,
+            'consistent': consistent,
+        })

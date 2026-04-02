@@ -47,3 +47,9 @@ def authenticated_client(api_client, user):
 def authenticated_admin_client(api_client, admin_user):
     api_client.force_authenticate(user=admin_user)
     return api_client
+
+
+@pytest.fixture
+def admin_client(authenticated_admin_client):
+    """Alias for authenticated_admin_client for brevity"""
+    return authenticated_admin_client

@@ -6,6 +6,7 @@ django-cors-headers==4.4.0
 
 # 数据库
 psycopg2-binary==2.9.9
+aiohttp==3.13.5
 
 # 环境变量
 python-decouple==3.8

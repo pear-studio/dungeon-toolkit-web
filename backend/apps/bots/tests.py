@@ -1,8 +1,120 @@
 import pytest
 import secrets
 from django.urls import reverse
+from django.test import override_settings
 from rest_framework import status
 from apps.bots.models import Bot
+from apps.bots.chat_relay import BotConnectionRegistry
+
+
+@pytest.mark.django_db
+class TestWsStatusDiagnostic:
+    """WebSocket 诊断端点测试"""
+
+    @override_settings(DEBUG=True)
+    def test_ws_status_admin_access(self, admin_client, admin_user):
+        """admin 用户可访问诊断端点"""
+        bot = Bot.objects.create(
+            bot_id='123456',
+            nickname='TestBot',
+            master=admin_user,
+            master_qq='987654',
+            api_key='test-api-key',
+            status='offline'
+        )
+        url = f'/api/debug/ws-status/{bot.id}/'
+        response = admin_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert 'registry' in response.data
+        assert 'db' in response.data
+        assert 'consistent' in response.data
+
+    @override_settings(DEBUG=True)
+    def test_ws_status_non_admin_forbidden(self, authenticated_client, user):
+        """非 admin 用户 403"""
+        bot = Bot.objects.create(
+            bot_id='123456',
+            nickname='TestBot',
+            master=user,
+            master_qq='987654',
+            api_key='test-api-key'
+        )
+        url = f'/api/debug/ws-status/{bot.id}/'
+        response = authenticated_client.get(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @override_settings(DEBUG=True)
+    def test_ws_status_unauthenticated(self, api_client):
+        """未认证用户 401"""
+        url = '/api/debug/ws-status/123e4567-e89b-12d3-a456-426614174000/'
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_ws_status_bot_not_found(self, admin_client):
+        """不存在的 bot 返回 404"""
+        import uuid
+        url = f'/api/debug/ws-status/{uuid.uuid4()}/'
+        response = admin_client.get(url)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @override_settings(DEBUG=True)
+    def test_ws_status_consistent_state(self, admin_client, admin_user):
+        """状态一致: registry offline, db offline"""
+        bot = Bot.objects.create(
+            bot_id='123456',
+            nickname='TestBot',
+            master=admin_user,
+            master_qq='987654',
+            api_key='test-api-key',
+            status='offline'
+        )
+        url = f'/api/debug/ws-status/{bot.id}/'
+        response = admin_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['registry']['is_online'] is False
+        assert response.data['db']['status'] == 'offline'
+        assert response.data['consistent'] is True
+
+    @override_settings(DEBUG=True)
+    def test_ws_status_inconsistent_state(self, admin_client, admin_user):
+        """状态不一致: registry online (模拟), db offline"""
+        bot = Bot.objects.create(
+            bot_id='123456',
+            nickname='TestBot',
+            master=admin_user,
+            master_qq='987654',
+            api_key='test-inconsistent-key',
+            status='offline'
+        )
+        # 模拟 registry 在线状态
+        BotConnectionRegistry.bind('test-inconsistent-key', 'specific.channel.test')
+
+        try:
+            url = f'/api/debug/ws-status/{bot.id}/'
+            response = admin_client.get(url)
+            assert response.status_code == status.HTTP_200_OK
+            assert response.data['registry']['is_online'] is True
+            assert response.data['db']['status'] == 'offline'
+            assert response.data['consistent'] is False
+        finally:
+            # 清理
+            BotConnectionRegistry.unbind('test-inconsistent-key', 'specific.channel.test')
+
+    @pytest.mark.django_db
+    def test_ws_status_debug_false_route_not_found(self, admin_user):
+        """DEBUG=False 时诊断端点路由不存在"""
+        from django.test import override_settings
+        from django.urls import resolve, Resolver404, clear_url_caches
+        import uuid
+        import importlib
+        import config.urls
+
+        with override_settings(DEBUG=False):
+            clear_url_caches()
+            importlib.reload(config.urls)
+            url_path = f'/api/debug/ws-status/{uuid.uuid4()}/'
+            with pytest.raises(Resolver404):
+                resolve(url_path)
 
 
 @pytest.mark.django_db

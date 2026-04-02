@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from apps.bots.views import WsStatusView
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -20,3 +22,7 @@ urlpatterns = [
     path('api/auth/', include('apps.users.urls')),
     path('api/bots/', include('apps.bots.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# DEBUG 模式下注册诊断端点
+if settings.DEBUG:
+    urlpatterns.insert(0, path('api/debug/ws-status/<uuid:pk>/', WsStatusView.as_view(), name='ws-status'))
