@@ -20,6 +20,7 @@ description: 启动本地 test 栈: 先按 run-tests 做 pytest + lint, 再于 W
 |------|------|
 | `run-tests` | Docker 检查, pytest, `npm run lint` 的规范与 Windows/WSL 注意点 |
 | `start-test-env` | 只拉起环境与健康检查, **不包含**预检与 `seed_test_data` |
+| `test-guide` | ws acceptance 前置自检: health/诊断端点/鉴权/证据留档 |
 | **本技能** | 编排: **预检 → 夹具 → 起服务 → 汇报 URL**, 并写明真机对接的灰区 |
 
 实现时: **不要与本条重复长篇命令**, 细节以 `run-tests`, `start-test-env` 为准; 此处给**必选顺序**与**路径占位符**.
@@ -50,7 +51,7 @@ REPO_WSL=/mnt/d/Workplace/dungeon-toolkit-web
 - [ ] 4. 前端 lint 通过(frontend 容器未起时用备选命令)
 - [ ] 5. seed baseline 夹具并(可选)校验
 - [ ] 6. 启动前端 Vite(WSL, 与 start-test-env 一致)
-- [ ] 7. 健康检查与 /api 代理抽检
+- [ ] 7. 基础健康检查与 /api 代理抽检(见 start-test-env)
 - [ ] 8. 向用户输出 URL, fixture 账号提示, 真机器人注意点
 ```
 
@@ -126,8 +127,8 @@ cd "$REPO_WSL/frontend" && npm run dev -- --host 0.0.0.0 --port 5173
 
 ### 7) 验证
 
-- `curl` 或浏览器访问: `http://localhost:8000/api/health/` → 期望含 `"status":"ok"`.
-- 经前端代理: `http://localhost:5173/api/bots/` → 期望 `200` 与 JSON(与 `start-test-env` 第 4 步一致).
+- 基础连通性抽检（health + `/api/...`）：按 `start-test-env` 第 2 和 4 步执行并确认。
+- ws acceptance 的更深入诊断/鉴权/证据自检见 `../test-guide/SKILL.md`。
 
 ### 8) 向用户交付的信息
 

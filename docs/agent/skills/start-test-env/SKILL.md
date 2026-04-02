@@ -49,6 +49,8 @@ wsl -d Ubuntu bash -lc "curl -fsS http://localhost:8000/api/health/"
 
 Expected: JSON containing `"status":"ok"`.
 
+更深入的 ws acceptance 前置自检（诊断端点/权限/证据 jsonl）见 `../test-guide/SKILL.md`。
+
 ### 3) Start frontend
 
 Preferred (same network context as backend):
@@ -115,3 +117,4 @@ wsl -d Ubuntu bash -lc "cd /mnt/d/Workplace/dungeon-toolkit-web && docker compos
 
 - Keep changes minimal: this skill is for runtime environment operations, not feature implementation.
 - Always report whether failures are from backend unavailability or frontend proxy path/network issues.
+- 如果要继续跑 ws acceptance（`ws_acceptance.py`），建议先按 `../test-guide/SKILL.md` 完成 preflight。
