@@ -1,38 +1,44 @@
 ---
 name: test-guide
-description: Start by checking environment & prerequisites before running ws acceptance/tests.
+description: Start by checking environment & prerequisites before running WebSocket tests.
 ---
 
-# 测试前自检（简洁版）
+# WebSocket 测试指南
 
-## 你要先确认什么
-- 运行环境是否“干净可复现”：上一次验收是否已退出；是否还残留了 `ws_acceptance.py` / 卡住的 Python 进程。
-- 后端是否可用：`GET /api/health/` 返回 `{"status":"ok"}`。
-- 诊断端点是否存在：`DEBUG=True` 时 `/api/debug/ws-status/<bot_pk>/` 才会注册（否则应直接 404）。
-- 诊断权限是否满足：诊断接口需要 `IsAdminUser`（必须使用 admin token）。
-- 依赖是否齐全：`ws_acceptance.py` 需要 `aiohttp`（若容器没装过，先补依赖）。
-- 访问路径是否可靠：尽量在 **backend 容器内**运行验收脚本，避免 Windows↔WSL 端口连通性问题。
+## 运行测试
 
-## 基础连通性检查（快速版）
-- 后端健康：WSL 内执行 `curl -fsS http://localhost:8000/api/health/`，期望含 `"status":"ok"`。
-- 前端代理：若前端 Vite 在 `5173`，从 Windows 执行 `curl.exe -i --max-time 10 http://localhost:5173/api/bots/`，期望 `200` 与 JSON。
-- 若这里失败：优先参照 `start-test-env` 的排错小节（通常是 Windows/WSL 网络不一致或端口占用）。
-- 如需更深入的 ws 诊断/鉴权/证据留档，请继续往下按本 skill 的 preflight 走（不是只做连通性）。
+```bash
+cd backend
 
-## 如果你要用 `--seed`
-- 一定使用唯一的 `--run-id`（避免账号/机器人冲突）。
-- 用固定前缀 `--acceptance-prefix` 来隔离数据，避免污染真实数据。
-- 推荐总是配对使用 `--seed --cleanup`（结束后自动清理）。
+# 运行所有 WebSocket 测试
+pytest apps/bots/tests/test_websocket_gateway.py -v
 
-## 建议的最小执行顺序
-```text
-1) 先跑脚本的 preflight（脚本启动后会自动做）
-2) preflight 通过再进入 Gate/场景
-3) 生成的 jsonl 证据留档，失败时只先修环境/鉴权问题
+# 运行特定测试类
+pytest apps/bots/tests/test_websocket_gateway.py::TestBotGateway -v
+pytest apps/bots/tests/test_websocket_gateway.py::TestUserGateway -v
+pytest apps/bots/tests/test_websocket_gateway.py::TestMessageRelay -v
 ```
 
-## 失败时优先检查
-- `api_health` / `diagnostic_accessible` 失败：先处理后端可达性、DEBUG、admin token。
-- `db_online` / `consistent` 波动：通常是网关刚连上到落库的短延迟，优先看是否需要重跑或检查 Gate 等待逻辑。
-- `ws` 断连/踢出异常：确认 bot/token 是否对应同一 bot_pk 与同一 user。
+## 前置检查
+
+- 后端是否可用：`GET /api/health/` 返回 `{“status”:”ok”}`
+- 测试使用内存 Channel Layer，**无需**启动外部服务
+- 若需诊断端点：`DEBUG=True` 时 `/api/debug/ws-status/<bot_pk>/` 才可用
+
+## 测试结构
+
+| 测试类 | 覆盖场景 |
+|--------|----------|
+| `TestBotGateway` | Bot 连接认证、无效 key 拒绝、消息接收 |
+| `TestUserGateway` | JWT 认证、离线系统消息、ack 响应 |
+| `TestMessageRelay` | 双向消息中继、断开通知 |
+| `TestRateLimiting` | 频率限制 |
+
+## 常见问题
+
+**Q: 测试出现 `Task was destroyed but it is pending` 警告？**  
+A: 这是 pytest-asyncio + channels 的已知现象，不影响测试结果。
+
+**Q: 如何在 CI 中运行？**  
+A: 直接运行 `pytest apps/bots/tests/test_websocket_gateway.py`，无需额外服务。
 

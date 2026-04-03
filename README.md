@@ -192,85 +192,34 @@ cd backend
 python scripts/mock_bot.py --base-url ws://localhost:8000 --api-key <BOT_API_KEY>
 ```
 
-### WebSocket 网关验收脚本
+### WebSocket 网关测试
 
-自动化验收脚本，覆盖 Gate 断言和 S1-S4 场景：
-
-**前置条件**
-- 后端 ASGI 服务已启动（`uvicorn config.asgi:application`）
-- 已创建测试 bot 并获取其 `api_key` 和 `pk`（UUID）
-- 已获取 admin 用户的 JWT token（用于诊断 API 访问）
-
-**运行验收**
+使用 pytest 运行 WebSocket 集成测试：
 
 ```bash
 cd backend
 
-# 方式一：命令行参数
-python scripts/ws_acceptance.py \
-  --base-url ws://localhost:8000 \
-  --api-url http://localhost:8000 \
-  --bot-pk <BOT_UUID> \
-  --api-key <BOT_API_KEY> \
-  --user-token <JWT_TOKEN>
+# 运行所有 WebSocket 测试
+pytest apps/bots/tests/test_websocket_gateway.py -v
 
-# 方式二：环境变量（推荐，避免敏感信息泄露到 shell history）
-export WS_ACCEPTANCE_API_KEY=<BOT_API_KEY>
-export WS_ACCEPTANCE_USER_TOKEN=<JWT_TOKEN>
-python scripts/ws_acceptance.py \
-  --base-url ws://localhost:8000 \
-  --api-url http://localhost:8000 \
-  --bot-pk <BOT_UUID>
+# 运行特定测试类
+pytest apps/bots/tests/test_websocket_gateway.py::TestBotGateway -v
+pytest apps/bots/tests/test_websocket_gateway.py::TestUserGateway -v
+pytest apps/bots/tests/test_websocket_gateway.py::TestMessageRelay -v
 ```
 
-**参数说明**
+**测试覆盖场景**
 
-| 参数 | 环境变量 | 说明 |
-|------|---------|------|
-| `--bot-pk` | - | Bot UUID 主键（必需） |
-| `--api-key` | `WS_ACCEPTANCE_API_KEY` | Bot API Key（必需） |
-| `--user-token` | `WS_ACCEPTANCE_USER_TOKEN` | 用户 JWT Token（必需） |
-| `--base-url` | - | WebSocket URL（默认: ws://localhost:8000） |
-| `--api-url` | - | HTTP API URL（默认: http://localhost:8000） |
-| `--timeout` | - | 场景超时秒数（默认: 10）。连接阶段使用此值；断言等待时间为 timeout/2（最小 2 秒），确保在总超时内完成 |
+- **TestBotGateway**: Bot 连接认证、无效 key 拒绝、消息接收
+- **TestUserGateway**: JWT 认证、离线系统消息、ack 响应
+- **TestMessageRelay**: 双向消息中继、断开通知
+- **TestRateLimiting**: 频率限制
 
-**超时策略说明**
+**测试特点**
 
-- **连接超时**：WebSocket 连接阶段使用 `--timeout` 指定值
-- **断言等待**：消息收发等断言等待使用 timeout/2（如 `--timeout 10` 则断言等待 5 秒）
-- 若环境较慢，增大 `--timeout` 可同时延长连接和断言等待时间
-
-**验收场景**
-
-- **Gate**: 诊断 API 可达性、Registry/DB 状态一致性检查
-- **S1**: 在线消息回环（user → bot echo → user）
-- **S2**: 离线消息（bot 离线时 user 发送消息应收到 ack error）
-- **S3**: 重连恢复（bot 断线重连后消息回环正常）
-- **S4**: 多标签页踢出（同一用户新连接导致旧连接被强制断开）
-
-**输出示例**
-
-```
-========================================
-WS Acceptance Report
-========================================
-Bot: <uuid>
-Time: 2026-04-02T10:30:00Z
-
-[GATE  ]  gateway_reachable    PASS  (120ms)
-[GATE  ]  registry_online      PASS
-[GATE  ]  db_online            PASS
-[GATE  ]  consistent           PASS
-[S1    ]  bot_received_msg     PASS  (85ms)
-[S1    ]  user_received_echo   PASS  (92ms)
-...
-
-Result: 8/8 PASS
-
-Evidence written to: ws_acceptance_20260402_103000.jsonl
-```
-
-验收证据以 JSON Lines 格式写入文件，每条记录包含时间戳、场景、断言结果和实际值，便于回溯和交接。
+- 使用内存 Channel Layer（`InMemoryChannelLayer`），无需外部服务
+- 测试隔离，可并行运行
+- 直接集成到 CI/CD 流程
 
 ### 验收前置条件（网页聊天）
 

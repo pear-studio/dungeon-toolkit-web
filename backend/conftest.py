@@ -4,6 +4,17 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+@pytest.fixture(scope='session', autouse=True)
+def set_channel_layer():
+    """确保测试使用内存 channel layer"""
+    from django.conf import settings
+    settings.CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
+
+
 @pytest.fixture
 def user(db):
     return User.objects.create_user(
