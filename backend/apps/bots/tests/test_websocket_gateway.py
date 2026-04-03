@@ -469,6 +469,86 @@ class TestMessageRelay:
 
 
 # =============================================================================
+# Multi-Tab Tests
+# =============================================================================
+
+@pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
+class TestMultiTab:
+    """多标签页/设备测试"""
+
+    async def test_second_tab_kicks_first_tab(self, user, bot):
+        """同一用户同一 bot 开第二个标签页，第一个应收到踢人通知"""
+        from rest_framework_simplejwt.tokens import AccessToken
+
+        token = AccessToken.for_user(user)
+
+        # 创建并认证 Bot
+        bot_comm = WebsocketCommunicator(
+            bot_gateway_app,
+            "/ws/bot/",
+        )
+        await bot_comm.connect()
+        await bot_comm.send_json_to({
+            "v": 1,
+            "type": "auth",
+            "api_key": bot.api_key,
+        })
+        await asyncio.sleep(0.1)
+
+        # 创建两个用户连接（模拟两个标签页）
+        tab_1 = WebsocketCommunicator(
+            user_chat_app,
+            f"/ws/chat/{bot.id}/?token={token}",
+        )
+        tab_2 = WebsocketCommunicator(
+            user_chat_app,
+            f"/ws/chat/{bot.id}/?token={token}",
+        )
+
+        connected_1, _ = await tab_1.connect()
+        connected_2, _ = await tab_2.connect()
+        assert connected_1 is True
+        assert connected_2 is True
+
+        # 第一个标签页应收到系统踢人消息
+        first_tab_notice = await tab_1.receive_json_from(timeout=1)
+        assert first_tab_notice["type"] == "system"
+        assert first_tab_notice.get("code") == "FORCE_DISCONNECT"
+
+        # 验证第一个标签页收到关闭帧
+        close_event = await tab_1.receive_output(timeout=1)
+        assert close_event["type"] == "websocket.close"
+        assert close_event["code"] == 4001
+
+        # 第二个标签页应能正常使用
+        await tab_2.send_json_to({
+            "v": 1,
+            "type": "message",
+            "content": "new-tab-message",
+            "ack_id": "ack-new-tab",
+        })
+
+        # Bot 应收到消息
+        to_bot = await bot_comm.receive_json_from(timeout=1)
+        assert to_bot["type"] == "user_message"
+        assert to_bot["ack_id"] == "ack-new-tab"
+
+        # 第二个标签页收到 ack
+        ack = await tab_2.receive_json_from(timeout=1)
+        assert ack["type"] == "ack"
+        assert ack["status"] == "ok"
+
+        await tab_1.disconnect()
+        await tab_2.disconnect()
+        await bot_comm.disconnect()
+        # 清理 registry
+        channel = BotConnectionRegistry.get_channel_name(bot.api_key)
+        if channel:
+            BotConnectionRegistry.unbind(bot.api_key, channel)
+
+
+# =============================================================================
 # Rate Limiting Tests
 # =============================================================================
 
@@ -476,6 +556,67 @@ class TestMessageRelay:
 @pytest.mark.django_db(transaction=True)
 class TestRateLimiting:
     """频率限制测试"""
+
+    async def test_rate_limit_allows_messages_after_window_reset(self, user, bot, mocker):
+        """频率限制窗口重置后应允许新消息"""
+        from rest_framework_simplejwt.tokens import AccessToken
+        from apps.bots import consumers as bot_consumers
+
+        token = AccessToken.for_user(user)
+
+        # 创建并认证 Bot
+        bot_comm = WebsocketCommunicator(
+            bot_gateway_app,
+            "/ws/bot/",
+        )
+        await bot_comm.connect()
+        await bot_comm.send_json_to({
+            "v": 1,
+            "type": "auth",
+            "api_key": bot.api_key,
+        })
+        await asyncio.sleep(0.1)
+
+        # 创建用户连接
+        user_comm = WebsocketCommunicator(
+            user_chat_app,
+            f"/ws/chat/{bot.id}/?token={token}",
+        )
+        await user_comm.connect()
+
+        # mock 时间函数模拟时间窗口重置
+        mocker.patch.object(
+            bot_consumers.UserChatConsumer,
+            "_current_time",
+            side_effect=[100.0, 101.0, 102.0, 108.5],
+        )
+
+        # 发送 4 条消息（mock 的时间窗口允许）
+        for idx in range(4):
+            ack_id = f"window-{idx}"
+            await user_comm.send_json_to({
+                "v": 1,
+                "type": "message",
+                "content": f"boundary-{idx}",
+                "ack_id": ack_id,
+            })
+
+            # Bot 应收到消息
+            to_bot = await bot_comm.receive_json_from(timeout=1)
+            assert to_bot["type"] == "user_message"
+            assert to_bot["ack_id"] == ack_id
+
+            # 用户收到 ack
+            ack = await user_comm.receive_json_from(timeout=1)
+            assert ack["type"] == "ack"
+            assert ack["status"] == "ok"
+
+        await user_comm.disconnect()
+        await bot_comm.disconnect()
+        # 清理 registry
+        channel = BotConnectionRegistry.get_channel_name(bot.api_key)
+        if channel:
+            BotConnectionRegistry.unbind(bot.api_key, channel)
 
     async def test_rate_limiting_applies(self, user, bot):
         """测试频率限制是否生效（快速发送消息会触发限制）"""
@@ -526,3 +667,83 @@ class TestRateLimiting:
         assert len(acks) > 0
 
         await user_comm.disconnect()
+
+
+# =============================================================================
+# Backward Compatibility Tests
+# =============================================================================
+
+@pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
+class TestBackwardCompatibility:
+    """向后兼容测试"""
+
+    async def test_legacy_pong_does_not_break_relay(self, user, bot):
+        """发送遗留的应用层 pong 应被忽略且不会破坏消息中继"""
+        from rest_framework_simplejwt.tokens import AccessToken
+
+        token = AccessToken.for_user(user)
+
+        # 创建并认证 Bot
+        bot_comm = WebsocketCommunicator(
+            bot_gateway_app,
+            "/ws/bot/",
+        )
+        await bot_comm.connect()
+        await bot_comm.send_json_to({
+            "v": 1,
+            "type": "auth",
+            "api_key": bot.api_key,
+        })
+        await asyncio.sleep(0.1)
+
+        # 创建用户连接
+        user_comm = WebsocketCommunicator(
+            user_chat_app,
+            f"/ws/chat/{bot.id}/?token={token}",
+        )
+        await user_comm.connect()
+
+        # 等待连接完成
+        await asyncio.sleep(0.1)
+
+        # 发送用户消息
+        await user_comm.send_json_to({
+            "v": 1,
+            "type": "message",
+            "content": "no-app-pong-needed",
+            "ack_id": "ack-no-pong",
+        })
+
+        # Bot 应收到消息
+        to_bot = await bot_comm.receive_json_from(timeout=1)
+        assert to_bot["type"] == "user_message"
+        assert to_bot["ack_id"] == "ack-no-pong"
+
+        # 用户收到 ack
+        ack = await user_comm.receive_json_from(timeout=1)
+        assert ack["type"] == "ack"
+        assert ack["status"] == "ok"
+
+        # 发送遗留的应用层 pong 应被忽略
+        await bot_comm.send_json_to({"v": 1, "type": "pong"})
+
+        # 之后的消息中继应正常工作
+        await bot_comm.send_json_to({
+            "v": 1,
+            "type": "bot_message",
+            "user_id": str(user.id),
+            "content": "still-alive",
+        })
+
+        # 用户应收到 bot 消息
+        inbound = await user_comm.receive_json_from(timeout=1)
+        assert inbound["type"] == "bot_message"
+        assert inbound["content"] == "still-alive"
+
+        await user_comm.disconnect()
+        await bot_comm.disconnect()
+        # 清理 registry
+        channel = BotConnectionRegistry.get_channel_name(bot.api_key)
+        if channel:
+            BotConnectionRegistry.unbind(bot.api_key, channel)
