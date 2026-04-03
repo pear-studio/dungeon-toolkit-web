@@ -93,11 +93,11 @@ npm run dev
 
 ### 5. 验证运行
 
-打开浏览器访问 **http://localhost:5173**，应看到 Dungeon Toolkit 登录页面。
+打开浏览器访问 **http://localhost:5173** (若通过 WSL+Docker 运行，建议以 WSL2 IP 访问前端，避免 `wslrelay.exe` 转发失效)，应看到 Dungeon Toolkit 登录页面。
 
 | 服务 | 地址 |
 |------|------|
-| 前端页面 | http://localhost:5173 |
+| 前端页面 | http://localhost:5173 (WSL+Docker 场景建议用 WSL2 IP) |
 | 后端 API | http://localhost:8000/api/ |
 | 健康检查 | http://localhost:8000/api/health/ |
 

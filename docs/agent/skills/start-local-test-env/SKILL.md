@@ -14,6 +14,29 @@ description: 启动本地 test 栈: 先按 run-tests 做 pytest + lint, 再于 W
 3. **夹具数据**: 开发库里写入 **baseline** 测试夹具(固定账号 / 示例机器人等), 便于登录与列表演示; **不是**"假后端纯内存"模式, 仍是真实 Django + PostgreSQL.
 4. **真实机器人**: 本仓库没有单独的"模拟器开关". **夹具机器人**在 DB 里; **真实 QQ 机器人进程**需能访问本机(或局域网)上的注册接口, 自行完成登记后再在网页端绑定.
 
+## 环境结构警告: Windows → WSL → Docker 三层网络
+
+这台机器上的网络栈是**三层结构**, Agent 非常容易在这里踩坑:
+
+```
+Windows (浏览器 / PowerShell / Git Bash)
+    |
+    |-- wslrelay.exe (负责 localhost 端口转发, 非常脆弱)
+    v
+WSL2 VM (Ubuntu, 例: 172.21.200.199)
+    |
+    |-- docker-proxy
+    v
+Docker 容器 (frontend/backend 在 172.18.0.x 网段)
+```
+
+**致命陷阱**: 这台 WSL 里**没有原生 Node.js**。如果在 WSL 中执行 `npm run dev`, 实际上会透过 `/init` 代理启动** Windows 侧的 `node.exe`**。这个 `node.exe` 会直接抢占 Windows 的 `localhost:5173`, 与 `wslrelay.exe` 的转发规则冲突。即便之后杀掉了 `node.exe`, `wslrelay.exe` 对 `5173` 的映射也**经常永久失效**（`localhost:8000` 通常不受影响）。
+
+**因此**:
+- **严禁**在 WSL 中执行 `npm run dev` 来启动前端。
+- 前端**必须**用 `docker compose up -d frontend` 启动。
+- 向用户汇报 URL 时, **优先使用 WSL2 IP** (如 `http://172.21.200.199:5173/`), 只有在明确验证过 Windows 侧 `localhost:5173` 可用时, 才能推荐使用 localhost。
+
 ## 与现有技能的关系
 
 | 技能 | 作用 |
@@ -49,10 +72,10 @@ REPO_WSL=/mnt/d/Workplace/dungeon-toolkit-web
 - [ ] 2. 拉起 db + backend(不必先起 frontend 容器)
 - [ ] 3. 后端 pytest 通过
 - [ ] 4. 前端 lint 通过(frontend 容器未起时用备选命令)
-- [ ] 5. seed baseline 夹具并(可选)校验
-- [ ] 6. 启动前端 Vite(WSL, 与 start-test-env 一致)
+- [ ] 5. seed baseline 夹具并创建管理员账号
+- [ ] 6. 启动前端容器(严禁在 WSL 里跑 `npm run dev`)
 - [ ] 7. 基础健康检查与 /api 代理抽检(见 start-test-env)
-- [ ] 8. 向用户输出 URL, fixture 账号提示, 真机器人注意点
+- [ ] 8. 向用户输出 WSL2 IP 形式的 URL, fixture 和管理员账号, 真机器人注意点, **并提醒保持 WSL 终端打开**
 ```
 
 ### 1) Docker
@@ -93,19 +116,30 @@ docker compose -f docker-compose.dev.yml run --rm -T frontend npm run lint
 cd "$REPO_WSL/frontend" && npm run lint
 ```
 
-### 5) 夹具数据("伪装数据")
+### 5) 夹具数据与管理员账号
 
-默认写入 **baseline** profile(固定用户 + 夹具机器人等), 与手测文档一致:
+**先写入 baseline 夹具** (固定用户 + 夹具机器人):
 
 ```bash
 docker compose -f docker-compose.dev.yml exec -T backend python manage.py seed_test_data --profile baseline --strict
 ```
 
-或使用仓库脚本(WSL 内, `cd` 到项目根):
+或使用仓库脚本:
 
 ```bash
 bash scripts/dev.sh seed-test-data baseline
 ```
+
+**再创建管理员和测试账号** (用于 Django Admin):
+
+```bash
+docker compose -f docker-compose.dev.yml exec -T backend python manage.py create_test_users
+```
+
+这会创建:
+- `admin / AdminPass1234` (超级管理员, 可登录 Django Admin)
+- `testuser / TestPass1234` (普通测试用户)
+- `runner / RunnerPass1234` (CI/CD 测试用户)
 
 可选完整性校验:
 
@@ -113,17 +147,17 @@ bash scripts/dev.sh seed-test-data baseline
 bash scripts/dev.sh verify-test-data baseline
 ```
 
-其他 profile(如空广场)见 `docs/testing.md`, **不要**在用户未要求时擅自切换 profile.
+其他 profile 见 `docs/testing.md`, **不要**在用户未要求时擅自切换 profile.
 
 ### 6) 启动前端开发服务
 
-与 `start-test-env` 一致, **推荐在 WSL 中**启动, 减少 Windows/WSL 与 Vite 代理到 `localhost:8000` 的坑:
+**必须通过 Docker 容器启动前端**, 严禁在 WSL 中执行 `npm run dev` (原因见上文的"环境结构警告"):
 
 ```bash
-cd "$REPO_WSL/frontend" && npm run dev -- --host 0.0.0.0 --port 5173
+docker compose -f docker-compose.dev.yml up -d frontend
 ```
 
-> 若用户坚持用 Docker 里的 `frontend` 服务代替 Vite 本机进程, 可 `docker compose ... up -d frontend`, 行为以 `docker-compose.dev.yml` 为准(`VITE_API_BASE_URL` 指向容器内 `backend`). 与 `start-test-env` 的推荐路径不完全相同, 需在汇报中说明采用的是哪一套.
+这样前端会在 Docker 网络中与 backend 共处同一上下文, `VITE_API_BASE_URL` 等配置以 `docker-compose.dev.yml` 为准。
 
 ### 7) 验证
 
@@ -132,10 +166,50 @@ cd "$REPO_WSL/frontend" && npm run dev -- --host 0.0.0.0 --port 5173
 
 ### 8) 向用户交付的信息
 
-- 前端: `http://localhost:5173/`
-- 后端: `http://localhost:8000/`
-- 登录手测: 优先 `docs/testing.md` 中的 **fixture_*** 账号与密码(如 `fixture_normal` / `FixturePass1234`).
+- 前端: `http://172.21.200.199:5173/` (WSL2 IP; 如 IP 变动, 以 `wsl hostname -I` 第一列为准).
+  - `localhost:5173` 在此环境下经常因 `wslrelay.exe` 损坏而无法访问, 不要默认推荐.
+- 后端基础地址: `http://localhost:8000/`
+- **可用 API 端点** (以列表形式清晰呈现, **不要提示** `/api/docs/` 因为该路径不存在):
+  - 健康检查: `http://localhost:8000/api/health/`
+  - 机器人列表: `http://localhost:8000/api/bots/`
+  - 认证接口: `http://localhost:8000/api/auth/`
+  - 管理后台: `http://localhost:8000/admin/`
+- **前端登录账号** (fixture 用户):
+  - `fixture_normal / FixturePass1234` (正常场景)
+  - `fixture_expired / FixturePass1234` (token 过期场景)
+  - `fixture_refresh_fail / FixturePass1234` (refresh 失败场景)
+- **后端管理账号** (Django Admin):
+  - `admin / AdminPass1234` (超级管理员)
+  - `testuser / TestPass1234` (普通测试用户)
 - **真实机器人**: 终端进程需能访问注册 URL(见下节); 网页端登录后在产品流程里**绑定**已有 `bot_id`.
+- **⚠️ 必须提醒用户**: 打开一个独立终端并执行 `wsl` 保持 WSL 会话活跃。如果几分钟后连接中断，执行任意 WSL 命令（如 `wsl ls`）即可唤醒。
+
+---
+
+## 重要: 保持 WSL 终端打开 (防止 WSL2 休眠断网)
+
+**关键**: WSL2 在几分钟无活动后会自动休眠, 导致 Windows 与 Docker 容器之间的网络桥接 (`wslrelay.exe`) 中断。**开发期间必须保持 WSL 终端窗口打开**。
+
+### 解决方案
+
+启动环境后, **打开一个独立的终端窗口**并保持 WSL 会话:
+
+```powershell
+wsl
+```
+
+只要终端保持开启（不需要执行任何命令）, WSL2 就不会休眠, 网络连接保持稳定。
+
+如果忘记打开终端导致连接中断:
+1. 执行任意 WSL 命令（如 `wsl ls`）即可唤醒
+2. 或切换到已打开的 WSL 终端窗口
+
+### 替代方案（如果没有终端窗口）
+
+每 2-3 分钟执行一次心跳命令:
+```powershell
+wsl bash -c "echo keepalive"
+```
 
 ---
 
