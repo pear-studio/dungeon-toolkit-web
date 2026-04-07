@@ -15,26 +15,23 @@ Boot the project test environment quickly and consistently:
 
 ## Important: Windows + WSL + Docker Network Architecture
 
-This machine has a **three-layer network stack** that agents frequently misunderstand:
+This machine has a three-layer network stack:
 
 ```
 Windows (Browser / PowerShell / Git Bash)
     |
-    |-- wslrelay.exe (localhost port forwarding, fragile)
     v
-WSL2 VM (Ubuntu, e.g. 172.21.200.199)
+WSL2 VM (Ubuntu)
     |
-    |-- docker-proxy
     v
-Docker containers (frontend/backend on 172.18.0.x)
+Docker containers (frontend/backend)
 ```
 
-**The trap**: Because this WSL distro does **not** have native Node.js, running `npm run dev` inside WSL actually launches the **Windows `node.exe`** process via `/init` relay. That Windows `node.exe` seizes `localhost:5173` on the Windows side, colliding with `wslrelay.exe`'s port forwarding rule. Even after the process is killed, `wslrelay.exe` often **never recovers** the `localhost:5173` mapping (while `localhost:8000` usually remains fine).
+**Note**: This WSL distro does **not** have native Node.js. Running `npm run dev` inside WSL actually launches the **Windows `node.exe`** process via `/init` relay, causing port conflicts.
 
 **Therefore**:
 - Do **not** run `npm run dev` inside WSL.
 - Always start the frontend with `docker compose up -d frontend`.
-- When reporting access URLs, prefer the **WSL2 IP** (e.g. `http://172.21.200.199:5173/`) over `http://localhost:5173/` unless you have explicitly verified localhost works from Windows.
 
 ## When to Use
 
@@ -54,7 +51,7 @@ Copy this checklist and execute in order:
 - [ ] 3. Verify backend health endpoint
 - [ ] 4. Start frontend container (NEVER run `npm run dev` in WSL)
 - [ ] 5. Verify /api proxy from frontend endpoint
-- [ ] 6. Report URLs, API endpoints, test accounts, and WSL keepalive reminder
+- [ ] 6. Report URLs, API endpoints, and test accounts
 ```
 
 ### 1) Start backend in WSL
@@ -90,7 +87,7 @@ WebSocket 测试使用 pytest：`pytest apps/bots/tests/test_websocket_gateway.p
 
 ### 3) Start frontend
 
-**Use Docker frontend container** (mandatory — never run `npm run dev` inside WSL in this environment, because it spawns Windows `node.exe` and breaks `localhost:5173` port forwarding permanently):
+**Use Docker frontend container** (mandatory — never run `npm run dev` inside WSL in this environment, because it spawns Windows `node.exe` and causes port conflicts):
 
 ```powershell
 wsl -d Ubuntu bash -lc "cd /mnt/d/Workplace/dungeon-toolkit-web && docker compose -f docker-compose.dev.yml up -d frontend"
@@ -100,20 +97,18 @@ Expected: container status `Up`.
 
 ### 4) Verify proxy connectivity
 
-From Windows shell, test via the **WSL2 IP** (replace `172.21.200.199` with the actual IP from `wsl hostname -I`):
+From Windows shell, test the API proxy:
 
 ```powershell
-curl.exe -i --max-time 10 http://172.21.200.199:5173/api/bots/
+curl.exe -i --max-time 10 http://localhost:5173/api/bots/
 ```
 
 Expected: HTTP `200` and JSON body.
 
-> `localhost:5173` may fail from Windows even when the container is healthy, because `wslrelay.exe` forwarding for 5173 is fragile in this environment. Always verify with the WSL2 IP first.
-
 ### 6) Report ready state
 
 Provide:
-- Frontend URL: `http://172.21.200.199:5173/` (WSL2 IP; mention that `localhost:5173` can be used only if explicitly verified)
+- Frontend URL: `http://localhost:5173/`
 - Backend base URL: `http://localhost:8000/`
 - **Available API endpoints** (present as a clear list, do **not** mention `/api/docs/` as it does not exist):
   - Health: `http://localhost:8000/api/health/`
@@ -125,27 +120,15 @@ Provide:
   - Test user: `testuser / TestPass1234`
   - CI user: `runner / RunnerPass1234`
 - Proxy check result for `/api/bots/`
-- **⚠️ Important reminder to user**: Open a separate terminal and run `wsl` to keep the WSL session alive. If the connection drops after a few minutes, execute any WSL command (e.g., `wsl ls`) to wake it up.
 
-## Important: Keep WSL Terminal Open (WSL2 Idle Timeout)
+## Network Stability Tips
 
-**Critical**: WSL2 VM will automatically suspend after a few minutes of inactivity, which breaks the network bridge (`wslrelay.exe`) between Windows and Docker containers. **To prevent this, keep a WSL terminal window open during development.**
+WSL2 may automatically suspend after extended periods of inactivity, causing network interruptions. If you encounter connection issues:
 
-### Solution
+1. Run any WSL command to wake it up (e.g., `wsl ls`)
+2. Or keep a WSL terminal window open during development
 
-After starting the environment, open a separate terminal and run:
-
-```powershell
-wsl
-```
-
-This keeps the WSL session alive, ensuring the network bridge remains active. You don't need to run any commands inside — just having the terminal open is sufficient.
-
-If you forget and the connection drops after a few minutes:
-1. Execute any WSL command (e.g., `wsl ls`) to wake it up
-2. Or switch to the already-open WSL terminal
-
-### Alternative (if no terminal available)
+### Keep-Alive (optional)
 
 Use this heartbeat command every 2-3 minutes:
 ```powershell
@@ -154,30 +137,40 @@ wsl bash -c "echo keepalive"
 
 ## Troubleshooting
 
-### Case A: `localhost:5173` unreachable but WSL2 IP works
+### Case A: `localhost:5173` unreachable
 
-This is expected in this environment due to the `wslrelay.exe` / `node.exe` conflict described above. Do **not** waste time trying to fix `localhost:5173` unless the user explicitly requires it. Simply switch the reported URL to the WSL2 IP.
+1. Confirm container is up: `wsl bash -c "docker ps"`.
+2. Verify from inside WSL: `wsl bash -c "curl -s http://localhost:5173/"`.
+3. Check for port conflicts on Windows: `netstat -ano | findstr :5173`
+4. Restart the frontend container: `docker compose -f docker-compose.dev.yml restart frontend`
 
-### Case B: Port 5173 already in use on Windows
+### Case B: Port 5173 already in use
 
-Find and stop the Windows `node.exe` or other process:
+Find and stop the process:
 
 ```powershell
 netstat -ano | findstr :5173
 taskkill /PID <PID> /F
 ```
 
-Then restart the frontend container (not `npm run dev`):
+Then restart the frontend container:
 
 ```powershell
 wsl -d Ubuntu bash -lc "cd /mnt/d/Workplace/dungeon-toolkit-web && docker compose -f docker-compose.dev.yml restart frontend"
 ```
 
-### Case C: Neither localhost nor WSL2 IP works from Windows
+### Case C: Connection drops after inactivity
 
-1. Confirm container is up inside WSL: `wsl bash -c "docker ps"`.
-2. Confirm WSL internal access works: `wsl bash -c "curl -s http://172.21.200.199:5173/"`.
-3. If step 2 works but Windows cannot reach the IP, `wslrelay.exe` or the WSL vEthernet bridge is in a bad state. Run `wsl --shutdown` and restart the stack.
+WSL2 may have suspended. Wake it up:
+```powershell
+wsl ls
+```
+
+Or restart the environment:
+```powershell
+wsl --shutdown
+# Then restart the stack
+```
 
 ## Stop Commands
 

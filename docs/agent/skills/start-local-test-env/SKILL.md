@@ -14,28 +14,25 @@ description: 启动本地 test 栈: 先按 run-tests 做 pytest + lint, 再于 W
 3. **夹具数据**: 开发库里写入 **baseline** 测试夹具(固定账号 / 示例机器人等), 便于登录与列表演示; **不是**"假后端纯内存"模式, 仍是真实 Django + PostgreSQL.
 4. **真实机器人**: 本仓库没有单独的"模拟器开关". **夹具机器人**在 DB 里; **真实 QQ 机器人进程**需能访问本机(或局域网)上的注册接口, 自行完成登记后再在网页端绑定.
 
-## 环境结构警告: Windows → WSL → Docker 三层网络
+## 环境结构: Windows → WSL → Docker
 
-这台机器上的网络栈是**三层结构**, Agent 非常容易在这里踩坑:
+这台机器上的网络栈是三层结构:
 
 ```
 Windows (浏览器 / PowerShell / Git Bash)
     |
-    |-- wslrelay.exe (负责 localhost 端口转发, 非常脆弱)
     v
-WSL2 VM (Ubuntu, 例: 172.21.200.199)
+WSL2 VM (Ubuntu)
     |
-    |-- docker-proxy
     v
-Docker 容器 (frontend/backend 在 172.18.0.x 网段)
+Docker 容器 (frontend/backend)
 ```
 
-**致命陷阱**: 这台 WSL 里**没有原生 Node.js**。如果在 WSL 中执行 `npm run dev`, 实际上会透过 `/init` 代理启动** Windows 侧的 `node.exe`**。这个 `node.exe` 会直接抢占 Windows 的 `localhost:5173`, 与 `wslrelay.exe` 的转发规则冲突。即便之后杀掉了 `node.exe`, `wslrelay.exe` 对 `5173` 的映射也**经常永久失效**（`localhost:8000` 通常不受影响）。
+**注意**: 这台 WSL 里**没有原生 Node.js**。如果在 WSL 中执行 `npm run dev`, 实际上会透过 `/init` 代理启动 **Windows 侧的 `node.exe`**。这会导致端口冲突。
 
 **因此**:
 - **严禁**在 WSL 中执行 `npm run dev` 来启动前端。
 - 前端**必须**用 `docker compose up -d frontend` 启动。
-- 向用户汇报 URL 时, **优先使用 WSL2 IP** (如 `http://172.21.200.199:5173/`), 只有在明确验证过 Windows 侧 `localhost:5173` 可用时, 才能推荐使用 localhost。
 
 ## 与现有技能的关系
 
@@ -75,7 +72,7 @@ REPO_WSL=/mnt/d/Workplace/dungeon-toolkit-web
 - [ ] 5. seed baseline 夹具并创建管理员账号
 - [ ] 6. 启动前端容器(严禁在 WSL 里跑 `npm run dev`)
 - [ ] 7. 基础健康检查与 /api 代理抽检(见 start-test-env)
-- [ ] 8. 向用户输出 WSL2 IP 形式的 URL, fixture 和管理员账号, 真机器人注意点, **并提醒保持 WSL 终端打开**
+- [ ] 8. 向用户输出访问 URL, fixture 和管理员账号, 真机器人注意点
 ```
 
 ### 1) Docker
@@ -166,8 +163,7 @@ docker compose -f docker-compose.dev.yml up -d frontend
 
 ### 8) 向用户交付的信息
 
-- 前端: `http://172.21.200.199:5173/` (WSL2 IP; 如 IP 变动, 以 `wsl hostname -I` 第一列为准).
-  - `localhost:5173` 在此环境下经常因 `wslrelay.exe` 损坏而无法访问, 不要默认推荐.
+- 前端: `http://localhost:5173/`
 - 后端基础地址: `http://localhost:8000/`
 - **可用 API 端点** (以列表形式清晰呈现, **不要提示** `/api/docs/` 因为该路径不存在):
   - 健康检查: `http://localhost:8000/api/health/`
@@ -182,29 +178,17 @@ docker compose -f docker-compose.dev.yml up -d frontend
   - `admin / AdminPass1234` (超级管理员)
   - `testuser / TestPass1234` (普通测试用户)
 - **真实机器人**: 终端进程需能访问注册 URL(见下节); 网页端登录后在产品流程里**绑定**已有 `bot_id`.
-- **⚠️ 必须提醒用户**: 打开一个独立终端并执行 `wsl` 保持 WSL 会话活跃。如果几分钟后连接中断，执行任意 WSL 命令（如 `wsl ls`）即可唤醒。
 
 ---
 
-## 重要: 保持 WSL 终端打开 (防止 WSL2 休眠断网)
+## 网络稳定性提示
 
-**关键**: WSL2 在几分钟无活动后会自动休眠, 导致 Windows 与 Docker 容器之间的网络桥接 (`wslrelay.exe`) 中断。**开发期间必须保持 WSL 终端窗口打开**。
+WSL2 在长时间无活动后可能会自动休眠, 导致网络连接中断。如果遇到连接问题:
 
-### 解决方案
+1. 在 WSL 终端中执行任意命令即可唤醒（如 `wsl ls`）
+2. 或在开发期间保持 WSL 终端窗口打开
 
-启动环境后, **打开一个独立的终端窗口**并保持 WSL 会话:
-
-```powershell
-wsl
-```
-
-只要终端保持开启（不需要执行任何命令）, WSL2 就不会休眠, 网络连接保持稳定。
-
-如果忘记打开终端导致连接中断:
-1. 执行任意 WSL 命令（如 `wsl ls`）即可唤醒
-2. 或切换到已打开的 WSL 终端窗口
-
-### 替代方案（如果没有终端窗口）
+### 保持唤醒（可选）
 
 每 2-3 分钟执行一次心跳命令:
 ```powershell

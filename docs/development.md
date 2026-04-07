@@ -73,7 +73,7 @@ docker compose -f docker-compose.dev.yml logs -f
 
 | 服务 | 地址 | 说明 |
 |------|------|------|
-| 前端 | http://localhost:5173 | React 开发服务器 (热重载; Windows+WSL+Docker 环境建议用 WSL2 IP 访问，避免 `wslrelay.exe` 损坏) |
+| 前端 | http://localhost:5173 | React 开发服务器 (热重载) |
 | 后端 | http://localhost:8000 | Django 开发服务器 (热重载) |
 | 数据库 | localhost:5432 | PostgreSQL |
 

@@ -59,7 +59,7 @@ bash scripts/dev.sh logs-bot --tail 100 --follow
 ### 服务地址
 
 启动后可访问：
-- **前端**: http://localhost:5173 (Windows+WSL+Docker 环境建议用 WSL2 IP 如 `http://172.21.200.199:5173/`，避免 `wslrelay.exe` 损坏导致 localhost 无法访问)
+- **前端**: http://localhost:5173
 - **后端**: http://localhost:8000
 - **数据库**: localhost:5432
 - **Bot API**: http://localhost:8080（默认，可通过 `--bot-port` 覆盖）

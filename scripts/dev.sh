@@ -50,7 +50,7 @@ start_dev() {
   echo "  ✓ 开发环境已启动"
   echo ""
   echo "  服务地址："
-  echo "    前端: http://\$(wsl hostname -I | awk '{print \$1}'):5173  (WSL2 IP, localhost:5173 在该环境下经常因 wslrelay 损坏无法访问)"
+  echo "    前端: http://localhost:5173"
   echo "    后端: http://localhost:8000"
   echo "    数据库: localhost:5432"
 }
@@ -98,7 +98,7 @@ rebuild_dev() {
   echo "🎉 重建完成！"
   echo ""
   echo "  访问："
-  echo "    前端: http://\$(wsl hostname -I | awk '{print \$1}'):5173  (WSL2 IP, localhost:5173 在该环境下经常因 wslrelay 损坏无法访问)"
+  echo "    前端: http://localhost:5173"
   echo "    后端: http://localhost:8000"
 }
 
@@ -378,7 +378,7 @@ dev_with_bot() {
   echo "🎉 联调环境启动完成"
   echo ""
   echo "  服务地址："
-  echo "    前端: http://\$(wsl hostname -I | awk '{print \$1}'):5173  (WSL2 IP, localhost:5173 在该环境下经常因 wslrelay 损坏无法访问)"
+  echo "    前端: http://localhost:5173"
   echo "    后端: http://localhost:8000"
   echo "    Bot API: http://localhost:${BOT_PORT}"
   echo "  机器人状态：在线 (BOT_ID=${BOT_ID})"

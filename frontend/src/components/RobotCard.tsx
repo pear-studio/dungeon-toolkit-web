@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bot as BotIcon, Circle, MessageCircle } from 'lucide-react'
 import { type Bot } from '../lib/api'
@@ -16,9 +17,22 @@ export default function RobotCard({ bot, onOpenChat }: RobotCardProps) {
   const navigate = useNavigate()
   const canOpenChat = bot.status === 'online'
 
+  const handleNavigate = useCallback(() => {
+    navigate(`/robots/${bot.id}`)
+  }, [navigate, bot.id])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      navigate(`/robots/${bot.id}`)
+    }
+  }, [navigate, bot.id])
+
   return (
-    <button
-      onClick={() => navigate(`/robots/${bot.id}`)}
+    <div
+      onClick={handleNavigate}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
       aria-label={`查看机器人 ${bot.nickname} 详情`}
       className={cn(
         CARD.interactive,
@@ -27,7 +41,6 @@ export default function RobotCard({ bot, onOpenChat }: RobotCardProps) {
       )}
     >
       <div className="flex items-start gap-4">
-        {/* 头像 */}
         <div className={cn(
           "w-12 h-12 rounded-lg",
           "bg-gray-100",
@@ -36,22 +49,18 @@ export default function RobotCard({ bot, onOpenChat }: RobotCardProps) {
           <BotIcon className="w-6 h-6 text-gray-600" aria-hidden="true" />
         </div>
 
-        {/* 信息区域 */}
         <div className="flex-1 min-w-0">
-          {/* 标题行 */}
           <div className="flex items-center gap-2">
             <h3 className={cn(TEXT.h3, "truncate")}>{bot.nickname}</h3>
-            <Circle 
-              className={cn("w-2 h-2 fill-current", STATUS_COLORS[bot.status])} 
-              aria-hidden="true" 
+            <Circle
+              className={cn("w-2 h-2 fill-current", STATUS_COLORS[bot.status])}
+              aria-hidden="true"
             />
             <span className={TEXT.caption}>{STATUS_TEXTS[bot.status]}</span>
           </div>
 
-          {/* QQ号 */}
           <p className={TEXT.bodySmall}>QQ: {bot.bot_id}</p>
 
-          {/* 描述（可选） */}
           {bot.description && (
             <p className={cn(TEXT.bodySmall, "mt-1 line-clamp-2")}>{bot.description}</p>
           )}
@@ -72,6 +81,6 @@ export default function RobotCard({ bot, onOpenChat }: RobotCardProps) {
           )}
         </div>
       </div>
-    </button>
+    </div>
   )
 }
