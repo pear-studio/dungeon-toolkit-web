@@ -3,12 +3,12 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY frontend/package.json ./
-RUN npm install
+RUN npm install --registry=https://registry.npmmirror.com
 
 COPY frontend/ .
 
 # 重新安装依赖，确保覆盖宿主机 Windows node_modules 带来的平台/版本差异
-RUN npm install
+RUN npm install --registry=https://registry.npmmirror.com
 
 EXPOSE 5173
 
