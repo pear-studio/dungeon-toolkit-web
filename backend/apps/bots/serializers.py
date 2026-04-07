@@ -37,6 +37,3 @@ class BotRegistrationSerializer(serializers.Serializer):
     version = serializers.CharField(max_length=50, required=False, allow_blank=True, default='')
     description = serializers.CharField(required=False, allow_blank=True, default='')
 
-
-class BotHeartbeatSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(choices=['online', 'offline'], required=False, default='online')

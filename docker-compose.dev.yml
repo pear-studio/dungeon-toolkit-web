@@ -83,17 +83,41 @@ services:
       - MASTER_ID=${MASTER_ID:-admin}
       - NICKNAME=${NICKNAME:-StandaloneBot}
       - PORT=${BOT_PORT:-8080}
+      - WEBCHAT_HUB_URL=${WEBCHAT_HUB_URL:-ws://backend:8000/ws/bot/}
     depends_on:
       backend:
         condition: service_started
     volumes:
-      - bot_data:/app/data
+      - ../nonebot-dicepp/src/plugins/DicePP/Data:/app/src/plugins/DicePP/Data
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '8080') + '/dpp/', timeout=3)\""]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 15s
+    networks:
+      - dev_network
+
+  cron:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=dungeon_toolkit
+      - DB_USER=dungeon_toolkit
+      - DB_PASSWORD=dungeon_toolkit
+      - DJANGO_SETTINGS_MODULE=config.settings.development
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "while true; do
+        python manage.py check_bot_status --timeout-minutes 2;
+        sleep 60;
+      done"
     networks:
       - dev_network
 

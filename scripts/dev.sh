@@ -362,13 +362,17 @@ dev_with_bot() {
   export BOT_PORT="$bot_port"
 
   echo ""
+  echo "▶ 重新构建 Bot 镜像..."
+  $DC -f docker-compose.dev.yml --profile bot build bot
+
+  echo ""
   echo "▶ 启动 Web + Bot 联调环境..."
   echo "  - BOT_ID: $BOT_ID"
   echo "  - HUB_URL: $HUB_URL"
   echo "  - MASTER_ID: $MASTER_ID"
   echo "  - NICKNAME: $NICKNAME"
   echo "  - BOT_PORT: $BOT_PORT"
-  $DC -f docker-compose.dev.yml --profile bot up -d
+  $DC -f docker-compose.dev.yml --profile bot up -d --force-recreate
 
   wait_backend_health "$health_timeout" || { print_bot_failure_diagnostics; exit 1; }
   wait_bot_container_healthy "$health_timeout" || { print_bot_failure_diagnostics; exit 1; }

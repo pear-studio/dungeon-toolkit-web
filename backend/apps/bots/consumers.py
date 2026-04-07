@@ -1,3 +1,4 @@
+import asyncio
 import json
 import time
 from collections import deque
@@ -32,7 +33,7 @@ class UserChatConsumer(AsyncJsonWebsocketConsumer):
         bot = await self._get_bot(bot_id)
 
         if not user or not bot:
-            await self.close(code=4401)
+            await self.close(code=1008)
             return
 
         self.user = user
@@ -102,7 +103,7 @@ class UserChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def relay_force_disconnect(self, event):
         await self.send_json(event['payload'])
-        await self.close(code=4001)
+        await self.close(code=1001)
 
     def _current_time(self) -> float:
         return time.monotonic()
@@ -171,16 +172,29 @@ class UserChatConsumer(AsyncJsonWebsocketConsumer):
 
 
 class BotGatewayConsumer(AsyncJsonWebsocketConsumer):
+    HEARTBEAT_INTERVAL = 30  # 秒，发送 ping 间隔
+    HEARTBEAT_TIMEOUT = 60   # 秒，超时未收到 pong 则断开
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bot = None
         self.api_key = ''
         self.authenticated = False
+        self._last_pong = 0
+        self._heartbeat_task = None
 
     async def connect(self):
         await self.accept()
+        self._last_pong = time.monotonic()
+        self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
 
     async def disconnect(self, code):
+        if self._heartbeat_task:
+            self._heartbeat_task.cancel()
+            try:
+                await self._heartbeat_task
+            except asyncio.CancelledError:
+                pass
         if self.authenticated and self.api_key:
             removed = BotConnectionRegistry.unbind(self.api_key, self.channel_name)
             if removed:
@@ -195,10 +209,16 @@ class BotGatewayConsumer(AsyncJsonWebsocketConsumer):
         try:
             content = json.loads(text_data)
         except json.JSONDecodeError:
-            await self.close(code=4400)
+            await self.close(code=1001)
             return
 
         message_type = content.get('type')
+
+        # 处理心跳 pong
+        if message_type == 'pong':
+            self._last_pong = time.monotonic()
+            return
+
         if not self.authenticated:
             await self._handle_auth(content)
             return
@@ -214,16 +234,16 @@ class BotGatewayConsumer(AsyncJsonWebsocketConsumer):
 
     async def _handle_auth(self, content: dict):
         if content.get('type') != 'auth' or str(content.get('api_key', '')).strip() == '':
-            await self.close(code=4401)
+            await self.close(code=1008)
             return
         if int(content.get('v', 1)) != 1:
-            await self.close(code=4401)
+            await self.close(code=1008)
             return
 
         api_key = str(content.get('api_key')).strip()
         bot = await self._get_bot_by_api_key(api_key)
         if not bot:
-            await self.close(code=4401)
+            await self.close(code=1008)
             return
 
         self.bot = bot
@@ -231,6 +251,11 @@ class BotGatewayConsumer(AsyncJsonWebsocketConsumer):
         self.authenticated = True
         BotConnectionRegistry.bind(api_key, self.channel_name)
         await self._update_bot_online()
+        await self.send_json({
+            "v": 1,
+            "type": "auth_result",
+            "status": "ok",
+        })
 
     async def _handle_bot_message(self, content: dict):
         user_id = str(content.get('user_id', '')).strip()
@@ -255,6 +280,45 @@ class BotGatewayConsumer(AsyncJsonWebsocketConsumer):
             return Bot.objects.get(api_key=api_key)
         except Bot.DoesNotExist:
             return None
+
+    async def _heartbeat_loop(self):
+        """心跳循环：定期发送 ping，超时未收到 pong 则断开连接"""
+        try:
+            # 等待认证完成
+            for _ in range(30):  # 最多等 30 秒
+                if self.authenticated:
+                    break
+                await asyncio.sleep(1)
+            else:
+                # 超时未认证，关闭连接
+                await self.close(code=1008)
+                return
+
+            while True:
+                await asyncio.sleep(self.HEARTBEAT_INTERVAL)
+
+                # 检查是否超时未收到 pong
+                elapsed = time.monotonic() - self._last_pong
+                if elapsed > self.HEARTBEAT_TIMEOUT:
+                    # 心跳超时，关闭连接
+                    await self.close(code=1001)
+                    return
+
+                # 发送 ping
+                try:
+                    await self.send_json({'v': 1, 'type': 'ping'})
+                except Exception:
+                    # 发送失败，连接已断开
+                    return
+        except asyncio.CancelledError:
+            # 任务被取消（正常断开）
+            raise
+        except Exception:
+            # 其他异常，关闭连接
+            try:
+                await self.close(code=1001)
+            except Exception:
+                pass
 
     @database_sync_to_async
     def _update_bot_online(self):

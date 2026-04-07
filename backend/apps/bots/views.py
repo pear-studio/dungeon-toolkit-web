@@ -7,7 +7,7 @@ import secrets
 
 from .models import Bot
 from .serializers import (
-    BotSerializer, BotRegistrationSerializer, BotHeartbeatSerializer
+    BotSerializer, BotRegistrationSerializer
 )
 from .authentication import BotAuthentication
 from .chat_relay import BotConnectionRegistry
@@ -107,28 +107,6 @@ class BotRegenerateKeyView(APIView):
         bot.save()
 
         return Response({'api_key': bot.api_key})
-
-
-class BotHeartbeatView(APIView):
-    authentication_classes = [BotAuthentication]
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        bot = request.user
-        if not bot or not isinstance(bot, Bot):
-            return Response(
-                {'error': 'Invalid API Key'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        serializer = BotHeartbeatSerializer(data=request.data)
-        if serializer.is_valid():
-            bot.status = serializer.validated_data.get('status', 'online')
-            bot.last_seen = timezone.now()
-            bot.save()
-            return Response({'status': bot.status})
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BotListView(generics.ListCreateAPIView):

@@ -3,7 +3,6 @@ from . import views
 
 urlpatterns = [
     path('register/', views.BotRegistrationView.as_view(), name='bot-register'),
-    path('heartbeat/', views.BotHeartbeatView.as_view(), name='bot-heartbeat'),
     path('bind/', views.BotBindView.as_view(), name='bot-bind'),
     path('', views.BotListView.as_view(), name='bot-list'),
     path('my/', views.MyBotListView.as_view(), name='bot-my-list'),
